@@ -1,0 +1,94 @@
+main {
+    background-color: black;
+    color: white;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.janelaCentralizada {
+    border: solid 2px white;
+    width: 600px;
+    height: 600px;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.h1-centralizado {
+    width: 100%;
+    text-align: center;
+}
+
+.div-geradorMapa {
+    /* border: solid 2px red; */
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.div-gerador-mapa-inferior {
+    /* border: 2px solid blue; */
+    flex: 1;
+    display: flex;
+}
+
+.div-gerador-mapa-superior {
+    height: 10%;
+    display: flex;
+}
+
+.div-deslizanteSuperior {
+    /* border: solid 2px purple; */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.div-deslizanteInferior {
+    /* border: solid 2px aqua; */
+    width: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mapa-blocos {
+    border: solid 2px gray;
+    width: 90%;
+
+    display: grid;
+
+    grid-template-columns: repeat(var(--largura), 1fr);
+    grid-template-rows: repeat(var(--altura), 1fr);
+}
+
+#larguraMapa {
+    width: 80%;
+}
+
+#alturaMapa {
+    height: 80%;
+}
+
+p,
+h1 {
+    margin: 0;
+}
+
+input[type="range"][orient="vertical"] {
+    writing-mode: bt-lr;
+    /* de baixo pra cima */
+    -webkit-appearance: slider-vertical;
+    /* necessário no Chrome/Safari */
+    width: 8px;
+    height: 150px;
+}
+
+.bloco {
+    border: 1px solid white;
+}
