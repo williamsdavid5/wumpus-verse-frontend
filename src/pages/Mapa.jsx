@@ -1,20 +1,26 @@
 import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-function Bloco({ selecionado, onMouseEnter }) {
+function Bloco({ selecionado, onMouseEnter, onMouseDown }) {
     return (
         <div
             className={`bloco ${selecionado ? 'selecionado' : ''}`}
             onMouseEnter={onMouseEnter}
-        />
+            onMouseDown={onMouseDown}
+        >
+            {/* <div className='elemento wumpus'></div>
+            <div className='elemento buraco'></div>
+            <div className='elemento ouro'></div> */}
+        </div>
     )
 }
 
 export default function Mapa() {
     const [largura, setLargura] = useState(4)
     const [altura, setAltura] = useState(4)
-    const [modo, setModo] = useState('desenhar') // novo estado: desenhar | apagar
+    const [modo, setModo] = useState('desenhar');
     const [ctrlPressionado, setCtrlPressionado] = useState(false)
+    const mousePosition = useRef(null);
 
 
     const [grid, setGrid] = useState(() =>
@@ -37,7 +43,14 @@ export default function Mapa() {
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Control') {
-                setCtrlPressionado(true)
+                setCtrlPressionado(true);
+
+                // Altera imediatamente a célula sob o mouse quando Control é pressionado
+                if (mousePosition.current) {
+                    const { x, y } = mousePosition.current;
+                    const valor = modo === 'desenhar';
+                    alternarNoGrid(x, y, valor);
+                }
             }
         }
 
@@ -54,7 +67,7 @@ export default function Mapa() {
             window.removeEventListener('keydown', handleKeyDown)
             window.removeEventListener('keyup', handleKeyUp)
         }
-    }, [])
+    }, [modo])
 
     const recalculaCellSize = useCallback(() => {
         const cont = containerRef.current
@@ -104,11 +117,26 @@ export default function Mapa() {
         })
     }
 
+
+
     const handleCellMouseEnter = (x, y) => {
+        mousePosition.current = { x, y };
         if (ctrlPressionado) {
-            const valor = modo === 'desenhar'
-            alternarNoGrid(x, y, valor)
+            const valor = modo === 'desenhar';
+            alternarNoGrid(x, y, valor);
         }
+    }
+
+    const handleCellMouseDown = (x, y) => {
+        mousePosition.current = { x, y };
+        if (ctrlPressionado) {
+            const valor = modo === 'desenhar';
+            alternarNoGrid(x, y, valor);
+        }
+    }
+
+    const handleMouseLeave = () => {
+        mousePosition.current = null;
     }
 
     const exportarJSON = () => {
@@ -208,7 +236,11 @@ export default function Mapa() {
                     </div>
 
                     <div className='div-gerador-mapa-inferior'>
-                        <div ref={containerRef} className='div-mapa'>
+                        <div
+                            ref={containerRef}
+                            className='div-mapa'
+                            onMouseLeave={handleMouseLeave}
+                        >
                             <div
                                 className='mapa-blocos'
                                 style={{
@@ -224,6 +256,7 @@ export default function Mapa() {
                                             key={`${x}-${y}`}
                                             selecionado={sel}
                                             onMouseEnter={() => handleCellMouseEnter(x, y)}
+                                            onMouseDown={() => handleCellMouseDown(x, y)}
                                         />
                                     ))
                                 )}

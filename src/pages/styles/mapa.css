@@ -126,8 +126,29 @@ button:hover {
     background-color: black;
     transition: background-color 0.08s linear;
     cursor: crosshair;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    /* gap: 5px; */
 }
 
+.elemento {
+    margin: 3px;
+    border-radius: 4px;
+}
+
+.elemento.wumpus {
+    background-color: red;
+}
+
+.elemento.buraco {
+    background-color: blueviolet;
+}
+
+.elemento.ouro {
+    background-color: yellow;
+}
 
 .bloco:hover {
     background-color: #444;
