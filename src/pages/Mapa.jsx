@@ -1,16 +1,17 @@
 import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-function Bloco({ selecionado, onMouseEnter, onMouseDown }) {
+function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
     return (
         <div
             className={`bloco ${selecionado ? 'selecionado' : ''}`}
             onMouseEnter={onMouseEnter}
             onMouseDown={onMouseDown}
+            onClick={onClick}
         >
-            {/* <div className='elemento wumpus'></div>
-            <div className='elemento buraco'></div>
-            <div className='elemento ouro'></div> */}
+            {wumpus && <div className='elemento wumpus'></div>}
+            {buraco && <div className='elemento buraco'></div>}
+            {ouro && <div className='elemento ouro'></div>}
         </div>
     )
 }
@@ -21,10 +22,16 @@ export default function Mapa() {
     const [modo, setModo] = useState('desenhar');
     const [ctrlPressionado, setCtrlPressionado] = useState(false)
     const mousePosition = useRef(null);
+    const [modoInsercao, setModoInsercao] = useState(null);
 
 
     const [grid, setGrid] = useState(() =>
-        Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => false))
+        Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => ({
+            ativa: false,
+            wumpus: false,
+            buraco: false,
+            ouro: false
+        })))
     )
 
     const containerRef = useRef(null)
@@ -34,7 +41,9 @@ export default function Mapa() {
     useEffect(() => {
         setGrid(prev => {
             const nova = Array.from({ length: altura }, (_, y) =>
-                Array.from({ length: largura }, (_, x) => (prev[y] && prev[y][x]) || false)
+                Array.from({ length: largura }, (_, x) =>
+                    (prev[y] && prev[y][x]) || { ativa: false, wumpus: false, buraco: false, ouro: false }
+                )
             )
             return nova
         })
@@ -52,7 +61,12 @@ export default function Mapa() {
                     alternarNoGrid(x, y, valor);
                 }
             }
+
+            if (e.key === 'Escape') {
+                setModoInsercao(null);
+            }
         }
+
 
         const handleKeyUp = (e) => {
             if (e.key === 'Control') {
@@ -67,7 +81,7 @@ export default function Mapa() {
             window.removeEventListener('keydown', handleKeyDown)
             window.removeEventListener('keyup', handleKeyUp)
         }
-    }, [modo])
+    }, [modo, modoInsercao]);
 
     const recalculaCellSize = useCallback(() => {
         const cont = containerRef.current
@@ -107,17 +121,20 @@ export default function Mapa() {
         return () => window.removeEventListener('resize', recalculaCellSize)
     }, [recalculaCellSize])
 
+
+
     const alternarNoGrid = (x, y, valor) => {
         setGrid(prev => {
             const copia = prev.map(row => row.slice())
             if (copia[y] && typeof copia[y][x] !== 'undefined') {
-                copia[y][x] = valor
+                copia[y][x] = {
+                    ...copia[y][x],
+                    ativa: valor
+                }
             }
             return copia
         })
     }
-
-
 
     const handleCellMouseEnter = (x, y) => {
         mousePosition.current = { x, y };
@@ -144,7 +161,12 @@ export default function Mapa() {
             largura,
             altura,
             salas: grid.flatMap((row, y) =>
-                row.map((v, x) => v ? { x, y, entidade: "" } : null)
+                row.map((celula, x) => celula.ativa ? {
+                    x, y,
+                    wumpus: celula.wumpus,
+                    buraco: celula.buraco,
+                    ouro: celula.ouro
+                } : null)
             ).filter(sala => sala !== null)
         }
 
@@ -161,9 +183,47 @@ export default function Mapa() {
         URL.revokeObjectURL(url)
     }
 
-    const limpar = () => setGrid(Array.from({ length: altura }, () => Array.from({ length: largura }, () => false)))
+
+    const toggleModoInsercao = (elemento) => {
+        if (modoInsercao === elemento) {
+            setModoInsercao(null);
+        } else {
+            setModoInsercao(elemento);
+        }
+    }
+
+    const handleCellClick = (x, y) => {
+        if (modoInsercao && grid[y][x].ativa) {
+            setGrid(prev => {
+                const novaGrid = prev.map(row => row.slice())
+                // Alterna o estado do elemento específico
+                novaGrid[y][x] = {
+                    ...novaGrid[y][x],
+                    [modoInsercao]: !novaGrid[y][x][modoInsercao]
+                }
+                return novaGrid
+            })
+        }
+    }
+
+    const limpar = () => setGrid(Array.from({ length: altura }, () =>
+        Array.from({ length: largura }, () => ({
+            ativa: false,
+            wumpus: false,
+            buraco: false,
+            ouro: false
+        }))
+    ))
+
     const preencherTodos = () => {
-        setGrid(Array.from({ length: altura }, () => Array.from({ length: largura }, () => true)))
+        setGrid(Array.from({ length: altura }, () =>
+            Array.from({ length: largura }, () => ({
+                ativa: true,
+                wumpus: false,
+                buraco: false,
+                ouro: false
+            }))
+        ))
     }
 
     return (
@@ -254,9 +314,13 @@ export default function Mapa() {
                                 linha.map((sel, x) => (
                                     <Bloco
                                         key={`${x}-${y}`}
-                                        selecionado={sel}
+                                        selecionado={sel.ativa}
+                                        wumpus={sel.wumpus}
+                                        buraco={sel.buraco}
+                                        ouro={sel.ouro}
                                         onMouseEnter={() => handleCellMouseEnter(x, y)}
                                         onMouseDown={() => handleCellMouseDown(x, y)}
+                                        onClick={() => handleCellClick(x, y)}
                                     />
                                 ))
                             )}
@@ -266,9 +330,24 @@ export default function Mapa() {
                 <aside className='janelaEntidades'>
                     <p className='paragrafoInformativo'>Insira as entidades nos blocos</p>
                     <div className='divControle'>
-                        <button>Wumpus</button>
-                        <button>Buraco</button>
-                        <button>Ouro</button>
+                        <button
+                            className={`botaoWumpus ${modoInsercao === 'wumpus' ? 'ativo' : ''}`}
+                            onClick={() => toggleModoInsercao('wumpus')}
+                        >
+                            Wumpus
+                        </button>
+                        <button
+                            className={`botaoBuraco ${modoInsercao === 'buraco' ? 'ativo' : ''}`}
+                            onClick={() => toggleModoInsercao('buraco')}
+                        >
+                            Buraco
+                        </button>
+                        <button
+                            className={`botaoOuro ${modoInsercao === 'ouro' ? 'ativo' : ''}`}
+                            onClick={() => toggleModoInsercao('ouro')}
+                        >
+                            Ouro
+                        </button>
                     </div>
                 </aside>
             </main>

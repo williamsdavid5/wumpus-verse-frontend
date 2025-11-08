@@ -166,6 +166,19 @@ button:hover {
     background-color: yellow;
 }
 
+.botaoWumpus.ativo {
+    background-color: red;
+}
+
+.botaoBuraco.ativo {
+    background-color: blueviolet;
+}
+
+.botaoOuro.ativo {
+    background-color: yellow;
+    color: black;
+}
+
 .bloco:hover {
     background-color: #444;
 }
