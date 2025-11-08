@@ -4,3 +4,11 @@ html {
   padding: 0;
   font-family: 'open sans', 'arial';
 }
+
+p {
+  margin: 0px;
+}
+
+:root {
+  --bordaCor: #5d5d5d;
+}
