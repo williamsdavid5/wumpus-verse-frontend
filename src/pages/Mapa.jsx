@@ -328,7 +328,23 @@ export default function Mapa() {
                     </div>
                 </section>
                 <aside className='janelaEntidades'>
-                    <p className='paragrafoInformativo'>Insira as entidades nos blocos</p>
+                    <h2>Entidades</h2>
+                    <p className='paragrafoInformativo' style={{ textAlign: 'left', marginLeft: '10px' }}>Escolha como será o mundo que seu agente irá explorar.</p>
+                    <p></p>
+                    <div className='divControle'>
+                        <div className='div-entidades-informacao'>
+                            {/* <div className='quadradoEntidade wumpus'></div>
+                            <p>
+                                Wumpus: Criado para matar agentes!
+                            </p> */}
+                            <h3 style={{ color: 'red' }}>Wumpus</h3>
+                            <p>Mata seu agente instantâneamente, mas seu agente pode matá-lo.</p>
+                            <h3 style={{ color: 'blueviolet', marginTop: '10px' }}>Buraco</h3>
+                            <p>Não há saída, se o agente cair, perde a partida.</p>
+                            <h3 style={{ color: 'orange', marginTop: '10px' }}>Ouro</h3>
+                            <p>Seu agente vence a partida se encontrar e fugir do mundo.</p>
+                        </div>
+                    </div>
                     <div className='divControle'>
                         <button
                             className={`botaoWumpus ${modoInsercao === 'wumpus' ? 'ativo' : ''}`}
@@ -348,7 +364,14 @@ export default function Mapa() {
                         >
                             Ouro
                         </button>
+                        <p className='paragrafoInformativo'>
+                            Adicione entidades aos blocos.
+                            Clique nos botões para ativar ou desativar a inserção de entidades,
+                            clique nos blocos ativos para inserir.</p>
                     </div>
+                    {/* <div className='divControle'>
+                        Sobre as entidades
+                    </div> */}
                 </aside>
             </main>
         </>

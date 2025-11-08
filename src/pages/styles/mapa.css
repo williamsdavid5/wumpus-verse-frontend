@@ -163,7 +163,7 @@ button:hover {
 }
 
 .elemento.ouro {
-    background-color: yellow;
+    background-color: orange;
 }
 
 .botaoWumpus.ativo {
@@ -175,8 +175,19 @@ button:hover {
 }
 
 .botaoOuro.ativo {
-    background-color: yellow;
+    background-color: orange;
     color: black;
+}
+
+.div-entidades-informacao h3 {
+    margin: 0;
+}
+
+.quadradoEntidade {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 4px;
 }
 
 .bloco:hover {
@@ -193,6 +204,10 @@ button:hover {
     height: 100vh;
     box-sizing: border-box;
     /* display: flex; */
+}
+
+.janelaEntidades h2 {
+    margin: 5px 10px;
 }
 
 @media (max-width: 900px) {
