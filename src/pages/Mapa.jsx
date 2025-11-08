@@ -167,104 +167,106 @@ export default function Mapa() {
     }
 
     return (
-        <main>
-            <section className='janelaCentralizada'>
-                <h1 className='h1-centralizado'>Gerador de ambientes</h1>
-                <p className='paragrafoInformativo'>Preencha os blocos para definir o formato do seu mundo.</p>
-                <div className='div-geradorMapa'>
-                    <div className='div-controlesSuperiores'>
-                        <div className='divControle'>
-                            <div className='div-controles-auxiliar'>
-                                <p>Largura:</p><br />
-                                <input
-                                    type='number'
-                                    value={largura}
-                                    min={1}
-                                    max={200}
-                                    className='inputDimensao'
-                                    onChange={(e) => setLargura(Math.max(1, Math.min(200, Number(e.target.value) || 1)))}
-                                />
-                            </div>
-                            <div className='div-controles-auxiliar'>
-                                <p>Altura:</p><br />
-                                <input
-                                    type='number'
-                                    value={altura}
-                                    min={1}
-                                    max={200}
-                                    className='inputDimensao'
-                                    onChange={(e) => setAltura(Math.max(1, Math.min(200, Number(e.target.value) || 1)))}
-                                />
-                            </div>
+        <>
+            <main>
+                <aside className='janelaConfigMapa'>
+                    <div className='divControle' style={{ border: 'none' }}>
+                        <h1>GERADOR DE MUNDOS</h1>
+                        <p className='paragrafoInformativo'>Preencha os blocos para definir o formato do seu mundo.</p>
+                    </div>
+                    <div className='divControle'>
+                        <div className='div-controles-auxiliar'>
+                            <p>Largura:</p><br />
+                            <input
+                                type='number'
+                                value={largura}
+                                min={1}
+                                max={200}
+                                className='inputDimensao'
+                                onChange={(e) => setLargura(Math.max(1, Math.min(200, Number(e.target.value) || 1)))}
+                            />
                         </div>
-
-                        <div className='divControle'>
-                            <div className='div-controles-auxiliar'>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name='modo'
-                                        value="desenhar"
-                                        checked={modo === 'desenhar'}
-                                        onChange={(e) => setModo(e.target.value)}
-                                    />
-                                    Desenhar
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name='modo'
-                                        value="apagar"
-                                        checked={modo === 'apagar'}
-                                        onChange={(e) => setModo(e.target.value)}
-                                    />
-                                    Apagar
-                                </label>
-                            </div>
-
-                            <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
-                        </div>
-
-                        <div className='divControle'>
-                            <div className='div-controles-auxiliar'>
-                                <button onClick={preencherTodos}>Preencher todos</button>
-                                <button onClick={limpar}>Limpar blocos</button>
-                            </div>
-
-                            <button onClick={exportarJSON}>Exportar JSON</button>
+                        <div className='div-controles-auxiliar'>
+                            <p>Altura:</p><br />
+                            <input
+                                type='number'
+                                value={altura}
+                                min={1}
+                                max={200}
+                                className='inputDimensao'
+                                onChange={(e) => setAltura(Math.max(1, Math.min(200, Number(e.target.value) || 1)))}
+                            />
                         </div>
                     </div>
 
-                    <div className='div-gerador-mapa-inferior'>
+                    <div className='divControle'>
+                        <div className='div-controles-auxiliar'>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name='modo'
+                                    value="desenhar"
+                                    checked={modo === 'desenhar'}
+                                    onChange={(e) => setModo(e.target.value)}
+                                />
+                                Desenhar
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name='modo'
+                                    value="apagar"
+                                    checked={modo === 'apagar'}
+                                    onChange={(e) => setModo(e.target.value)}
+                                />
+                                Apagar
+                            </label>
+                        </div>
+
+                        <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
+                    </div>
+
+                    <div className='divControle'>
+                        <div className='div-controles-auxiliar'>
+                            <button className='botaoPreencher-apagar' onClick={preencherTodos}>Preencher todos</button>
+                            <button className='botaoPreencher-apagar' onClick={limpar}>Limpar blocos</button>
+                        </div>
+
+                        <button onClick={exportarJSON}>Exportar JSON</button>
+                    </div>
+                </aside>
+                <section className='janelaCentralizada'>
+                    <div
+                        ref={containerRef}
+                        className='div-mapa'
+                        onMouseLeave={handleMouseLeave}
+                    >
                         <div
-                            ref={containerRef}
-                            className='div-mapa'
-                            onMouseLeave={handleMouseLeave}
+                            className='mapa-blocos'
+                            style={{
+                                gridTemplateColumns: `repeat(${largura}, ${cellSize}px)`,
+                                gridTemplateRows: `repeat(${altura}, ${cellSize}px)`,
+                                width: `${mapSize.w}px`,
+                                height: `${mapSize.h}px`,
+                            }}
                         >
-                            <div
-                                className='mapa-blocos'
-                                style={{
-                                    gridTemplateColumns: `repeat(${largura}, ${cellSize}px)`,
-                                    gridTemplateRows: `repeat(${altura}, ${cellSize}px)`,
-                                    width: `${mapSize.w}px`,
-                                    height: `${mapSize.h}px`,
-                                }}
-                            >
-                                {grid.map((linha, y) =>
-                                    linha.map((sel, x) => (
-                                        <Bloco
-                                            key={`${x}-${y}`}
-                                            selecionado={sel}
-                                            onMouseEnter={() => handleCellMouseEnter(x, y)}
-                                            onMouseDown={() => handleCellMouseDown(x, y)}
-                                        />
-                                    ))
-                                )}
-                            </div>
+                            {grid.map((linha, y) =>
+                                linha.map((sel, x) => (
+                                    <Bloco
+                                        key={`${x}-${y}`}
+                                        selecionado={sel}
+                                        onMouseEnter={() => handleCellMouseEnter(x, y)}
+                                        onMouseDown={() => handleCellMouseDown(x, y)}
+                                    />
+                                ))
+                            )}
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
+                </section>
+                <aside className='janelaEntidades'>
+                    <p>asdsdadasdasd</p>
+                </aside>
+            </main>
+        </>
     )
 }
