@@ -12,3 +12,7 @@ p {
 :root {
   --bordaCor: #5d5d5d;
 }
+
+.destaqueRed {
+  color: red;
+}

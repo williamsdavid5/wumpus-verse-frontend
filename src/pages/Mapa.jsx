@@ -226,6 +226,71 @@ export default function Mapa() {
         ))
     }
 
+    const limparEntidades = () => {
+        setGrid(prev =>
+            prev.map(linha =>
+                linha.map(celula => ({
+                    ...celula,
+                    wumpus: false,
+                    buraco: false,
+                    ouro: false
+                }))
+            )
+        );
+    };
+
+    const gerarEntidadesAleatorias = () => {
+        limparEntidades();
+        const porcentagemInput = document.querySelector('input[placeholder="% prenchimento"]');
+        const porcentagem = porcentagemInput.value ? Math.min(95, Math.max(0, parseInt(porcentagemInput.value))) : null;
+
+        setGrid(prev => {
+            const novaGrid = prev.map(row => row.slice());
+
+            // Conta quantas salas estão ativas
+            const salasAtivas = novaGrid.flat().filter(celula => celula.ativa).length;
+            if (salasAtivas === 0) return novaGrid;
+
+            // Para cada tipo de entidade, calcula quantas adicionar
+            const entidades = ['wumpus', 'buraco', 'ouro'];
+
+            entidades.forEach(entidade => {
+                // Define a porcentagem para esta entidade
+                let porcentagemEntidade = porcentagem;
+                if (!porcentagemEntidade) {
+                    // Gera porcentagem aleatória entre 5% e 95% se não foi especificada
+                    porcentagemEntidade = Math.floor(Math.random() * 15) + 1; // 5-95%
+                }
+
+                // Calcula quantas salas preencher com esta entidade
+                const quantidade = Math.max(1, Math.floor((salasAtivas * porcentagemEntidade) / 100));
+
+                // Encontra todas as salas ativas sem esta entidade
+                const salasDisponiveis = [];
+                novaGrid.forEach((linha, y) => {
+                    linha.forEach((celula, x) => {
+                        if (celula.ativa && !celula[entidade]) {
+                            salasDisponiveis.push({ x, y });
+                        }
+                    });
+                });
+
+                // Embaralha as salas disponíveis
+                const salasEmbaralhadas = [...salasDisponiveis].sort(() => Math.random() - 0.5);
+
+                // Adiciona a entidade nas salas selecionadas
+                salasEmbaralhadas.slice(0, quantidade).forEach(({ x, y }) => {
+                    novaGrid[y][x] = {
+                        ...novaGrid[y][x],
+                        [entidade]: true
+                    };
+                });
+            });
+
+            return novaGrid;
+        });
+    };
+
     return (
         <>
             <main>
@@ -346,6 +411,10 @@ export default function Mapa() {
                         </div>
                     </div>
                     <div className='divControle'>
+                        <p className='paragrafoInformativo'>
+                            Adicione entidades aos blocos.
+                            Clique nos botões para ativar ou <span className='destaqueRed'>desativar</span> a inserção de entidades,
+                            clique nos blocos ativos para inserir ou <span className='destaqueRed'>remover</span>.</p>
                         <button
                             className={`botaoWumpus ${modoInsercao === 'wumpus' ? 'ativo' : ''}`}
                             onClick={() => toggleModoInsercao('wumpus')}
@@ -364,10 +433,16 @@ export default function Mapa() {
                         >
                             Ouro
                         </button>
+                        <button onClick={limparEntidades} style={{ backgroundColor: 'red', border: 'none' }}>Limpar Todas as Entidades</button>
+                        <div className='div-entidades-aleatorio'>
+                            <input type="number" min={0} max={95} name="" id="" placeholder='% prenchimento' />
+                            <button onClick={gerarEntidadesAleatorias}>Aleatório</button>
+                        </div>
                         <p className='paragrafoInformativo'>
-                            Adicione entidades aos blocos.
-                            Clique nos botões para ativar ou desativar a inserção de entidades,
-                            clique nos blocos ativos para inserir.</p>
+                            Gere entidades de forma aleatória no ambiente, você pode ou não definir
+                            a <span className='destaqueRed'>porcentagem de densidade</span> em relação
+                            à quantidade de salas ativas.
+                        </p>
                     </div>
                     {/* <div className='divControle'>
                         Sobre as entidades
