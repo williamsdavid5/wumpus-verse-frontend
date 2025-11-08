@@ -116,11 +116,21 @@ export default function Mapa() {
             largura,
             altura,
             salas: grid.flatMap((row, y) =>
-                row.map((v, x) => ({ x, y, ativa: !!v }))
-            )
+                row.map((v, x) => v ? { x, y, entidade: "" } : null)
+            ).filter(sala => sala !== null)
         }
-        console.log('Export JSON:', JSON.stringify(payload, null, 2))
-        alert('JSON gerado no console (veja DevTools).')
+
+        const jsonString = JSON.stringify(payload, null, 2)
+        const blob = new Blob([jsonString], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `mapa_${largura}x${altura}.json`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
     }
 
     const limpar = () => setGrid(Array.from({ length: altura }, () => Array.from({ length: largura }, () => false)))
