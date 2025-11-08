@@ -122,7 +122,7 @@ button:hover {
     justify-content: center;
     padding: 8;
     box-sizing: border-box;
-    border: solid 1px var(--bordaCor);
+    /* border: solid 1px var(--bordaCor); */
 }
 
 .mapa-blocos {
@@ -150,7 +150,7 @@ button:hover {
 }
 
 .elemento {
-    margin: 3px;
+    margin: 10%;
     border-radius: 4px;
 }
 

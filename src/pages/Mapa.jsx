@@ -171,7 +171,7 @@ export default function Mapa() {
             <main>
                 <aside className='janelaConfigMapa'>
                     <div className='divControle' style={{ border: 'none' }}>
-                        <h1>GERADOR DE MUNDOS</h1>
+                        <h1>EDITOR DE MUNDOS</h1>
                         <p className='paragrafoInformativo'>Preencha os blocos para definir o formato do seu mundo.</p>
                     </div>
                     <div className='divControle'>
@@ -264,7 +264,12 @@ export default function Mapa() {
                     </div>
                 </section>
                 <aside className='janelaEntidades'>
-                    <p>asdsdadasdasd</p>
+                    <p className='paragrafoInformativo'>Insira as entidades nos blocos</p>
+                    <div className='divControle'>
+                        <button>Wumpus</button>
+                        <button>Buraco</button>
+                        <button>Ouro</button>
+                    </div>
                 </aside>
             </main>
         </>
