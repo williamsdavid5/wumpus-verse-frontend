@@ -11,8 +11,13 @@ p {
 
 :root {
   --bordaCor: #5d5d5d;
+  --roxoDestaque: #8800B5;
 }
 
 .destaqueRed {
   color: red;
+}
+
+.destaqueRoxo {
+  color: #8800B5;
 }
