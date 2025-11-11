@@ -24,4 +24,8 @@
         bottom: 30px;
         width: 20%;
     }
+
+    .mainInicio {
+        display: none;
+    }
 }
