@@ -1,6 +1,8 @@
 import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+import { AvisoLayout } from './AvisoLayout'
+
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
     return (
         <div
@@ -449,6 +451,7 @@ export default function Mapa() {
                     </div> */}
                 </aside>
             </main>
+            <AvisoLayout />
         </>
     )
 }

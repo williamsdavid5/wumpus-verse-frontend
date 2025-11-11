@@ -66,3 +66,12 @@
     border: none;
     background-color: var(--roxoDestaque);
 }
+
+@media (max-width: 900px) {
+
+    .tituloInicio,
+    .paragrafoInicio,
+    .divBotoesInicio {
+        width: 80%;
+    }
+}

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import logo from '../assets/wumpus_verse_logo_white.svg'
 import { useState } from 'react';
 
+import { AvisoLayout } from './AvisoLayout';
+
 export default function Inicio() {
     const navigate = useNavigate();
     const [logado, setLogado] = useState(false);
@@ -65,6 +67,7 @@ export default function Inicio() {
                 </footer>
                 <img src={logo} alt="" className='logoInicio' />
             </main>
+            <AvisoLayout />
         </>
     )
 }
