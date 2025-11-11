@@ -70,6 +70,7 @@ main {
     width: 20%;
     height: 100vh;
     box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .janelaConfigMapa h1,
@@ -205,6 +206,7 @@ button:hover {
     width: 20%;
     height: 100vh;
     box-sizing: border-box;
+    overflow-y: auto;
     /* display: flex; */
 }
 
@@ -232,7 +234,12 @@ button:hover {
 
 @media (max-width: 900px) {
     .janelaCentralizada {
-        width: 90%;
+        width: 50%;
         height: 95%;
+    }
+
+    .janelaEntidades,
+    .janelaConfigMapa {
+        width: 25%;
     }
 }
