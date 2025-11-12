@@ -79,6 +79,15 @@ main {
     margin: 0;
 }
 
+.nomeDoMundo {
+    margin: 0px 5px;
+    padding: 4px;
+    margin-bottom: 5px;
+    background-color: black;
+    border: 1px solid var(--bordaCor);
+    color: white;
+}
+
 .botaoPreencher-apagar {
     width: 50%;
 }
@@ -210,7 +219,8 @@ button:hover {
     /* display: flex; */
 }
 
-.janelaEntidades h2 {
+.janelaEntidades h2,
+.janelaConfigMapa h2 {
     margin: 5px 10px;
 }
 

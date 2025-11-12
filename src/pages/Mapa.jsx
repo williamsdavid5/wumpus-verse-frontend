@@ -25,6 +25,7 @@ export default function Mapa() {
     const [ctrlPressionado, setCtrlPressionado] = useState(false)
     const mousePosition = useRef(null);
     const [modoInsercao, setModoInsercao] = useState(null);
+    const [nomeMundo, setNomeMundo] = useState('');
 
 
     const [grid, setGrid] = useState(() =>
@@ -159,7 +160,13 @@ export default function Mapa() {
     }
 
     const exportarJSON = () => {
+        if (!nomeMundo.trim()) {
+            alert('Por favor, preencha o nome do mundo antes de exportar!');
+            return;
+        }
+
         const payload = {
+            nome: nomeMundo.trim(),
             largura,
             altura,
             salas: grid.flatMap((row, y) =>
@@ -178,13 +185,73 @@ export default function Mapa() {
 
         const a = document.createElement('a')
         a.href = url
-        a.download = `mapa_${largura}x${altura}.json`
+        a.download = `mapa_${nomeMundo.trim().replace(/\s+/g, '_')}.json`
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
     }
 
+    const importarJSON = () => {
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+
+                    if (!data.nome || !data.largura || !data.altura || !Array.isArray(data.salas)) {
+                        alert('Arquivo JSON inválido!');
+                        return;
+                    }
+
+                    setNomeMundo(data.nome);
+                    setLargura(data.largura);
+                    setAltura(data.altura);
+
+                    const novoGrid = Array.from({ length: data.altura }, (_, y) =>
+                        Array.from({ length: data.largura }, (_, x) => {
+                            const sala = data.salas.find(s => s.x === x && s.y === y);
+
+                            if (sala) {
+                                return {
+                                    ativa: true,
+                                    wumpus: sala.wumpus || false,
+                                    buraco: sala.buraco || false,
+                                    ouro: sala.ouro || false
+                                };
+                            } else {
+                                return {
+                                    ativa: false,
+                                    wumpus: false,
+                                    buraco: false,
+                                    ouro: false
+                                };
+                            }
+                        })
+                    );
+
+                    setGrid(novoGrid);
+
+                    // alert(`Mundo "${data.nome}" importado com sucesso!`);
+
+                } catch (error) {
+                    alert('Erro ao ler arquivo JSON: ' + error.message);
+                }
+            };
+
+            reader.readAsText(file);
+        };
+
+        input.click();
+    }
 
     const toggleModoInsercao = (elemento) => {
         if (modoInsercao === elemento) {
@@ -249,25 +316,19 @@ export default function Mapa() {
         setGrid(prev => {
             const novaGrid = prev.map(row => row.slice());
 
-            // Conta quantas salas estão ativas
             const salasAtivas = novaGrid.flat().filter(celula => celula.ativa).length;
             if (salasAtivas === 0) return novaGrid;
 
-            // Para cada tipo de entidade, calcula quantas adicionar
             const entidades = ['wumpus', 'buraco', 'ouro'];
 
             entidades.forEach(entidade => {
-                // Define a porcentagem para esta entidade
                 let porcentagemEntidade = porcentagem;
                 if (!porcentagemEntidade) {
-                    // Gera porcentagem aleatória entre 5% e 95% se não foi especificada
-                    porcentagemEntidade = Math.floor(Math.random() * 15) + 1; // 5-95%
+                    porcentagemEntidade = Math.floor(Math.random() * 15) + 1;
                 }
 
-                // Calcula quantas salas preencher com esta entidade
                 const quantidade = Math.max(1, Math.floor((salasAtivas * porcentagemEntidade) / 100));
 
-                // Encontra todas as salas ativas sem esta entidade
                 const salasDisponiveis = [];
                 novaGrid.forEach((linha, y) => {
                     linha.forEach((celula, x) => {
@@ -277,10 +338,8 @@ export default function Mapa() {
                     });
                 });
 
-                // Embaralha as salas disponíveis
                 const salasEmbaralhadas = [...salasDisponiveis].sort(() => Math.random() - 0.5);
 
-                // Adiciona a entidade nas salas selecionadas
                 salasEmbaralhadas.slice(0, quantidade).forEach(({ x, y }) => {
                     novaGrid[y][x] = {
                         ...novaGrid[y][x],
@@ -351,15 +410,22 @@ export default function Mapa() {
                         </div>
 
                         <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
-                    </div>
-
-                    <div className='divControle'>
                         <div className='div-controles-auxiliar'>
                             <button className='botaoPreencher-apagar' onClick={preencherTodos}>Preencher todos</button>
                             <button className='botaoPreencher-apagar' onClick={limpar}>Limpar blocos</button>
                         </div>
-
+                    </div>
+                    <div className='divControle'>
+                        <h2>Salvar</h2>
+                        <input
+                            type="text"
+                            value={nomeMundo}
+                            onChange={(e) => setNomeMundo(e.target.value)}
+                            placeholder='Nome do mundo'
+                            className='nomeDoMundo'
+                        />
                         <button onClick={exportarJSON}>Exportar JSON</button>
+                        <button onClick={importarJSON}>Importar JSON</button>
                     </div>
                 </aside>
                 <section className='janelaCentralizada'>
