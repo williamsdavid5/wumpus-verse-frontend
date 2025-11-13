@@ -26,6 +26,21 @@ export default function Mapa() {
     const mousePosition = useRef(null);
     const [modoInsercao, setModoInsercao] = useState(null);
     const [nomeMundo, setNomeMundo] = useState('');
+    const [estatisticas, setEstatisticas] = useState({
+        totalSalas: 16,
+        salasAtivas: 0,
+        salasInativas: 16,
+        quantidadeEntidades: {
+            wumpus: 0,
+            buracos: 0,
+            ouros: 0
+        },
+        densidadeEntidades: {
+            wumpus: '0%',
+            buracos: '0%',
+            ouros: '0%'
+        }
+    });
 
 
     const [grid, setGrid] = useState(() =>
@@ -125,7 +140,6 @@ export default function Mapa() {
     }, [recalculaCellSize])
 
 
-
     const alternarNoGrid = (x, y, valor) => {
         setGrid(prev => {
             const copia = prev.map(row => row.slice())
@@ -165,10 +179,31 @@ export default function Mapa() {
             return;
         }
 
+        const salasAtivas = grid.flat().filter(celula => celula.ativa).length;
+        const totalWumpus = grid.flat().filter(celula => celula.wumpus).length;
+        const totalBuracos = grid.flat().filter(celula => celula.buraco).length;
+        const totalOuros = grid.flat().filter(celula => celula.ouro).length;
+
         const payload = {
             nome: nomeMundo.trim(),
             largura,
             altura,
+
+            estatisticas: {
+                totalSalas: largura * altura,
+                salasAtivas: salasAtivas,
+                salasInativas: (largura * altura) - salasAtivas,
+                quantidadeEntidades: {
+                    wumpus: totalWumpus,
+                    buracos: totalBuracos,
+                    ouros: totalOuros
+                },
+                densidadeEntidades: {
+                    wumpus: salasAtivas > 0 ? ((totalWumpus / salasAtivas) * 100).toFixed(2) + '%' : '0%',
+                    buracos: salasAtivas > 0 ? ((totalBuracos / salasAtivas) * 100).toFixed(2) + '%' : '0%',
+                    ouros: salasAtivas > 0 ? ((totalOuros / salasAtivas) * 100).toFixed(2) + '%' : '0%'
+                }
+            },
             salas: grid.flatMap((row, y) =>
                 row.map((celula, x) => celula.ativa ? {
                     x, y,
@@ -193,7 +228,6 @@ export default function Mapa() {
     }
 
     const importarJSON = () => {
-
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
@@ -240,7 +274,9 @@ export default function Mapa() {
 
                     setGrid(novoGrid);
 
-                    // alert(`Mundo "${data.nome}" importado com sucesso!`);
+                    if (data.estatisticas) {
+                        console.log('Estatísticas do mundo importado:', data.estatisticas);
+                    }
 
                 } catch (error) {
                     alert('Erro ao ler arquivo JSON: ' + error.message);
@@ -252,6 +288,29 @@ export default function Mapa() {
 
         input.click();
     }
+
+    useEffect(() => {
+        const salasAtivas = grid.flat().filter(celula => celula.ativa).length;
+        const totalWumpus = grid.flat().filter(celula => celula.wumpus).length;
+        const totalBuracos = grid.flat().filter(celula => celula.buraco).length;
+        const totalOuros = grid.flat().filter(celula => celula.ouro).length;
+
+        setEstatisticas({
+            totalSalas: largura * altura,
+            salasAtivas: salasAtivas,
+            salasInativas: (largura * altura) - salasAtivas,
+            quantidadeEntidades: {
+                wumpus: totalWumpus,
+                buracos: totalBuracos,
+                ouros: totalOuros
+            },
+            densidadeEntidades: {
+                wumpus: salasAtivas > 0 ? ((totalWumpus / salasAtivas) * 100).toFixed(2) + '%' : '0%',
+                buracos: salasAtivas > 0 ? ((totalBuracos / salasAtivas) * 100).toFixed(2) + '%' : '0%',
+                ouros: salasAtivas > 0 ? ((totalOuros / salasAtivas) * 100).toFixed(2) + '%' : '0%'
+            }
+        });
+    }, [grid, largura, altura]);
 
     const toggleModoInsercao = (elemento) => {
         if (modoInsercao === elemento) {
@@ -414,6 +473,14 @@ export default function Mapa() {
                             <button className='botaoPreencher-apagar' onClick={preencherTodos}>Preencher todos</button>
                             <button className='botaoPreencher-apagar' onClick={limpar}>Limpar blocos</button>
                         </div>
+                    </div>
+                    <div className='divControle'>
+                        <p className='paragrafoInformativo'>
+                            <b>Salas:</b> {estatisticas.salasAtivas}/{estatisticas.totalSalas} ({((estatisticas.salasAtivas / estatisticas.totalSalas) * 100).toFixed(1)}%)<br />
+                            <b>Wumpus:</b> {estatisticas.quantidadeEntidades.wumpus} ({estatisticas.densidadeEntidades.wumpus})<br />
+                            <b>Buracos:</b> {estatisticas.quantidadeEntidades.buracos} ({estatisticas.densidadeEntidades.buracos})<br />
+                            <b>Ouros:</b> {estatisticas.quantidadeEntidades.ouros} ({estatisticas.densidadeEntidades.ouros})
+                        </p>
                     </div>
                     <div className='divControle'>
                         <h2>Salvar</h2>

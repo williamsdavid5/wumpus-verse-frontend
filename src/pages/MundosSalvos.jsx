@@ -1,6 +1,21 @@
 import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
 
+function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
+    return (
+        <div
+            className={`bloco ${selecionado ? 'selecionado' : ''}`}
+            onMouseEnter={onMouseEnter}
+            onMouseDown={onMouseDown}
+            onClick={onClick}
+        >
+            {wumpus && <div className='elemento wumpus'></div>}
+            {buraco && <div className='elemento buraco'></div>}
+            {ouro && <div className='elemento ouro'></div>}
+        </div>
+    )
+}
+
 export default function MundosSalvos() {
 
     const navigate = useNavigate();
@@ -91,7 +106,59 @@ export default function MundosSalvos() {
 
                 </aside>
                 <section className='mundosVisualizador'>
-                    exibição
+                    <div className='div-mapa'>
+                        <div
+                            className='mapa-blocos'
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(6, 50px)',
+                                gridTemplateRows: 'repeat(5, 50px)',
+                                width: '300px',
+                                height: '250px',
+                                gap: '2px'
+                            }}
+                        >
+                            {/* Linha 1 */}
+                            <Bloco selecionado />
+                            <Bloco />
+                            <Bloco buraco />
+                            <Bloco />
+                            <Bloco ouro />
+                            <Bloco />
+
+                            {/* Linha 2 */}
+                            <Bloco />
+                            <Bloco selecionado />
+                            <Bloco />
+                            <Bloco wumpus />
+                            <Bloco />
+                            <Bloco />
+
+                            {/* Linha 3 */}
+                            <Bloco />
+                            <Bloco />
+                            <Bloco selecionado buraco />
+                            <Bloco />
+                            <Bloco />
+                            <Bloco />
+
+                            {/* Linha 4 */}
+                            <Bloco ouro />
+                            <Bloco />
+                            <Bloco />
+                            <Bloco selecionado />
+                            <Bloco buraco />
+                            <Bloco />
+
+                            {/* Linha 5 */}
+                            <Bloco />
+                            <Bloco />
+                            <Bloco wumpus />
+                            <Bloco />
+                            <Bloco />
+                            <Bloco selecionado />
+                        </div>
+                    </div>
                 </section>
             </main>
         </>
