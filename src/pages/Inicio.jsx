@@ -12,8 +12,8 @@ export default function Inicio() {
     const [botaoHover, setBotaoHover] = useState(null);
 
     const botoes = [
-        { id: 1, texto: 'Editor de mundos', acao: () => navigate('/mapa') },
-        { id: 2, texto: 'Editor de agentes', acao: () => { } },
+        { id: 1, texto: 'Mundos', acao: () => navigate('/mapa') },
+        { id: 2, texto: 'Agentes', acao: () => { } },
         { id: 3, texto: 'Histórico', acao: () => { } },
         { id: 4, texto: 'Nova partida', acao: () => { } },
     ];
@@ -33,7 +33,7 @@ export default function Inicio() {
                         as diversas formas de vencer esse jogo
                     </p>
                     <div className='divBotoesInicio'>
-                        <button onClick={() => navigate('/mapa')} >Editor de mundos</button>
+                        <button onClick={() => navigate('/mundos-salvos')} >Mundos</button>
                         {botoes.slice(1, 3).map(b => (
                             <button
                                 key={b.id}

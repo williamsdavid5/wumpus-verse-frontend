@@ -5,7 +5,9 @@ html {
   font-family: 'open sans', 'arial';
 }
 
-p {
+p,
+h1,
+h2 {
   margin: 0px;
 }
 

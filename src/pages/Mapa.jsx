@@ -426,6 +426,7 @@ export default function Mapa() {
                         />
                         <button onClick={exportarJSON}>Exportar JSON</button>
                         <button onClick={importarJSON}>Importar JSON</button>
+                        <button>Salvar</button>
                     </div>
                 </aside>
                 <section className='janelaCentralizada'>

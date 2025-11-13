@@ -1,0 +1,78 @@
+.mundosMain {
+    width: 100vw;
+    height: 100dvh;
+}
+
+.mundosLista {
+    width: 30%;
+    height: 100dvh;
+    border-right: solid 1px var(--bordaCor);
+    /* padding: 10px; */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.mundosLista p {
+    text-align: left;
+}
+
+.topoMundosSalvos {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+}
+
+.botaoNovoMundo {
+    width: 100px;
+    height: 90%;
+    background-color: var(--roxoDestaque);
+    border: none;
+}
+
+.divListaMundos {
+    border-top: solid 1px var(--bordaCor);
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+}
+
+.itemListaMundos {
+    border-bottom: solid 1px var(--bordaCor);
+    padding: 10px;
+    padding-left: 15px;
+    display: flex;
+}
+
+.itemListaMundos:hover {
+    cursor: pointer;
+    /* transform: scale(1.03); */
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.itemListaMundos .esquerda {
+    width: 80%;
+}
+
+.itemListaMundos .direita {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+}
+
+.itemListaMundos .direita button {
+    /* width: 90%; */
+    flex: 1
+}
+
+.itemListaMundos .direita .botaoExcluir:hover {
+    background-color: red;
+    color: white;
+}
+
+.mundosVisualizador {
+    /* background-color: gray; */
+    width: 70%;
+    height: 100dvh;
+}
