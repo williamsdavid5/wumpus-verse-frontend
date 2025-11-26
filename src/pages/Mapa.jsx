@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 
 import { AvisoLayout } from './AvisoLayout'
 
-function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
+function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, x, y }) {
     return (
         <div
             className={`bloco ${selecionado ? 'selecionado' : ''}`}
@@ -11,6 +11,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
             onMouseDown={onMouseDown}
             onClick={onClick}
         >
+            {/* <p>{x},{y}</p> */}
             {wumpus && <div className='elemento wumpus'></div>}
             {buraco && <div className='elemento buraco'></div>}
             {ouro && <div className='elemento ouro'></div>}
@@ -522,6 +523,8 @@ export default function Mapa() {
                                         onMouseEnter={() => handleCellMouseEnter(x, y)}
                                         onMouseDown={() => handleCellMouseDown(x, y)}
                                         onClick={() => handleCellClick(x, y)}
+                                        x={x}
+                                        y={y}
                                     />
                                 ))
                             )}

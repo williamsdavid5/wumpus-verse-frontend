@@ -30,7 +30,7 @@ export default function Inicio() {
                     <p className='paragrafoInicio'>
                         Baseado no jogo lógico “mundo de wumpus“, a plataforma <span className='destaqueRoxo' style={{ fontWeight: 'bold' }}>WUMPUS VERSE</span> permite
                         que qualquer pessoa crie mundos e personalize agentes inteligentes para testar
-                        as diversas formas de vencer esse jogo
+                        as diversas formas de vencer esse jogo. <br /><a href="/saibamais">Saiba mais</a>
                     </p>
                     <div className='divBotoesInicio'>
                         <button onClick={() => navigate('/mundos-salvos')} >Mundos</button>

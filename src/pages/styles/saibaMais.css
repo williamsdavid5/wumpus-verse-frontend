@@ -1,0 +1,154 @@
+.mainSaibaMais {
+    flex-direction: column;
+    overflow-y: auto;
+    align-items: normal;
+    height: auto;
+    width: 100%;
+}
+
+.divisaoHorizontal {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    display: flex;
+}
+
+.secaoSaibaMais {
+    height: auto;
+    width: 50%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.pargrafoNormalJustificado {
+    text-align: justify;
+    margin: 10px 0px;
+}
+
+.secaoSaibaMaisDireita {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 50%;
+    /* background-color: gray; */
+}
+
+.LinoIlustracao {
+    object-fit: contain;
+    width: 80%;
+    border-bottom-left-radius: 50px;
+    border-top-right-radius: 50px;
+}
+
+.legendaImagem {
+    width: 70%;
+}
+
+.legendaImagem a {
+    color: white;
+}
+
+.divisaoHorizontal .tituloInicio {
+    width: 100%;
+    text-align: center;
+}
+
+.divisaoCards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.cardPessoa {
+    height: 80%;
+    width: 300px;
+    border: 1px solid var(--bordaCor);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    /* justify-content: center; */
+}
+
+.cardPessoa .imagem {
+    height: 75%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--bordaCor);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.imagem img {
+    width: 100%;
+    object-fit: contain;
+    /* height: 100%; */
+}
+
+.textBold {
+    font-weight: bold;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background: #ddd;
+    /* margin: 1.5rem 0; */
+    /* width: 80%; */
+}
+
+.hrCompleta {
+    width: 90%;
+}
+
+.logoLinkedin {
+    object-fit: contain;
+    width: 100%;
+    /* margin: 5px 0px; */
+}
+
+.botaoLinkedin {
+    border: none;
+    width: 30px;
+    padding: 5px;
+    /* background-color: red; */
+}
+
+.botaoLinkedin:hover {
+    background-color: black;
+}
+
+@media (max-width: 1200px) {
+    .secaoSaibaMais {
+        width: 70%;
+    }
+
+    .secaoSaibaMaisDireita {
+        width: 30%;
+    }
+}
+
+@media (max-width: 1000px) {
+    .cardPessoa {
+        height: 50%;
+        width: 150px;
+    }
+}
+
+@media (max-width: 950px) {
+    .secaoSaibaMais {
+        width: 100%;
+    }
+
+    .secaoSaibaMaisDireita {
+        display: none;
+    }
+}

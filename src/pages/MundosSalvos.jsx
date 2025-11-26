@@ -1,6 +1,8 @@
 import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
 
+import { AvisoLayout } from './AvisoLayout'
+
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
     return (
         <div
@@ -77,6 +79,7 @@ export default function MundosSalvos() {
                             <p className='paragrafoInformativo'>
                                 Todos os mundos que você criou e salvou
                             </p>
+                            <input type="text" name="" id="" className='barraPesquisaMundosSalvos' placeholder='Pesquise qualquer coisa' />
                         </div>
                         <div className='topoMundosAuxiliar'>
                             <button className='botaoNovoMundo' onClick={() => navigate('/mapa')}>Novo</button>
@@ -161,6 +164,7 @@ export default function MundosSalvos() {
                     </div>
                 </section>
             </main>
+            <AvisoLayout />
         </>
     )
 }

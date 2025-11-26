@@ -23,6 +23,10 @@
     width: 50%;
 }
 
+.paragrafoInicio a {
+    color: white;
+}
+
 .divBotoesInicio {
     width: 50%;
     display: flex;
