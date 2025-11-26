@@ -1,5 +1,5 @@
 import './styles/saibaMais.css'
-import LinoVsCanva from '../assets/LinoVsCanva.png'
+import LinoVsCanva from '../assets/linoVsCanva.png'
 import LinkedinLogo from '../assets/linkedin_logo.png'
 import otavio from '../assets/otavio.jpeg'
 import jose from '../assets/jose.jpg'
