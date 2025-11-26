@@ -5,6 +5,7 @@ import otavio from '../assets/otavio.jpeg'
 import jose from '../assets/jose.jpg'
 import pedro from '../assets/pedro.jpg'
 import williams from '../assets/williams.jpg'
+import lino from '../assets/linoPerfil.png'
 
 export default function SaibaMais() {
     return (
@@ -94,7 +95,8 @@ export default function SaibaMais() {
             </section>
             <hr className='hrCompleta' />
             <section className='divisaoHorizontal'>
-                <h1 className='tituloInicio'>Equipe de desenvolvimento</h1>
+                <h1 className='tituloInicio'>Equipe</h1>
+                {/* <p>Nossa equipe trabalhou duro para o desenvolvimento desse projeto, com o objetivo de tornar mais acessível e agradável à pessoas interessadas a observação de agentes inteligentes em campo.</p> */}
             </section>
             <section className='divisaoHorizontal divisaoCards'>
                 <div className='cardPessoa'>
@@ -102,10 +104,13 @@ export default function SaibaMais() {
                         <img src={williams} alt="" />
                     </div>
                     <p className='textBold'>Williams David Duarte</p>
-                    <p>UX, Direção de arte, Frontend</p>
-                    <a className='botaoLinkedin' href='https://www.linkedin.com/in/williamsdavid5/'>
-                        <img src={LinkedinLogo} alt="" className='logoLinkedin' />
-                    </a>
+                    <p className='paragrafoInformativo'>UX, Direção de arte, Frontend</p>
+                    <div className='auxiliarLinkedin'>
+                        <a className='botaoLinkedin' href='https://www.linkedin.com/in/williamsdavid5/'>
+                            <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                    </div>
+
                 </div>
                 <div className='cardPessoa'>
                     <div className='imagem'>
@@ -114,10 +119,12 @@ export default function SaibaMais() {
                     <p className='textBold'>Pedro Pablo Valente Barroso</p>
                     {/* <p>Engenharia de computação - UFPA</p> */}
                     {/* <p>Universidade Federal do Pará</p> */}
-                    <p>API, Banco de dados</p>
-                    <a className='botaoLinkedin' href='https://www.linkedin.com/in/pedro-pablo-430656359/'>
-                        <img src={LinkedinLogo} alt="" className='logoLinkedin' />
-                    </a>
+                    <p className='paragrafoInformativo'>API, Banco de dados</p>
+                    <div className='auxiliarLinkedin'>
+                        <a className='botaoLinkedin' href='https://www.linkedin.com/in/pedro-pablo-430656359/'>
+                            <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                    </div>
                 </div>
                 <div className='cardPessoa'>
                     <div className='imagem'>
@@ -126,20 +133,36 @@ export default function SaibaMais() {
                     <p className='textBold'>José Raimundo Maciel</p>
                     {/* <p>Engenharia de computação - UFPA</p> */}
                     {/* <p>Universidade Federal do Pará</p> */}
-                    <p>IA de agentes, Integração geral</p>
-                    <a className='botaoLinkedin' href='https://www.linkedin.com/in/jose-maciel-developer/'>
-                        <img src={LinkedinLogo} alt="" className='logoLinkedin' />
-                    </a>
+                    <p className='paragrafoInformativo'>IA de agentes, Integração geral</p>
+                    <div className='auxiliarLinkedin'>
+                        <a className='botaoLinkedin' href='https://www.linkedin.com/in/jose-maciel-developer/'>
+                            <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                    </div>
                 </div>
                 <div className='cardPessoa'>
                     <div className='imagem'>
                         <img src={otavio} alt="" />
                     </div>
                     <p className='textBold'>Dr. Otávio Noura Teixeira</p>
-                    <p>Docente Orientador</p>
-                    <a className='botaoLinkedin' href='https://www.linkedin.com/in/onoura/'>
-                        <img src={LinkedinLogo} alt="" className='logoLinkedin' />
-                    </a>
+                    <p className='paragrafoInformativo'>Docente Orientador</p>
+                    <div className='auxiliarLinkedin'>
+                        <a className='botaoLinkedin' href='https://www.linkedin.com/in/onoura/'>
+                            <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                    </div>
+                </div>
+                <div className='cardPessoa'>
+                    <div className='imagem'>
+                        <img src={lino} alt="" />
+                    </div>
+                    <p className='textBold'>Lino Duarte</p>
+                    <p className='paragrafoInformativo'>Exterminador de wumpus, Mascote</p>
+                    {/* <div className='auxiliarLinkedin'>
+                        <a className='botaoLinkedin' href='https://www.linkedin.com/in/onoura/'>
+                            <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                    </div> */}
                 </div>
             </section>
         </main>
