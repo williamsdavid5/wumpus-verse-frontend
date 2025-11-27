@@ -1,11 +1,18 @@
 import './styles/saibaMais.css'
+
+// imagens
+// são importadas aqui para evitar erros de renderização no deploy
 import LinoVsCanva from '../assets/linoVsCanva.png'
 import LinkedinLogo from '../assets/linkedin_logo.png'
+import gitlogo from '../assets/gitLogo.png'
 import otavio from '../assets/otavio.jpeg'
 import jose from '../assets/jose.jpg'
 import pedro from '../assets/pedro.jpg'
 import williams from '../assets/williams.jpg'
 import lino from '../assets/linoPerfil.png'
+import loopInfinito from '../assets/loopInfinito.png'
+import julgamento from '../assets/julgamentoAgente.png'
+import logo from '../assets/wumpus_verse_logo_white.svg'
 
 export default function SaibaMais() {
     return (
@@ -52,7 +59,7 @@ export default function SaibaMais() {
                         <li>Sistemas baseados em regras</li>
                         <li>Aprendizado de máquina e tomadas de decisão sob incerteza</li>
                     </ul>
-                    <hr className='hrCompleta' />
+                    {/* <hr className='hrCompleta' /> */}
                 </section>
                 <section className='secaoSaibaMaisDireita'>
                     <img src={LinoVsCanva} alt="Ilustração do game 'Lino vs Canva', primeira versão desenvolvida." className='LinoIlustracao' />
@@ -60,6 +67,7 @@ export default function SaibaMais() {
                     </p>
                 </section>
             </section>
+            <hr className='hrCompleta' />
             <section className='divisaoHorizontal'>
                 <section className='secaoSaibaMais'>
                     <h1 className='tituloInicio'>Sobre agentes inteligentes</h1>
@@ -95,8 +103,78 @@ export default function SaibaMais() {
             </section>
             <hr className='hrCompleta' />
             <section className='divisaoHorizontal'>
-                <h1 className='tituloInicio'>Equipe</h1>
-                {/* <p>Nossa equipe trabalhou duro para o desenvolvimento desse projeto, com o objetivo de tornar mais acessível e agradável à pessoas interessadas a observação de agentes inteligentes em campo.</p> */}
+                <section className='secaoSaibaMais'>
+                    <h1 className='tituloInicio'>Sobre a nossa ferramenta</h1>
+                    <p className='pargrafoNormalJustificado'>
+                        Nosso objetivo com este projeto é oferecer ao usuário a liberdade de criar, testar e visualizar agentes inteligentes atuando no Mundo de Wumpus, explorando diferentes arquiteturas e estratégias de resolução de problemas. Embora o foco da plataforma seja esse ambiente clássico, ele funciona apenas como laboratório de experimentação, permitindo observar o comportamento dos agentes em situações reais de tomada de decisão sob incerteza.
+                        <br /><br />
+                        Ao compreender e aplicar as arquiteturas apresentadas aqui, o usuário estará desenvolvendo habilidades que podem ser utilizadas em uma ampla gama de aplicações da vida real, desde sistemas de recomendação e automação até robótica, logística e aprendizado de máquina. Nosso objetivo é que esta ferramenta seja um ponto de partida acessível e poderoso para qualquer pessoa interessada no desenvolvimento de agentes inteligentes.
+                        <br /><br />
+                        Aqui, o usuário poderá criar seu próprio Mundo de Wumpus, personalizando o ambiente e explorando diferentes formas de testar agentes inteligentes. Além disso, será possível escolher entre diversas arquiteturas de agentes, cada uma com suas características e estratégias de tomada de decisão. São esses:
+                    </p>
+                    <h2>Agentes Reativos Simples</h2>
+                    <p className="pargrafoNormalJustificado">
+                        Esse tipo de agente escolhe ações <strong>com base apenas na percepção atual</strong>, sem levar em conta o passado ou consequências futuras. Ele funciona como um “reflexo programado”: recebe uma entrada e executa a ação associada a ela (geralmente armazenada em uma tabela de regras). Apesar de simples, pode entrar em comportamentos repetitivos (como ciclos infinitos), podendo ser corrigido com ações aleatórias em situações de impasse.
+                    </p>
+                    <p className="pargrafoNormalJustificado"><strong>Características principais:</strong></p>
+                    <ul>
+                        <li>Age com base apenas nas <strong>percepções imediatas</strong></li>
+                    </ul>
+                    {/* <hr></hr> */}
+                    <h2>Agentes Reativos Baseados em Modelo</h2>
+                    <p className="pargrafoNormalJustificado">
+                        Seu funcionamento é semelhante ao reativo simples, mas agora o agente <strong>mantém uma representação interna do ambiente</strong>. Em outras palavras, ele “se lembra” de percepções anteriores e usa esse conhecimento para inferir o que não é diretamente visível. Isso reduz a dependência de aleatoriedade e permite decisões mais inteligentes em ambientes parcialmente observáveis, como o Mundo de Wumpus.
+                    </p>
+                    <p className="pargrafoNormalJustificado"><strong>Características principais:</strong></p>
+                    <ul>
+                        <li>Usa percepções atuais <strong>e memória das passadas</strong></li>
+                        <li>Possui uma noção de como o mundo funciona (modelo de transição)</li>
+                    </ul>
+                    {/* <hr></hr> */}
+                    <h2>Agentes Baseados em Objetivo</h2>
+                    <p className="pargrafoNormalJustificado">
+                        Quando há diversas ações possíveis, o agente precisa escolher qual delas o aproxima mais de um resultado desejado. O agente baseado em objetivo compara alternativas e <strong>planeja ações pensando nas consequências futuras</strong>, ao contrário dos reativos, que agem apenas de forma imediata. Ele pode calcular sequências de ações que maximizam a chance de alcançar o objetivo.
+                    </p>
+                    <p className="pargrafoNormalJustificado"><strong>Características principais:</strong></p>
+                    <ul>
+                        <li>Usa percepções + memória + <strong>um objetivo definido</strong></li>
+                        <li>Avalia várias ações e planeja suas consequências futuras</li>
+                    </ul>
+                    {/* <hr></hr> */}
+                    <h2>Agentes Baseados em Utilidade</h2>
+                    <p className="pargrafoNormalJustificado">
+                        Nem sempre basta alcançar um objetivo: algumas soluções podem ser <strong>mais eficientes, seguras ou vantajosas que outras</strong>. Esse agente usa uma <strong>função de utilidade</strong> para medir o “quão boa” é cada ação ou estado, escolhendo a alternativa com maior benefício. Assim, ele não apenas atinge o objetivo, mas busca a <strong>melhor forma de alcançá-lo.</strong>
+                    </p>
+                    <p className="pargrafoNormalJustificado"><strong>Características principais:</strong></p>
+                    <ul>
+                        <li>Usa percepções, memória, objetivos <strong>e uma medida de utilidade/eficiência</strong></li>
+                        <li>Busca maximizar o ganho, e não só chegar ao objetivo</li>
+                    </ul>
+                </section>
+                <section className='secaoSaibaMaisDireita'>
+                    <img src={loopInfinito} alt="Representação da movimentação do agente" className='movimentacaoAgenteAntigoImagem LinoIlustracao' />
+                    <p className='paragrafoInformativo legendaImagem'>
+                        Representação da movimentação do agente reativo baseado em modelo na antiga vesão desenvolvida desse game (Lino vs Canva). Essa ilustração mostra como esse agente pode desviar de obstáculos conhecidos, mas não impede que ele caia em loop infinito.
+                    </p>
+                    <img src={julgamento} alt="Representação do julgamento do agente" className='movimentacaoAgenteAntigoImagem LinoIlustracao imagemDupla' />
+                    <p className='paragrafoInformativo legendaImagem'>
+                        Representação do julgamento do agente baseado na percepção, também em Lino vs Canva. O agente era capaz de definir salas suspeitas na memória se baseando nas perpeções que ele se lembrava.
+                    </p>
+                </section>
+            </section>
+            <hr className='hrCompleta' />
+            <section className='divisaoHorizontal divisaoSobreNos'>
+                <h1 className='tituloInicio'>Sobre a nossa equipe</h1>
+                <p className="pargrafoNormalJustificado">Somos estudantes de Engenharia de Computação da Universidade Federal do Pará — Campus Tucuruí. A ideia deste projeto surgiu no início de 2025, durante a disciplina Inteligência Computacional, cujo objetivo era compreender como agentes inteligentes funcionam internamente, ainda de maneira simplificada. O principal desafio da matéria era desenvolver agentes inteligentes (baseados nas arquiteturas descritas nesta plataforma) capazes de percorrer o Mundo de Wumpus e avaliar seu desempenho nessas interações.
+                    <br /><br />
+                    Durante o processo, surgiu uma pergunta: <br />
+                    e se qualquer pessoa pudesse criar, testar e comparar seus próprios agentes inteligentes de forma simples?
+                    <br /><br />
+                    A partir disso, decidimos transformar o desafio acadêmico em uma ferramenta aberta para outros estudantes, curiosos e apaixonados por IA.
+                    <br /><br />
+                    Sabemos que ainda estamos entregando uma versão limitada em relação ao que planejamos, mas ela foi projetada com foco em escalabilidade e futuras melhorias, permitindo que, ao longo do tempo, possamos adicionar mais liberdade de customização e novas funcionalidades para criação e análise de agentes.
+                    <br />
+                    Todos os integrantes da equipe contribuem ativamente no desenvolvimento, especialmente nosso professor orientador, que incentivou a ideia desde o início, e Lino, nosso mascote corajoso, o único disposto a explorar cavernas escuras, procurar ouro e enfrentar o temível Wumpus (não se preocupe, ele foi o primeiro voluntário!).</p>
             </section>
             <section className='divisaoHorizontal divisaoCards'>
                 <div className='cardPessoa'>
@@ -104,10 +182,13 @@ export default function SaibaMais() {
                         <img src={williams} alt="" />
                     </div>
                     <p className='textBold'>Williams David Duarte</p>
-                    <p className='paragrafoInformativo'>UX, Direção de arte, Frontend</p>
+                    <p className='paragrafoInformativo'>UX, Designer, Frontend</p>
                     <div className='auxiliarLinkedin'>
                         <a className='botaoLinkedin' href='https://www.linkedin.com/in/williamsdavid5/'>
                             <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                        <a href="https://github.com/williamsdavid5" className='botaoLinkedin'>
+                            <img src={gitlogo} alt="" className='logoLinkedin' />
                         </a>
                     </div>
 
@@ -124,6 +205,9 @@ export default function SaibaMais() {
                         <a className='botaoLinkedin' href='https://www.linkedin.com/in/pedro-pablo-430656359/'>
                             <img src={LinkedinLogo} alt="" className='logoLinkedin' />
                         </a>
+                        <a href="https://github.com/Pedropablo087" className='botaoLinkedin'>
+                            <img src={gitlogo} alt="" className='logoLinkedin' />
+                        </a>
                     </div>
                 </div>
                 <div className='cardPessoa'>
@@ -137,6 +221,9 @@ export default function SaibaMais() {
                     <div className='auxiliarLinkedin'>
                         <a className='botaoLinkedin' href='https://www.linkedin.com/in/jose-maciel-developer/'>
                             <img src={LinkedinLogo} alt="" className='logoLinkedin' />
+                        </a>
+                        <a href="https://github.com/Johsep06" className='botaoLinkedin'>
+                            <img src={gitlogo} alt="" className='logoLinkedin' />
                         </a>
                     </div>
                 </div>
@@ -164,6 +251,10 @@ export default function SaibaMais() {
                         </a>
                     </div> */}
                 </div>
+            </section>
+            <hr className='hrCompleta' />
+            <section className='divisaoHorizontal divisaoCards'>
+                <img src={logo} alt="" className='logo' />
             </section>
         </main>
     )
