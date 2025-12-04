@@ -1,0 +1,80 @@
+.loginJanela {
+    border: 1px solid var(--bordaCor);
+    width: 500px;
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    background-color: black;
+    /* box-shadow: 10px 10px 0px var(--roxoDestaque); */
+}
+
+/* .mainLogin {
+    background: #000000;
+    background: linear-gradient(11deg, rgba(0, 0, 0, 1) 0%, rgba(70, 40, 122, 1) 60%, rgba(168, 83, 237, 1) 100%);
+} */
+
+/* .mainLogin {
+    justify-content: left;
+} */
+
+.tituloH1 {
+    width: 100%;
+    text-align: center;
+    font-weight: lighter;
+}
+
+.botaoLogin {
+    width: 400px;
+}
+
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    filter: invert(1);
+    /* inverte as cores do ícone */
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+    filter: invert(1);
+}
+
+
+.inputRegistro {
+    width: 400px;
+    background-color: black;
+    border: 1px solid var(--bordaCor);
+    color: white;
+    padding: 8px;
+    box-sizing: border-box;
+    margin: 5px;
+}
+
+.loginJanela .logo {
+    width: 100px;
+    margin: 20px;
+    position: absolute;
+    top: 10px;
+}
+
+.pInput {
+    width: 390px;
+    text-align: left;
+    margin: 0;
+}
+
+.pVermelho {
+    color: red;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.senhaIncompativelInput {
+    border: 1px solid red;
+    color: red;
+}

@@ -60,7 +60,14 @@
     margin: 0px;
     box-sizing: border-box;
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+    /* justify-content: right; */
+}
+
+.botaoLogado {
+    margin: 0;
+    border: none;
+    padding: 0px 20px;
 }
 
 .botaoNovaPartida {
@@ -69,6 +76,22 @@
     width: 200px;
     border: none;
     background-color: var(--roxoDestaque);
+}
+
+.usuarioInicio {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    /* border: solid 1px var(--bordaCor); */
+    display: flex;
+    flex-direction: column;
+    /* gap: 10px; */
+    align-items: center;
+    justify-content: center;
+}
+
+.usuarioInicio button {
+    width: 100%;
 }
 
 @media (max-width: 900px) {

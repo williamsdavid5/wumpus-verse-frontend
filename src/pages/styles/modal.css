@@ -1,0 +1,41 @@
+.modalBackgrund {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.janelaModal {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    border: 1px solid var(--bordaCor);
+    width: 350px;
+}
+
+.janelaModal h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.pModal {
+    margin: 10px 0px;
+    margin-bottom: 20px;
+}
+
+.botoes {
+    /* background-color: red; */
+    display: flex;
+    gap: 15px;
+}
+
+.botoes button {
+    flex: 1;
+    margin: 0;
+    padding: 10px;
+}
