@@ -3,6 +3,7 @@ import logo from '../assets/logo_vertical_branca.svg'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
+import { useConfirm } from '../contexts/ConfirmContext';
 
 import LoadingPage from './LoadingPage';
 
@@ -11,6 +12,7 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [erro, setErro] = useState("");
+    const { confirm } = useConfirm();
     const navigate = useNavigate();
 
     const [carregando, setCarregando] = useState(false);
@@ -19,13 +21,32 @@ export default function Login() {
         e.preventDefault();
         setErro("");
         setCarregando(true);
-        try {
-            await login(email, senha);
-            navigate('/');
-        } catch (err) {
-            setErro("Erro de login!");
-        }
+        if (email.trim() == '' || senha.trim() == '') {
+            await confirm({
+                title: "Eu pareço um vidende pra você?",
+                message: "Preencha todos os campos! 😠",
+                type: "alert",
+                botao1: "Tá bom"
+            })
+            setCarregando(false)
+            return;
+        } else {
+            try {
+                await login(email, senha);
+                navigate('/');
+            } catch (err) {
 
+                await confirm({
+                    title: "Ops!",
+                    message: "Parece que algo deu errado no seu login! Verifique com cuidado o que você digitou. Ou você não se cadastrou ainda? 🤨",
+                    type: "alert",
+                    botao1: "Tá bom"
+                })
+
+                setErro(err.message);
+                console.log(erro);
+            }
+        }
         setCarregando(false)
     }
 
@@ -42,6 +63,11 @@ export default function Login() {
                     className='inputRegistro'
                     placeholder='fulanodasilva@gmail.com'
                     onChange={(e) => setEmail(e.target.value.trim())}
+                    onKeyDown={(e) => {
+                        if (e.key === " ") {
+                            e.preventDefault();
+                        }
+                    }}
                 />
                 <p className='paragrafoInformativo pInput'>Senha</p>
                 <input
@@ -51,6 +77,11 @@ export default function Login() {
                     className='inputRegistro'
                     placeholder='*******'
                     onChange={(e) => setSenha(e.target.value.trim())}
+                    onKeyDown={(e) => {
+                        if (e.key === " ") {
+                            e.preventDefault();
+                        }
+                    }}
                 />
                 <button type="button" onClick={enviar} className='botaoLogin'>Entrar</button>
                 <p className='paragrafoInformativo'>ou</p>

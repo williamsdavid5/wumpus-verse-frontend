@@ -10,6 +10,7 @@ export default function LoadingPage() {
                 width: '100%',
                 height: '100%',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 backdropFilter: 'blur(10px)',
@@ -22,6 +23,8 @@ export default function LoadingPage() {
                     }}
                     src={LoadingGif}
                     alt="" />
+                <p>Carregando...</p>
+                <p className='paragrafoInformativo'>Se demorar, provavelmente a API está dormindo, mas aguarde.</p>
             </div>
         </>
     )

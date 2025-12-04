@@ -2,20 +2,25 @@ import { useState } from 'react';
 import logo from '../assets/logo_vertical_branca.svg'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
+import { useConfirm } from '../contexts/ConfirmContext';
+import LoadingPage from './LoadingPage';
 
 export default function Registrar() {
 
+    const { confirm } = useConfirm();
     const { registrar } = useAuth();
 
     const [email, setEmail] = useState('');
     const [usuario, setUsuario] = useState('');
     const [senha, setSenha] = useState('');
     const [trolagem, setTrolagem] = useState(false);
-
+    const [confirmarSenha, setConfirmarSenha] = useState('');
     const [senhaValida, setSenhaValida] = useState(true);
 
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
+
+    const [carregando, setCarregando] = useState(false);
 
     const navigate = useNavigate();
 
@@ -31,6 +36,26 @@ export default function Registrar() {
         e.preventDefault();
         setErro("");
         setSucesso("");
+        setCarregando(true);
+
+        if (email.trim() == "" || usuario.trim() == "" || senha.trim() == "") {
+            await confirm({
+                title: "Eu pareço um vidende pra você?",
+                message: "Preencha todos os campos! 😠",
+                type: "alert",
+                botao1: "Tá bom"
+            })
+            setCarregando(false);
+            return;
+        } else if (senha.trim() != confirmarSenha.trim()) {
+            await confirm({
+                title: "Você é cego?",
+                message: "Confirme sua senha corretamente antes do registro! 😠",
+                type: "alert",
+                botao1: "Tá bom, chato"
+            })
+            setCarregando(false);
+        }
 
         try {
             await registrar(usuario, email, senha);
@@ -58,7 +83,11 @@ export default function Registrar() {
                     placeholder='fulaninhodasilva24'
                     onChange={(e) => setUsuario(e.target.value.trim())}
                     autoComplete="off"
-
+                    onKeyDown={(e) => {
+                        if (e.key === " ") {
+                            e.preventDefault();
+                        }
+                    }}
                 />
                 <p className='paragrafoInformativo pInput'>Email</p>
                 <input
@@ -70,6 +99,11 @@ export default function Registrar() {
                     onChange={(e) => setEmail(e.target.value.trim())}
                     // value={""}
                     autoComplete="off"
+                    onKeyDown={(e) => {
+                        if (e.key === " ") {
+                            e.preventDefault();
+                        }
+                    }}
                 />
                 <p className='paragrafoInformativo pInput'>Senha</p>
                 <input
@@ -81,6 +115,11 @@ export default function Registrar() {
                     onBlur={() => {
                         if (senha.trim() != '') {
                             setTrolagem(!trolagem)
+                        }
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === " ") {
+                            e.preventDefault();
                         }
                     }}
                     // autoComplete="new-password"
@@ -100,12 +139,18 @@ export default function Registrar() {
                     className='inputRegistro'
                     placeholder='*******'
                     onChange={(e) => {
+                        setConfirmarSenha(e.target.value);
                         if (e.target.value.trim() != senha) {
                             e.target.classList.add('senhaIncompativelInput');
                             setSenhaValida(false);
                         } else {
                             e.target.classList.remove('senhaIncompativelInput');
                             setSenhaValida(true);
+                        }
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === " ") {
+                            e.preventDefault();
                         }
                     }}
                     // value={""}
@@ -120,6 +165,10 @@ export default function Registrar() {
                 <button className='botaoLogin' onClick={() => navigate('/registrar')}>Registrar</button> */}
                 <img src={logo} alt="" className='logo' />
             </form>
+
+            {carregando && (
+                <LoadingPage></LoadingPage>
+            )}
         </main>
     )
 }

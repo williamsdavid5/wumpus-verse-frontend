@@ -5,7 +5,7 @@ import logo from '../assets/wumpus_verse_logo_white.svg'
 import { useEffect, useState } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { AvisoLayout } from './AvisoLayout';
-import Modal from './Modal';
+
 
 export default function Inicio() {
     const { usuario, token, logout } = useAuth();

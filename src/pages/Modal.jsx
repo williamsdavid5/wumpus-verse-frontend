@@ -5,11 +5,14 @@ export default function Modal({ title, message, type, onClose, botao1, botao2 })
         <>
             <div className="modalBackgrund">
                 <div className="janelaModal">
-                    <h2 className='tituloInicio'>{title}</h2>
+                    <h2>{title}</h2>
                     <p className='pragrafoInformativo pModal'>{message}</p>
 
                     {type === "alert" && (
-                        <button onClick={() => onClose("ok")}>{botao1}</button>
+                        <div className="botoes">
+                            <button onClick={() => onClose("ok")}>{botao1}</button>
+                        </div>
+
                     )}
 
                     {type === "confirm" && (
