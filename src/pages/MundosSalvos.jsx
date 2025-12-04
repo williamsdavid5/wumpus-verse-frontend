@@ -1,8 +1,6 @@
 import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
 
-import { AvisoLayout } from './AvisoLayout'
-
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
     return (
         <div
@@ -164,7 +162,6 @@ export default function MundosSalvos() {
                     </div>
                 </section>
             </main>
-            <AvisoLayout />
         </>
     )
 }

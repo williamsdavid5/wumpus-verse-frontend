@@ -4,8 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/wumpus_verse_logo_white.svg'
 import { useEffect, useState } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
-import { AvisoLayout } from './AvisoLayout';
-
 
 export default function Inicio() {
     const { usuario, token, logout } = useAuth();
@@ -16,7 +14,7 @@ export default function Inicio() {
     const [botaoHover, setBotaoHover] = useState(null);
 
     const botoes = [
-        { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mapa') : navigate('/login') },
+        { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mundos-salvos') : navigate('/login') },
         { id: 2, texto: 'Agentes', acao: () => logado ? navigate('/agentes') : navigate('/login') },
         { id: 3, texto: 'Histórico', acao: () => logado ? navigate('/historico') : navigate('/login') },
         { id: 4, texto: 'Nova partida', acao: () => logado ? navigate('/nova-partida') : navigate('/login') },
@@ -96,7 +94,6 @@ export default function Inicio() {
                 </footer>
                 <img src={logo} alt="" className='logoInicio' />
             </main>
-            <AvisoLayout />
         </>
     )
 }
