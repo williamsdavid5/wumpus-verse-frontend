@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
 
+import LoadingPage from './LoadingPage';
+
 export default function Login() {
     const { login } = useAuth();
     const [email, setEmail] = useState('');
@@ -11,10 +13,12 @@ export default function Login() {
     const [erro, setErro] = useState("");
     const navigate = useNavigate();
 
+    const [carregando, setCarregando] = useState(false);
+
     async function enviar(e) {
         e.preventDefault();
         setErro("");
-
+        setCarregando(true);
         try {
             await login(email, senha);
             navigate('/');
@@ -22,7 +26,7 @@ export default function Login() {
             setErro("Erro de login!");
         }
 
-        console.log('enviar');
+        setCarregando(false)
     }
 
     return (
@@ -54,6 +58,10 @@ export default function Login() {
                 <p className='paragrafoInformativo'>caso você não tenha uma conta</p>
                 <img src={logo} alt="" className='logo' />
             </form>
+
+            {carregando && (
+                <LoadingPage></LoadingPage>
+            )}
         </main>
     )
 }

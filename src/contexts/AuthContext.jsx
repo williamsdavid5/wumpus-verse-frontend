@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
         //     body: JSON.stringify({ email, password })
         // });
 
-        const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/login", {
+        const resposta = await fetch("/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
