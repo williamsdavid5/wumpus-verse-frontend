@@ -58,11 +58,9 @@ export default function Inicio() {
                                 onMouseLeave={() => setBotaoHover(null)}
                                 className={`${logado ? '' : 'botaoInicioSemLogin'}`}
                             >
-                                {logado
-                                    ? b.texto
-                                    : botaoHover === b.id
-                                        ? 'faça login'
-                                        : b.texto}
+                                {logado ?
+                                    b.texto : botaoHover === b.id ?
+                                        'faça login' : b.texto}
                             </button>
                         ))}
                     </div>
