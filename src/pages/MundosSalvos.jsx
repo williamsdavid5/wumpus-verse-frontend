@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 
+import LoadingGif from '../assets/loadingGif.gif'
+
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
     return (
         <div
@@ -21,61 +23,22 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 export default function MundosSalvos() {
 
     const { getMundosSalvos } = useAuth();
+    const [mundos, setMundos] = useState([]);
     const [carregado, setCarregado] = useState(false);
 
-    useEffect(() => {
-        if (!carregado) {
-            getMundosSalvos();
-            setCarregado(true);
-        }
+    async function carregarMundosSalvos() {
+        setCarregado(true);
+        const resposta = await getMundosSalvos();
+        setMundos(resposta);
+        // console.log(resposta);
+        setCarregado(false);
+    }
 
-    })
+    useEffect(() => {
+        carregarMundosSalvos();
+    }, [])
 
     const navigate = useNavigate();
-
-    const mundosExemplo = [
-        {
-            nome: "Mundo Deserto",
-            data: "05/10/2025",
-            salas: 60,
-            buracos: 10,
-            ouros: 5,
-            wumpus: 1
-        },
-        {
-            nome: "Caverna",
-            data: "12/09/2025",
-            salas: 120,
-            buracos: 25,
-            ouros: 8,
-            wumpus: 3
-        },
-        {
-            nome: "Labirinto Simples",
-            data: "20/11/2025",
-            salas: 16,
-            buracos: 3,
-            ouros: 2,
-            wumpus: 1
-        },
-        {
-            nome: "Abismo Mortal",
-            data: "03/12/2025",
-            salas: 80,
-            buracos: 35,
-            ouros: 12,
-            wumpus: 5
-        },
-        {
-            nome: "Mina Dourada",
-            data: "15/08/2025",
-            salas: 100,
-            buracos: 15,
-            ouros: 20,
-            wumpus: 2
-        }
-    ];
-
 
     return (
         <>
@@ -98,7 +61,37 @@ export default function MundosSalvos() {
                     </div>
 
                     <div className='divListaMundos'>
-                        {mundosExemplo.map((mundo, index) => (
+                        {carregado &&
+                            <div className='loadingPequeno'>
+                                <img src={LoadingGif} alt="" />
+                            </div>
+                        }
+
+                        {!carregado &&
+                            (mundos.map((mundo, index) => {
+                                // console.log(mundo);
+                                return (
+                                    <div key={index} className='itemListaMundos'>
+                                        <div className='esquerda'>
+                                            <h2>{mundo.nome}</h2>
+                                            <p className='paragrafoInformativo'>Data de criação: {mundo.data}</p>
+                                            <p className='paragrafoInformativo'>
+                                                <b>Salas:</b> {mundo.estatisticas.totalSalas} <br />
+                                                <b>Buracos:</b> {mundo.estatisticas.quantidadeEntidades.buracos} <br />
+                                                <b>Ouros:</b> {mundo.estatisticas.quantidadeEntidades.ouros} <br />
+                                                <b>Wumpus:</b> {mundo.estatisticas.quantidadeEntidades.wumpus}
+                                            </p>
+                                        </div>
+                                        <div className='direita'>
+                                            <button className='botaoEditar'>Editar</button>
+                                            <button className='botaoExcluir'>Excluir</button>
+                                        </div>
+                                    </div>
+                                )
+                            }))
+                        }
+
+                        {/* {mundosExemplo.map((mundo, index) => (
                             <div key={index} className='itemListaMundos'>
                                 <div className='esquerda'>
                                     <h2>{mundo.nome}</h2>
@@ -115,7 +108,7 @@ export default function MundosSalvos() {
                                     <button className='botaoExcluir'>Excluir</button>
                                 </div>
                             </div>
-                        ))}
+                        ))} */}
                     </div>
 
                 </aside>

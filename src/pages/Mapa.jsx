@@ -1,6 +1,9 @@
 import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useConfirm } from '../contexts/ConfirmContext';
+
+import LoadingPage from './LoadingPage';
 
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, x, y }) {
     return (
@@ -55,6 +58,10 @@ export default function Mapa() {
     const containerRef = useRef(null)
     const [cellSize, setCellSize] = useState(20)
     const [mapSize, setMapSize] = useState({ w: largura * 20, h: altura * 20 })
+
+    const [carregado, setCarregado] = useState(false);
+    const { salvarMundo } = useAuth();
+    const { confirm } = useConfirm();
 
     useEffect(() => {
         setGrid(prev => {
@@ -411,14 +418,13 @@ export default function Mapa() {
         });
     };
 
-    //lógica do banco
-    const { salvarMundo } = useAuth();
-
     async function salvar() {
         if (!nomeMundo.trim()) {
             alert('Por favor, preencha o nome do mundo antes de exportar!');
             return;
         }
+
+        setCarregado(true);
 
         const salasAtivas = grid.flat().filter(celula => celula.ativa).length;
         const totalWumpus = grid.flat().filter(celula => celula.wumpus).length;
@@ -463,7 +469,23 @@ export default function Mapa() {
             ).filter(sala => sala !== null)
         }
 
-        await salvarMundo(payload);
+        const salvou = await salvarMundo(payload);
+        setCarregado(false);
+        if (salvou) {
+            await confirm({
+                title: "Sucesso!",
+                message: "Seu mundo foi salvo.",
+                type: "alert",
+                botao1: "Tá bom"
+            })
+        } else {
+            await confirm({
+                title: "Ops!",
+                message: "Algo deu errado ao salvar seu mundo, provavlemente foi culpa do programador backend.",
+                type: "alert",
+                botao1: "Aff"
+            })
+        }
     }
 
     return (
@@ -637,11 +659,12 @@ export default function Mapa() {
                             à quantidade de salas ativas.
                         </p>
                     </div>
-                    {/* <div className='divControle'>
-                        Sobre as entidades
-                    </div> */}
                 </aside>
             </main>
+            {
+                carregado && (<LoadingPage></LoadingPage>)
+            }
+
         </>
     )
 }

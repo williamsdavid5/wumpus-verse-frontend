@@ -1,12 +1,14 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from '../contexts/AuthContext'
 
 export default function ProtecaoDeRotas({ children }) {
-    const { usuario, token } = useAuth();
+    const { usuario, token, carregando } = useAuth();
+
+    if (carregando) {
+        return null;
+    }
 
     if (!usuario || !token) {
-        console.log(usuario);
-        console.log(token);
         return <Navigate to='/login' replace />
     }
 

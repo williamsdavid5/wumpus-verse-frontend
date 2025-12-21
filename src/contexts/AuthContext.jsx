@@ -117,18 +117,11 @@ export function AuthProvider({ children }) {
     }
 
     async function getMundosSalvos() {
-        const response = await api.get("/environment/user-environments");
-
-        const data = response.data;
-        console.log(data);
-    }
-
-    async function salvarMundo(mundo) {
 
         try {
-            const response = await api.post("/environment", mundo);
+            const response = await api.get("/environment/user-environments");
+
             const data = response.data;
-            console.log(response);
             return data;
         } catch (error) {
             if (error.response) {
@@ -139,7 +132,27 @@ export function AuthProvider({ children }) {
             } else {
                 console.error(error);
             }
-            throw error;
+            return error;
+        }
+
+    }
+
+    async function salvarMundo(mundo) {
+
+        try {
+            const response = await api.post("/environment", mundo);
+            console.log(response);
+            return true;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro 422 detalhado:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return false;
         }
 
 
