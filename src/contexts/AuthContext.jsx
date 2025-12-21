@@ -57,9 +57,6 @@ export function AuthProvider({ children }) {
         setToken(data.access_token);
         setUsuario(data.user);
 
-        console.log("dados de login: ", data);
-
-
         return data;
     }
 
@@ -110,7 +107,6 @@ export function AuthProvider({ children }) {
 
 
         const data = response.data;
-        console.log("dados de registro: ", data);
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -121,14 +117,37 @@ export function AuthProvider({ children }) {
     }
 
     async function getMundosSalvos() {
-        const response = await api.get("/environment/user-environments", {});
+        const response = await api.get("/environment/user-environments");
 
         const data = response.data;
         console.log(data);
     }
 
+    async function salvarMundo(mundo) {
+
+        try {
+            const response = await api.post("/environment", mundo);
+            const data = response.data;
+            console.log(response);
+            return data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro 422 detalhado:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            throw error;
+        }
+
+
+
+    }
+
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos }}>
+        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo }}>
             {children}
         </AuthContext.Provider>
     );

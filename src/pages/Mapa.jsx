@@ -1,5 +1,6 @@
 import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, x, y }) {
     return (
@@ -410,6 +411,61 @@ export default function Mapa() {
         });
     };
 
+    //lógica do banco
+    const { salvarMundo } = useAuth();
+
+    async function salvar() {
+        if (!nomeMundo.trim()) {
+            alert('Por favor, preencha o nome do mundo antes de exportar!');
+            return;
+        }
+
+        const salasAtivas = grid.flat().filter(celula => celula.ativa).length;
+        const totalWumpus = grid.flat().filter(celula => celula.wumpus).length;
+        const totalBuracos = grid.flat().filter(celula => celula.buraco).length;
+        const totalOuros = grid.flat().filter(celula => celula.ouro).length;
+
+        const payload = {
+            id: 1,
+            nome: nomeMundo.trim(),
+            largura,
+            altura,
+
+            estatisticas: {
+                totalSalas: largura * altura,
+                salasAtivas: salasAtivas,
+                salasInativas: (largura * altura) - salasAtivas,
+                quantidadeEntidades: {
+                    wumpus: totalWumpus,
+                    buracos: totalBuracos,
+                    ouros: totalOuros
+                },
+                densidadeEntidades: {
+                    wumpus: salasAtivas > 0
+                        ? ((totalWumpus / salasAtivas) * 100).toFixed(2)
+                        : "0",
+                    buracos: salasAtivas > 0
+                        ? ((totalBuracos / salasAtivas) * 100).toFixed(2)
+                        : "0",
+                    ouros: salasAtivas > 0
+                        ? ((totalOuros / salasAtivas) * 100).toFixed(2)
+                        : "0"
+                }
+
+            },
+            salas: grid.flatMap((row, y) =>
+                row.map((celula, x) => celula.ativa ? {
+                    x, y,
+                    wumpus: celula.wumpus,
+                    buraco: celula.buraco,
+                    ouro: celula.ouro
+                } : null)
+            ).filter(sala => sala !== null)
+        }
+
+        await salvarMundo(payload);
+    }
+
     return (
         <>
             <main>
@@ -492,7 +548,7 @@ export default function Mapa() {
                         />
                         <button onClick={exportarJSON}>Exportar JSON</button>
                         <button onClick={importarJSON}>Importar JSON</button>
-                        <button>Salvar</button>
+                        <button onClick={salvar}>Salvar</button>
                     </div>
                 </aside>
                 <section className='janelaCentralizada'>
