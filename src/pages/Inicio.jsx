@@ -34,6 +34,44 @@ export default function Inicio() {
         }
     }
 
+    async function deletarConta() {
+        try {
+
+            const resposta = await fetch(
+                "https://wumpus-verse-api.onrender.com/auth/user",
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (resposta.ok) {
+                const dados = await resposta.json();
+
+                logout();
+
+                return {
+                    success: true,
+                    message: "Conta deletada com sucesso",
+                    data: dados
+                };
+            } else {
+                const erro = await resposta.json().catch(() => ({}));
+                throw new Error(erro.detail || erro.message || "Erro ao deletar conta");
+            }
+
+        } catch (error) {
+            console.error('Erro:', error);
+            return {
+                success: false,
+                message: error.message
+            };
+        }
+    }
+
     return (
         <>
             <main className='mainInicio'>
@@ -67,10 +105,16 @@ export default function Inicio() {
                 </section>
                 <footer>
                     {logado && (
-                        <button onClick={sair} className='botaoLogado'>
-                            <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
-                            clique para sair
-                        </button>
+                        <>
+                            <button onClick={sair} className='botaoLogado'>
+                                <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
+                                clique para sair
+                            </button>
+                            <button onClick={() => deletarConta()}>
+                                Excluir conta
+                            </button>
+                        </>
+
                     )}
 
                     {!logado && (

@@ -64,6 +64,8 @@ export default function Registrar() {
             navigate('/');
         } catch (err) {
             setErro(err.message || "Erro no registro");
+        } finally {
+            setCarregando(false);
         }
 
         console.log('enviar');

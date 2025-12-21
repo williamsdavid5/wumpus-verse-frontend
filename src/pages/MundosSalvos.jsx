@@ -1,5 +1,7 @@
 import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext';
+import { useEffect, useState } from 'react';
 
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
     return (
@@ -17,6 +19,17 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 }
 
 export default function MundosSalvos() {
+
+    const { getMundosSalvos } = useAuth();
+    const [carregado, setCarregado] = useState(false);
+
+    useEffect(() => {
+        if (!carregado) {
+            getMundosSalvos();
+            setCarregado(true);
+        }
+
+    })
 
     const navigate = useNavigate();
 

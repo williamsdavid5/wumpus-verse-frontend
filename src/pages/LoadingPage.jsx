@@ -1,6 +1,20 @@
 import LoadingGif from '../assets/loadingGif.gif'
+import LinoDormindo from '../assets/linoDormindo.png'
+import './styles/loadingPage.css'
+import { useEffect, useState } from 'react'
 
 export default function LoadingPage() {
+
+    const [mostrarLinoDormindo, setMostrarLinoDormindo] = useState(false);
+
+    useEffect(() => {
+        const tempo = setTimeout(() => {
+            setMostrarLinoDormindo(true);
+        }, 7000);
+
+        return () => clearTimeout(tempo);
+    }, []);
+
     return (
         <>
             <div style={{
@@ -25,6 +39,19 @@ export default function LoadingPage() {
                     alt="" />
                 <p>Carregando...</p>
                 <p className='paragrafoInformativo'>Se demorar, provavelmente a API está dormindo, mas aguarde.</p>
+                {mostrarLinoDormindo && <>
+                    <img
+                        src={LinoDormindo} alt=""
+                        style={{
+                            width: '120px',
+                            position: 'fixed',
+                            bottom: '20px',
+
+                        }}
+                        className='fade-in'
+                    />
+                </>}
+
             </div>
         </>
     )

@@ -5,6 +5,8 @@ export default function ProtecaoDeRotas({ children }) {
     const { usuario, token } = useAuth();
 
     if (!usuario || !token) {
+        console.log(usuario);
+        console.log(token);
         return <Navigate to='/login' replace />
     }
 

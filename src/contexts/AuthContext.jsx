@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import api from "../services/api";
 
 const AuthContext = createContext();
 
@@ -19,24 +20,45 @@ export function AuthProvider({ children }) {
         setCarregando(false);
     }, []);
 
+    // async function login(email, password) {
+    //     const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/login", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify({ email, password })
+    //     });
+
+    //     if (!resposta.ok) {
+    //         throw new Error("Email ou senha incorretos");
+    //     }
+
+    //     const data = await resposta.json();
+    //     console.log(data);
+
+    //     localStorage.setItem("access_token", data.access_token);
+    //     localStorage.setItem("user", JSON.stringify(data.user));
+
+    //     setToken(data.access_token);
+    //     setUsuario(data.user);
+
+    //     return data;
+    // }
+
     async function login(email, password) {
-        const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+        const response = await api.post("/auth/login", {
+            email,
+            password
         });
 
-        if (!resposta.ok) {
-            throw new Error("Email ou senha incorretos");
-        }
-
-        const data = await resposta.json();
+        const data = response.data;
 
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
         setToken(data.access_token);
         setUsuario(data.user);
+
+        console.log("dados de login: ", data);
+
 
         return data;
     }
@@ -48,28 +70,47 @@ export function AuthProvider({ children }) {
         setUsuario(null);
     }
 
+    // async function registrar(name, email, password) {
+    //     const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/register", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify({ name, email, password })
+    //     });
+
+    //     if (!resposta.ok) {
+    //         let erro = "Erro ao registrar";
+
+    //         try {
+    //             const dataErro = await resposta.json();
+    //             if (dataErro?.detail?.[0]?.msg) {
+    //                 erro = dataErro.detail[0].msg;
+    //             }
+    //         } catch { }
+
+    //         throw new Error(erro);
+    //     }
+
+    //     const data = await resposta.json();
+
+    //     localStorage.setItem("access_token", data.access_token);
+    //     localStorage.setItem("user", JSON.stringify(data.user));
+
+    //     setToken(data.access_token);
+    //     setUsuario(data.user);
+
+    //     return data;
+    // }
+
     async function registrar(name, email, password) {
-        const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password })
+        const response = await api.post("/auth/register", {
+            name,
+            email,
+            password
         });
 
-        if (!resposta.ok) {
-            let erro = "Erro ao registrar";
 
-            try {
-                const dataErro = await resposta.json();
-                if (dataErro?.detail?.[0]?.msg) {
-                    erro = dataErro.detail[0].msg;
-                }
-            } catch { }
-
-            throw new Error(erro);
-        }
-
-        const data = await resposta.json();
-
+        const data = response.data;
+        console.log("dados de registro: ", data);
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -79,8 +120,15 @@ export function AuthProvider({ children }) {
         return data;
     }
 
+    async function getMundosSalvos() {
+        const response = await api.get("/environment/user-environments", {});
+
+        const data = response.data;
+        console.log(data);
+    }
+
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar }}>
+        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos }}>
             {children}
         </AuthContext.Provider>
     );
