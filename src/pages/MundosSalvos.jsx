@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 
+import LinoDormindo from '../assets/linoDormindo.png'
 import LoadingGif from '../assets/loadingGif.gif'
 
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick }) {
@@ -25,6 +26,15 @@ export default function MundosSalvos() {
     const { getMundosSalvos } = useAuth();
     const [mundos, setMundos] = useState([]);
     const [carregado, setCarregado] = useState(false);
+    const [mostrarLinoDormindo, setMostrarLinoDormindo] = useState(false);
+
+    useEffect(() => {
+        const tempo = setTimeout(() => {
+            setMostrarLinoDormindo(true);
+        }, 7000);
+
+        return () => clearTimeout(tempo);
+    }, []);
 
     async function carregarMundosSalvos() {
         setCarregado(true);
@@ -64,6 +74,13 @@ export default function MundosSalvos() {
                         {carregado &&
                             <div className='loadingPequeno'>
                                 <img src={LoadingGif} alt="" />
+                                <p className='paragrafoInformativo'>Se demorar, provavelmente a API está dormindo...</p>
+
+                                {mostrarLinoDormindo && (
+                                    <img src={LinoDormindo} alt="" className='fade-in linoDormindoImg' />
+                                )}
+
+
                             </div>
                         }
 

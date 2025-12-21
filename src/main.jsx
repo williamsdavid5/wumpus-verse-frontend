@@ -8,10 +8,10 @@ import App from './App.jsx'
 createRoot(document.getElementById('root')).render(
 
   <StrictMode>
-    <AuthProvider>
-      <ConfirmProvider>
+    <ConfirmProvider>
+      <AuthProvider>
         <App />
-      </ConfirmProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ConfirmProvider>
   </StrictMode>
 )

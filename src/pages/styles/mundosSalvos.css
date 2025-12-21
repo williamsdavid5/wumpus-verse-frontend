@@ -89,6 +89,9 @@
 .loadingPequeno {
     width: 100%;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     height: 50px;
     padding: 20px 0px;
 }
@@ -96,6 +99,7 @@
 .loadingPequeno img {
     flex: 1;
     object-fit: contain;
+    width: 50px;
 }
 
 @media (max-width: 1150px) {

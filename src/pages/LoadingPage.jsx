@@ -42,13 +42,7 @@ export default function LoadingPage() {
                 {mostrarLinoDormindo && <>
                     <img
                         src={LinoDormindo} alt=""
-                        style={{
-                            width: '120px',
-                            position: 'fixed',
-                            bottom: '20px',
-
-                        }}
-                        className='fade-in'
+                        className='fade-in linoDormindoImg'
                     />
                 </>}
 

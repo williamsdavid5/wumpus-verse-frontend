@@ -154,9 +154,6 @@ export function AuthProvider({ children }) {
             }
             return false;
         }
-
-
-
     }
 
     return (

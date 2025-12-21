@@ -3,6 +3,12 @@
     animation: fadeIn 3s ease-in forwards;
 }
 
+.linoDormindoImg {
+    width: 120px;
+    bottom: 20px;
+    position: fixed;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
