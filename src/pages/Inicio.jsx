@@ -110,9 +110,9 @@ export default function Inicio() {
                                 <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
                                 clique para sair
                             </button>
-                            <button onClick={() => deletarConta()}>
+                            {/* <button onClick={() => deletarConta()}>
                                 Excluir conta
-                            </button>
+                            </button> */}
                         </>
 
                     )}

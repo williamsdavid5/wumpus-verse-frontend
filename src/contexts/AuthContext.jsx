@@ -156,8 +156,23 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function getMiniMapa(id) {
+        try {
+            const response = await api.get("/environment/mini-mapa", {
+                params: {
+                    environment_id: id
+                }
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return (error);
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo }}>
+        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa }}>
             {children}
         </AuthContext.Provider>
     );

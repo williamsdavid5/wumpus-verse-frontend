@@ -45,6 +45,10 @@
     display: flex;
 }
 
+.itemListaMundos.ativo {
+    background-color: rgb(40, 40, 40);
+}
+
 .itemListaMundos:hover {
     cursor: pointer;
     /* transform: scale(1.03); */
