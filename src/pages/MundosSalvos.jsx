@@ -1,7 +1,7 @@
 import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import LinoDormindo from '../assets/linoDormindo.png'
 import LoadingGif from '../assets/loadingGif.gif'
@@ -35,7 +35,19 @@ export default function MundosSalvos() {
     const mundosFiltrados = mundos.filter(mundo =>
         mundo.nome.toLowerCase().includes(pesquisa.toLowerCase())
     );
+    const containerRef = useRef(null);
+    const [cellSize, setCellSize] = useState(40);
 
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const { clientWidth, clientHeight } = containerRef.current;
+
+        const sizeX = Math.floor(clientWidth / dimensoes.largura);
+        const sizeY = Math.floor(clientHeight / dimensoes.altura);
+
+        setCellSize(Math.min(sizeX, sizeY, 40));
+    }, [dimensoes]);
 
     useEffect(() => {
         const tempo = setTimeout(() => {
@@ -191,16 +203,17 @@ export default function MundosSalvos() {
 
                 </aside>
                 <section className='mundosVisualizador'>
-
-                    <div className='div-mapa'>
+                    <div ref={containerRef} className='div-mapa'>
 
                         {!carregadoMinimapa && (
                             <div
                                 className='mapa-blocos'
                                 style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: `repeat(${dimensoes.largura}, 40px)`,
-                                    gridTemplateRows: `repeat(${dimensoes.altura}, 40px)`,
+                                    display: "grid",
+                                    gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
+                                    gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
+                                    width: `${dimensoes.largura * cellSize}px`,
+                                    height: `${dimensoes.altura * cellSize}px`,
                                 }}
                             >
                                 {miniGrid.map((linha, y) =>
