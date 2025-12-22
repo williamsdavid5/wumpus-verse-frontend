@@ -20,20 +20,38 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// api.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         if (error.response?.status === 401) {
+//             localStorage.removeItem("access_token");
+//             // window.location.href = "/login";
+//         }
+//         if (error.response?.status === 422) {
+//             localStorage.removeItem("access_token");
+//             window.location.href = "/login";
+//         }
+
+//         return Promise.reject(error);
+//     }
+// );
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        const status = error.response?.status;
+
+        if (status === 422) {
             localStorage.removeItem("access_token");
-            // window.location.href = "/login";
-        }
-        if (error.response?.status === 422) {
-            localStorage.removeItem("access_token");
+
             window.location.href = "/login";
+
+            return new Promise(() => { });
         }
 
         return Promise.reject(error);
     }
 );
+
 
 export default api;
