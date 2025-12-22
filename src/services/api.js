@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 
 const api = axios.create({
     baseURL: "https://wumpus-verse-api.onrender.com",
@@ -6,6 +7,7 @@ const api = axios.create({
         "Content-Type": "application/json"
     }
 });
+
 
 api.interceptors.request.use(
     (config) => {
@@ -20,6 +22,7 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+//tentativa de corrigir o erro de token invalido
 // api.interceptors.response.use(
 //     (response) => response,
 //     (error) => {
@@ -36,15 +39,41 @@ api.interceptors.request.use(
 //     }
 // );
 
+// api.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         const status = error.response?.status;
+
+//         if (status === 422) {
+//             localStorage.removeItem("access_token");
+
+//             window.location.href = "/login";
+
+//             return new Promise(() => { });
+//         }
+
+//         return Promise.reject(error);
+//     }
+// );
+
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         const status = error.response?.status;
+        const url = error.config?.url;
 
-        if (status === 422) {
+        const rotasIgnoradas = [
+            "/auth/login",
+            "/auth/register"
+        ];
+
+        const ignorar = rotasIgnoradas.some(r => url?.includes(r));
+
+        if (!ignorar && (status === 401 || status === 422)) {
             localStorage.removeItem("access_token");
-
-            window.location.href = "/login";
+            localStorage.removeItem("user");
+            window.location.replace("/login");
 
             return new Promise(() => { });
         }
@@ -52,6 +81,5 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
 
 export default api;
