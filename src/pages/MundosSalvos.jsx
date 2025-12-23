@@ -2,6 +2,9 @@ import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import { useEffect, useState, useRef } from 'react';
+import { useConfirm } from '../contexts/ConfirmContext';
+
+import LoadingPage from './LoadingPage';
 
 import LinoDormindo from '../assets/linoDormindo.png'
 import LoadingGif from '../assets/loadingGif.gif'
@@ -23,9 +26,10 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 
 export default function MundosSalvos() {
 
-    const { getMundosSalvos, getMiniMapa } = useAuth();
+    const { getMundosSalvos, getMiniMapa, excluirmundo } = useAuth();
     const [mundos, setMundos] = useState([]);
     const [carregado, setCarregado] = useState(false);
+    const [carregandoLoading, setCarregandoLoading] = useState(false);
     const [carregadoMinimapa, setCarregandoMinimapa] = useState(false);
     const [mostrarLinoDormindo, setMostrarLinoDormindo] = useState(false);
     const [mundoSelecionado, setMundoSelecionado] = useState(null);
@@ -37,6 +41,7 @@ export default function MundosSalvos() {
     );
     const containerRef = useRef(null);
     const [cellSize, setCellSize] = useState(40);
+    const { confirm } = useConfirm();
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -50,12 +55,18 @@ export default function MundosSalvos() {
     }, [dimensoes]);
 
     useEffect(() => {
-        const tempo = setTimeout(() => {
+        if (!carregado) {
+            setMostrarLinoDormindo(false);
+            return;
+        }
+
+        const timer = setTimeout(() => {
             setMostrarLinoDormindo(true);
         }, 7000);
 
-        return () => clearTimeout(tempo);
-    }, []);
+        return () => clearTimeout(timer);
+    }, [carregado]);
+
 
     async function carregarMundosSalvos() {
         setCarregado(true);
@@ -67,6 +78,47 @@ export default function MundosSalvos() {
     useEffect(() => {
         carregarMundosSalvos();
     }, [])
+
+    async function excluirMundoSalvo(id) {
+
+        const confirmar = await confirm({
+            title: "Tem certeza?",
+            message: "Deseja mesmo excluir este mundo?",
+            type: "confirm",
+            botao1: "Sim",
+            botao2: "Não"
+        });
+
+        if (confirmar === "yes") {
+            setCarregandoLoading(true);
+            const resposta = await excluirmundo(id);
+            //vefificação de resposta da API
+            if (!resposta) {
+                console.log('algo deu errado');
+                await confirm({
+                    title: "Droga",
+                    message: "Algo deu errado, provavlemente foi culpa do programador backend.",
+                    type: "alert",
+                    botao1: "Aff"
+                })
+            } else {
+                setMundos(prev => prev.filter(mundo => mundo.id !== id));
+                setMiniGrid([]);
+                setDimensoes({ largura: 0, altura: 0 });
+                setPesquisa('');
+                setMundoSelecionado(null);
+                setCarregandoMinimapa(false);
+                setCellSize(0);
+                await confirm({
+                    title: "Absoluta?",
+                    message: "Brincadeira, seu mundo já foi excluído.",
+                    type: "alert",
+                    botao1: "Palhaço",
+                });
+            }
+        }
+        setCarregandoLoading(false);
+    }
 
     async function carregarMinimapa(id) {
         setCarregandoMinimapa(true);
@@ -158,8 +210,6 @@ export default function MundosSalvos() {
                                 {mostrarLinoDormindo && (
                                     <img src={LinoDormindo} alt="" className='fade-in linoDormindoImg' />
                                 )}
-
-
                             </div>
                         }
 
@@ -187,7 +237,10 @@ export default function MundosSalvos() {
                                         </div>
                                         <div className='direita'>
                                             <button className='botaoEditar'>Editar</button>
-                                            <button className='botaoExcluir'>Excluir</button>
+                                            <button
+                                                className='botaoExcluir'
+                                                onClick={() => excluirMundoSalvo(mundo.id)}
+                                            >Excluir</button>
                                         </div>
                                     </div>
                                 )
@@ -256,6 +309,8 @@ export default function MundosSalvos() {
                     </div>
                 </section> */}
             </main>
+
+            {carregandoLoading && <LoadingPage></LoadingPage>}
         </>
     )
 }

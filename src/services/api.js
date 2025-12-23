@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useAuth } from "../contexts/AuthContext";
 
 const api = axios.create({
     baseURL: "https://wumpus-verse-api.onrender.com",

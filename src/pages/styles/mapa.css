@@ -58,6 +58,16 @@ main {
     text-align: left;
 }
 
+.divControle .botaoSalvar {
+    background-color: white;
+    color: black;
+}
+
+.divControle .botaoSalvar:hover {
+    background-color: black;
+    color: white;
+}
+
 .div-controles-auxiliar {
     display: flex;
     justify-content: space-between;

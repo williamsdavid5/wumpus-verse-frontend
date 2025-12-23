@@ -119,14 +119,14 @@ export function AuthProvider({ children }) {
     async function getMundosSalvos() {
 
         try {
-            const response = await api.get("/environment/user-environments");
+            const response = await api.get("/environment/list-user");
 
             const data = response.data;
             return data;
         } catch (error) {
             if (error.response) {
                 console.error(
-                    'Erro 422 detalhado:',
+                    'Erro detalhado:',
                     JSON.stringify(error.response.data, null, 2)
                 );
             } else {
@@ -140,7 +140,7 @@ export function AuthProvider({ children }) {
     async function salvarMundo(mundo) {
 
         try {
-            const response = await api.post("/environment", mundo);
+            const response = await api.post("/environment/user", mundo);
             console.log(response);
             return true;
         } catch (error) {
@@ -158,7 +158,7 @@ export function AuthProvider({ children }) {
 
     async function getMiniMapa(id) {
         try {
-            const response = await api.get("/environment/mini-mapa", {
+            const response = await api.get("/environment/mini-map", {
                 params: {
                     environment_id: id
                 }
@@ -171,8 +171,21 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function excluirmundo(id) {
+        try {
+            const response = await api.delete("/environment/user", {
+                params: {
+                    environment_id: id
+                }
+            })
+            return true;
+        } catch (erro) {
+            return false;
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa }}>
+        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa, excluirmundo }}>
             {children}
         </AuthContext.Provider>
     );

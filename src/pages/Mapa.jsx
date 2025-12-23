@@ -2,6 +2,7 @@ import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useConfirm } from '../contexts/ConfirmContext';
+import { useNavigate } from 'react-router-dom'
 
 import LoadingPage from './LoadingPage';
 
@@ -62,6 +63,7 @@ export default function Mapa() {
     const [carregado, setCarregado] = useState(false);
     const { salvarMundo } = useAuth();
     const { confirm } = useConfirm();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setGrid(prev => {
@@ -420,7 +422,22 @@ export default function Mapa() {
 
     async function salvar() {
         if (!nomeMundo.trim()) {
-            alert('Por favor, preencha o nome do mundo antes de exportar!');
+            await confirm({
+                title: "Calma aí",
+                message: "Dê um nome ao mundo antes de salvar.",
+                type: "alert",
+                botao1: "Tá ok",
+            });
+            return;
+        }
+
+        if (estatisticas.salasAtivas === 0) {
+            await confirm({
+                title: "Opa opa",
+                message: "Adicione uma sala antes de salvar, ou a API irá explodir!",
+                type: "alert",
+                botao1: "Sinistro",
+            });
             return;
         }
 
@@ -478,6 +495,9 @@ export default function Mapa() {
                 type: "alert",
                 botao1: "Tá bom"
             })
+
+            navigate('/mundos-salvos');
+
         } else {
             await confirm({
                 title: "Ops!",
@@ -570,7 +590,7 @@ export default function Mapa() {
                         />
                         <button onClick={exportarJSON}>Exportar JSON</button>
                         <button onClick={importarJSON}>Importar JSON</button>
-                        <button onClick={salvar}>Salvar</button>
+                        <button onClick={salvar} className='botaoSalvar'>Salvar</button>
                     </div>
                 </aside>
                 <section className='janelaCentralizada'>
