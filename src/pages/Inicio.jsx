@@ -35,40 +35,51 @@ export default function Inicio() {
     }
 
     async function deletarConta() {
-        try {
 
-            const resposta = await fetch(
-                "https://wumpus-verse-api.onrender.com/auth/user",
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+        const resposta = await confirm({
+            title: "Excluir conta",
+            message: "Sério mesmo?",
+            type: "confirm",
+            botao1: "Sim",
+            botao2: "Não"
+        })
+
+        if (resposta === "yes") {
+            try {
+
+                const resposta = await fetch(
+                    "https://wumpus-verse-api.onrender.com/auth/user",
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
                     }
+                );
+
+                if (resposta.ok) {
+                    const dados = await resposta.json();
+
+                    logout();
+
+                    return {
+                        success: true,
+                        message: "Conta deletada com sucesso",
+                        data: dados
+                    };
+                } else {
+                    const erro = await resposta.json().catch(() => ({}));
+                    throw new Error(erro.detail || erro.message || "Erro ao deletar conta");
                 }
-            );
 
-            if (resposta.ok) {
-                const dados = await resposta.json();
-
-                logout();
-
+            } catch (error) {
+                console.error('Erro:', error);
                 return {
-                    success: true,
-                    message: "Conta deletada com sucesso",
-                    data: dados
+                    success: false,
+                    message: error.message
                 };
-            } else {
-                const erro = await resposta.json().catch(() => ({}));
-                throw new Error(erro.detail || erro.message || "Erro ao deletar conta");
             }
-
-        } catch (error) {
-            console.error('Erro:', error);
-            return {
-                success: false,
-                message: error.message
-            };
         }
     }
 
@@ -110,9 +121,11 @@ export default function Inicio() {
                                 <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
                                 clique para sair
                             </button>
-                            <button onClick={() => deletarConta()}>
-                                Excluir conta
-                            </button>
+                            {import.meta.env.DEV &&
+                                <button onClick={() => deletarConta()}>
+                                    Excluir conta
+                                </button>
+                            }
                         </>
 
                     )}
