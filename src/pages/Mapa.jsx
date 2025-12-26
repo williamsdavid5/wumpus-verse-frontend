@@ -154,8 +154,10 @@ export default function Mapa() {
             const copia = prev.map(row => row.slice())
             if (copia[y] && typeof copia[y][x] !== 'undefined') {
                 copia[y][x] = {
-                    ...copia[y][x],
-                    ativa: valor
+                    ativa: valor,
+                    wumpus: valor ? copia[y][x].wumpus : false,
+                    buraco: valor ? copia[y][x].buraco : false,
+                    ouro: valor ? copia[y][x].ouro : false,
                 }
             }
             return copia
@@ -182,9 +184,15 @@ export default function Mapa() {
         mousePosition.current = null;
     }
 
-    const exportarJSON = () => {
+    const exportarJSON = async () => {
         if (!nomeMundo.trim()) {
-            alert('Por favor, preencha o nome do mundo antes de exportar!');
+            await confirm({
+                title: "Calma parceiro",
+                message: "Dê um nome ao mundo antes de exportar",
+                type: "alert",
+                botao1: "Tá bom, chato"
+            })
+
             return;
         }
 
@@ -236,7 +244,7 @@ export default function Mapa() {
         URL.revokeObjectURL(url)
     }
 
-    const importarJSON = () => {
+    const importarJSON = async () => {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
@@ -246,12 +254,17 @@ export default function Mapa() {
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = async (event) => {
                 try {
                     const data = JSON.parse(event.target.result);
 
                     if (!data.nome || !data.largura || !data.altura || !Array.isArray(data.salas)) {
-                        alert('Arquivo JSON inválido!');
+                        await confirm({
+                            title: "Opa!",
+                            message: "JSON inválido amigo!",
+                            type: "alert",
+                            botao1: "Aff"
+                        })
                         return;
                     }
 
@@ -288,7 +301,12 @@ export default function Mapa() {
                     }
 
                 } catch (error) {
-                    alert('Erro ao ler arquivo JSON: ' + error.message);
+                    await confirm({
+                        title: "Droga!",
+                        message: `Erro ao ler o JSON: ${error.message}`,
+                        type: "alert",
+                        botao1: "Aff"
+                    })
                 }
             };
 
@@ -343,41 +361,104 @@ export default function Mapa() {
         }
     }
 
-    const limpar = () => setGrid(Array.from({ length: altura }, () =>
-        Array.from({ length: largura }, () => ({
-            ativa: false,
-            wumpus: false,
-            buraco: false,
-            ouro: false
-        }))
-    ))
+    const limpar = async () => {
 
-    const preencherTodos = () => {
-        setGrid(Array.from({ length: altura }, () =>
-            Array.from({ length: largura }, () => ({
-                ativa: true,
-                wumpus: false,
-                buraco: false,
-                ouro: false
-            }))
-        ))
-    }
+        const resposta = await confirm({
+            title: "Tem certeza",
+            message: "Quer mesmo limpar todos os blocos?",
+            type: "confirm",
+            botao1: "Sim",
+            botao2: "Não"
+        })
 
-    const limparEntidades = () => {
-        setGrid(prev =>
-            prev.map(linha =>
-                linha.map(celula => ({
-                    ...celula,
+        if (resposta === "yes") {
+            setGrid(Array.from({ length: altura }, () =>
+                Array.from({ length: largura }, () => ({
+                    ativa: false,
                     wumpus: false,
                     buraco: false,
                     ouro: false
                 }))
-            )
-        );
-    };
+            ))
+        }
+    }
 
-    const gerarEntidadesAleatorias = () => {
-        limparEntidades();
+    const preencherTodos = async () => {
+        const resposta = await confirm({
+            title: "Tem certeza",
+            message: "Quer mesmo preencher todos os blocos?",
+            type: "confirm",
+            botao1: "Sim",
+            botao2: "Não"
+        })
+
+        if (resposta === "yes") {
+            setGrid(Array.from({ length: altura }, () =>
+                Array.from({ length: largura }, () => ({
+                    ativa: true,
+                    wumpus: false,
+                    buraco: false,
+                    ouro: false
+                }))
+            ))
+        }
+    }
+
+    // const limparEntidades = async () => {
+
+    //     const resposta = await confirm({
+    //         title: "Tem certeza",
+    //         message: "Quer mesmo apagar todas as entidades?",
+    //         type: "confirm",
+    //         botao1: "Sim",
+    //         botao2: "Não"
+    //     })
+
+    //     console.log(resposta);
+
+    //     if (resposta == "yes") {
+    //         setGrid(prev =>
+    //             prev.map(linha =>
+    //                 linha.map(celula => ({
+    //                     ...celula,
+    //                     wumpus: false,
+    //                     buraco: false,
+    //                     ouro: false
+    //                 }))
+    //             )
+    //         );
+    //     }
+    // };
+
+    const limparEntidades = async (aleatorio = false) => {
+        let resposta = "yes";
+
+        if (!aleatorio) {
+            resposta = await confirm({
+                title: "Tem certeza",
+                message: "Quer mesmo apagar todas as entidades?",
+                type: "confirm",
+                botao1: "Sim",
+                botao2: "Não"
+            })
+        }
+
+        if (resposta === "yes") {
+            setGrid(prev =>
+                prev.map(linha =>
+                    linha.map(celula => ({
+                        ...celula,
+                        wumpus: false,
+                        buraco: false,
+                        ouro: false
+                    }))
+                )
+            );
+        }
+    }
+
+    const gerarEntidadesAleatorias = async () => {
+        await limparEntidades(true);
         const porcentagemInput = document.querySelector('input[placeholder="% prenchimento"]');
         const porcentagem = porcentagemInput.value ? Math.min(95, Math.max(0, parseInt(porcentagemInput.value))) : null;
 
@@ -668,7 +749,7 @@ export default function Mapa() {
                         >
                             Ouro
                         </button>
-                        <button onClick={limparEntidades} style={{ backgroundColor: 'red', border: 'none' }}>Limpar Todas as Entidades</button>
+                        <button onClick={() => limparEntidades()} style={{ backgroundColor: 'red', border: 'none' }}>Limpar Todas as Entidades</button>
                         <div className='div-entidades-aleatorio'>
                             <input type="number" min={0} max={95} name="" id="" placeholder='% prenchimento' />
                             <button onClick={gerarEntidadesAleatorias}>Aleatório</button>

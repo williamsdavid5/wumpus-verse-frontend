@@ -80,7 +80,6 @@ export default function MundosSalvos() {
     }, [])
 
     async function excluirMundoSalvo(id) {
-
         const confirmar = await confirm({
             title: "Tem certeza?",
             message: "Deseja mesmo excluir este mundo?",
