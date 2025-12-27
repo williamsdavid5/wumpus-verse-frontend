@@ -289,7 +289,7 @@ export default function MundosSalvos() {
                         {mundosFiltrados.length > 0 &&
                             (mundosFiltrados.map((mundo, index) => {
                                 const ativo = mundoSelecionado === mundo.id;
-                                console.log(mundo);
+                                // console.log(mundo);
                                 return (
                                     <div
                                         key={mundo.id}

@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom'
 
 import LoadingPage from './LoadingPage';
 
-function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, x, y }) {
+function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, x, y, destacado }) {
     return (
         <div
-            className={`bloco ${selecionado ? 'selecionado' : ''}`}
+            className={`bloco ${selecionado ? 'selecionado' : ''} ${destacado ? 'blocoDestacado' : ''}`}
             onMouseEnter={onMouseEnter}
             onMouseDown={onMouseDown}
             onClick={onClick}
@@ -23,17 +23,21 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 }
 
 export default function Mapa() {
-    const [largura, setLargura] = useState(4)
-    const [altura, setAltura] = useState(4)
+
+    const TAMANHO_INICIAL_LARGURA = 8;
+    const TAMANHO_INICIAL_ALTURA = 8;
+
+    const [largura, setLargura] = useState(TAMANHO_INICIAL_LARGURA)
+    const [altura, setAltura] = useState(TAMANHO_INICIAL_ALTURA)
     const [modo, setModo] = useState('desenhar');
     const [ctrlPressionado, setCtrlPressionado] = useState(false)
     const mousePosition = useRef(null);
     const [modoInsercao, setModoInsercao] = useState(null);
     const [nomeMundo, setNomeMundo] = useState('');
     const [estatisticas, setEstatisticas] = useState({
-        totalSalas: 16,
+        totalSalas: TAMANHO_INICIAL_LARGURA * TAMANHO_INICIAL_ALTURA,
         salasAtivas: 0,
-        salasInativas: 16,
+        salasInativas: TAMANHO_INICIAL_LARGURA * TAMANHO_INICIAL_ALTURA,
         quantidadeEntidades: {
             wumpus: 0,
             buracos: 0,
@@ -48,7 +52,7 @@ export default function Mapa() {
 
 
     const [grid, setGrid] = useState(() =>
-        Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => ({
+        Array.from({ length: TAMANHO_INICIAL_ALTURA }, () => Array.from({ length: TAMANHO_INICIAL_LARGURA }, () => ({
             ativa: false,
             wumpus: false,
             buraco: false,
@@ -65,8 +69,10 @@ export default function Mapa() {
     const { confirm } = useConfirm();
     const navigate = useNavigate();
 
-    const valoresInput = [1, 4, 6, 8];
+    const valoresInput = [1, 2, 3, 4];
     const [indiceInput, setIndiceInput] = useState(0);
+    const [tamanhoPincel, setTamanhoPincel] = useState(1);
+    const [previewPosicao, setPreviewPosicao] = useState({ x: null, y: null });
 
     useEffect(() => {
         setGrid(prev => {
@@ -80,11 +86,19 @@ export default function Mapa() {
     }, [largura, altura])
 
     useEffect(() => {
+        if (ctrlPressionado && mousePosition.current) {
+            const { x, y } = mousePosition.current;
+            const valor = modo === 'desenhar';
+            alternarNoGrid(x, y, valor);
+        }
+    }, [tamanhoPincel, ctrlPressionado, modo]);
+
+    useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Control') {
                 setCtrlPressionado(true);
 
-                // Altera imediatamente a célula sob o mouse quando Control é pressionado
+                // Altera imediatamente a área do pincel quando Control é pressionado
                 if (mousePosition.current) {
                     const { x, y } = mousePosition.current;
                     const valor = modo === 'desenhar';
@@ -152,23 +166,51 @@ export default function Mapa() {
     }, [recalculaCellSize])
 
 
+    // const alternarNoGrid = (x, y, valor) => {
+    //     setGrid(prev => {
+    //         const copia = prev.map(row => row.slice())
+    //         if (copia[y] && typeof copia[y][x] !== 'undefined') {
+    //             copia[y][x] = {
+    //                 ativa: valor,
+    //                 wumpus: valor ? copia[y][x].wumpus : false,
+    //                 buraco: valor ? copia[y][x].buraco : false,
+    //                 ouro: valor ? copia[y][x].ouro : false,
+    //             }
+    //         }
+    //         return copia
+    //     })
+    // }
+
     const alternarNoGrid = (x, y, valor) => {
+        console.log(`Aplicando pincel ${tamanhoPincel}x${tamanhoPincel} em (${x}, ${y})`);
+
         setGrid(prev => {
             const copia = prev.map(row => row.slice())
-            if (copia[y] && typeof copia[y][x] !== 'undefined') {
-                copia[y][x] = {
-                    ativa: valor,
-                    wumpus: valor ? copia[y][x].wumpus : false,
-                    buraco: valor ? copia[y][x].buraco : false,
-                    ouro: valor ? copia[y][x].ouro : false,
+
+            for (let dy = 0; dy < tamanhoPincel; dy++) {
+                for (let dx = 0; dx < tamanhoPincel; dx++) {
+                    const nx = x + dx;
+                    const ny = y + dy;
+
+                    if (copia[ny] && typeof copia[ny][nx] !== 'undefined') {
+                        copia[ny][nx] = {
+                            ativa: valor,
+                            wumpus: valor ? (copia[ny][nx]?.wumpus || false) : false,
+                            buraco: valor ? (copia[ny][nx]?.buraco || false) : false,
+                            ouro: valor ? (copia[ny][nx]?.ouro || false) : false,
+                        }
+                    }
                 }
             }
+
             return copia
         })
     }
 
     const handleCellMouseEnter = (x, y) => {
         mousePosition.current = { x, y };
+        setPreviewPosicao({ x, y });
+
         if (ctrlPressionado) {
             const valor = modo === 'desenhar';
             alternarNoGrid(x, y, valor);
@@ -185,6 +227,16 @@ export default function Mapa() {
 
     const handleMouseLeave = () => {
         mousePosition.current = null;
+        setPreviewPosicao({ x: null, y: null });
+    }
+
+    const deveDestacar = (x, y) => {
+        if (previewPosicao.x === null || previewPosicao.y === null) return false;
+
+        const dx = x - previewPosicao.x;
+        const dy = y - previewPosicao.y;
+
+        return dx >= 0 && dx < tamanhoPincel && dy >= 0 && dy < tamanhoPincel;
     }
 
     const exportarJSON = async () => {
@@ -343,6 +395,9 @@ export default function Mapa() {
     }, [grid, largura, altura]);
 
     const toggleModoInsercao = (elemento) => {
+        setTamanhoPincel(1);
+        setIndiceInput(0);
+
         if (modoInsercao === elemento) {
             setModoInsercao(null);
         } else {
@@ -624,10 +679,30 @@ export default function Mapa() {
                         </div>
                         <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
                         <p className='paragrafoInformativo' style={{ width: "100%", textAlign: "center", marginTop: "5px" }}>Tamanho do pincel</p>
-                        <input type="range" min={0} max={valoresInput.length - 1} step={1} value={indiceInput} onChange={(e) => setIndiceInput(Number(e.target.value))} name="" id="" />
+                        <input
+                            type="range"
+                            min={0}
+                            max={valoresInput.length - 1}
+                            step={1}
+                            value={indiceInput}
+                            onChange={(e) => {
+                                const novoIndice = Number(e.target.value);
+                                setIndiceInput(novoIndice);
+                                setTamanhoPincel(valoresInput[novoIndice]);
+                            }}
+                        />
                         <div className='valoresInputPincel'>
-                            {valoresInput.map((e) => {
-                                return <p className='paragrafoInformativo'>{e}</p>
+                            {valoresInput.map((valor, index) => {
+                                return <p
+                                    key={index}
+                                    className='paragrafoInformativo'
+                                    style={{
+                                        fontWeight: indiceInput === index ? 'bold' : 'normal',
+                                        color: indiceInput === index ? '#ff4444' : 'inherit'
+                                    }}
+                                >
+                                    {valor}
+                                </p>
                             })}
                         </div>
                         <div className='div-controles-auxiliar'>
@@ -680,6 +755,7 @@ export default function Mapa() {
                                         wumpus={sel.wumpus}
                                         buraco={sel.buraco}
                                         ouro={sel.ouro}
+                                        destacado={deveDestacar(x, y)}
                                         onMouseEnter={() => handleCellMouseEnter(x, y)}
                                         onMouseDown={() => handleCellMouseDown(x, y)}
                                         onClick={() => handleCellClick(x, y)}
@@ -697,10 +773,6 @@ export default function Mapa() {
                     <p></p>
                     <div className='divControle'>
                         <div className='div-entidades-informacao'>
-                            {/* <div className='quadradoEntidade wumpus'></div>
-                            <p>
-                                Wumpus: Criado para matar agentes!
-                            </p> */}
                             <h3 style={{ color: 'red' }}>Wumpus</h3>
                             <p>Mata seu agente instantâneamente, mas seu agente pode matá-lo.</p>
                             <h3 style={{ color: 'blueviolet', marginTop: '10px' }}>Buraco</h3>

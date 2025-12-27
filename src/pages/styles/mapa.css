@@ -225,6 +225,11 @@ button:hover {
     background-color: #444;
 }
 
+.blocoDestacado {
+    background-color: #444 !important;
+    transition: background-color 0.1s ease;
+}
+
 .bloco.selecionado {
     background-color: rgb(102, 0, 75);
 }
@@ -259,6 +264,12 @@ button:hover {
 .div-entidades-aleatorio input,
 .div-entidades-aleatorio button {
     width: 50%;
+}
+
+.cursor-quadrado {
+    transition: none;
+    opacity: 0.7;
+    background-color: transparent;
 }
 
 @media (max-width: 900px) {
