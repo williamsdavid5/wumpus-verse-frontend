@@ -65,6 +65,9 @@ export default function Mapa() {
     const { confirm } = useConfirm();
     const navigate = useNavigate();
 
+    const valoresInput = [1, 4, 6, 8];
+    const [indiceInput, setIndiceInput] = useState(0);
+
     useEffect(() => {
         setGrid(prev => {
             const nova = Array.from({ length: altura }, (_, y) =>
@@ -404,32 +407,6 @@ export default function Mapa() {
         }
     }
 
-    // const limparEntidades = async () => {
-
-    //     const resposta = await confirm({
-    //         title: "Tem certeza",
-    //         message: "Quer mesmo apagar todas as entidades?",
-    //         type: "confirm",
-    //         botao1: "Sim",
-    //         botao2: "Não"
-    //     })
-
-    //     console.log(resposta);
-
-    //     if (resposta == "yes") {
-    //         setGrid(prev =>
-    //             prev.map(linha =>
-    //                 linha.map(celula => ({
-    //                     ...celula,
-    //                     wumpus: false,
-    //                     buraco: false,
-    //                     ouro: false
-    //                 }))
-    //             )
-    //         );
-    //     }
-    // };
-
     const limparEntidades = async (aleatorio = false) => {
         let resposta = "yes";
 
@@ -536,7 +513,7 @@ export default function Mapa() {
             altura,
 
             estatisticas: {
-                totalSalas: largura * altura,
+                totalSalas: salasAtivas,
                 salasAtivas: salasAtivas,
                 salasInativas: (largura * altura) - salasAtivas,
                 quantidadeEntidades: {
@@ -645,8 +622,14 @@ export default function Mapa() {
                                 Apagar
                             </label>
                         </div>
-
                         <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
+                        <p className='paragrafoInformativo' style={{ width: "100%", textAlign: "center", marginTop: "10px" }}>Tamanho do pincel</p>
+                        <input type="range" min={0} max={valoresInput.length - 1} step={1} value={indiceInput} onChange={(e) => setIndiceInput(Number(e.target.value))} name="" id="" />
+                        <div className='valoresInputPincel'>
+                            {valoresInput.map((e) => {
+                                return <p className='paragraforInformativo'>{e}</p>
+                            })}
+                        </div>
                         <div className='div-controles-auxiliar'>
                             <button className='botaoPreencher-apagar' onClick={preencherTodos}>Preencher todos</button>
                             <button className='botaoPreencher-apagar' onClick={limpar}>Limpar blocos</button>

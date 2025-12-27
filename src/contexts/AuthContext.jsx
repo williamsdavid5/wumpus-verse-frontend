@@ -116,10 +116,36 @@ export function AuthProvider({ children }) {
         return data;
     }
 
-    async function getMundosSalvos() {
+    // async function getMundosSalvos(pagina = 1, limite = 5) {
 
+    //     try {
+    //         const response = await api.get("/environment/list-user");
+
+    //         const data = response.data;
+    //         return data;
+    //     } catch (error) {
+    //         if (error.response) {
+    //             console.error(
+    //                 'Erro detalhado:',
+    //                 JSON.stringify(error.response.data, null, 2)
+    //             );
+    //         } else {
+    //             console.error(error);
+    //         }
+    //         return error;
+    //     }
+
+    // }
+
+    async function getMundosSalvos(pagina = 1, limite = 5) {
         try {
-            const response = await api.get("/environment/list-user");
+            // Adiciona os parâmetros de paginação à URL
+            const response = await api.get("/environment/list-user", {
+                params: {
+                    page: pagina,
+                    limit: limite
+                }
+            });
 
             const data = response.data;
             return data;
@@ -132,9 +158,8 @@ export function AuthProvider({ children }) {
             } else {
                 console.error(error);
             }
-            return error;
+            return [];
         }
-
     }
 
     async function salvarMundo(mundo) {

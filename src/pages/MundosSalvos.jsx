@@ -1,7 +1,7 @@
 import './styles/mundosSalvos.css'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useTransition } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
 
 import LoadingPage from './LoadingPage';
@@ -43,6 +43,11 @@ export default function MundosSalvos() {
     const [cellSize, setCellSize] = useState(40);
     const { confirm } = useConfirm();
 
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const [temMaisItens, setTemMaisItens] = useState(true);
+    const [carregandoMais, setCarregandoMais] = useState(false);
+    const [isPending, startTransition] = useTransition();
+
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -68,15 +73,73 @@ export default function MundosSalvos() {
     }, [carregado]);
 
 
-    async function carregarMundosSalvos() {
-        setCarregado(true);
-        const resposta = await getMundosSalvos();
-        setMundos(resposta);
-        setCarregado(false);
+    function carregarMais() {
+        if (!carregandoMais && temMaisItens && !pesquisa) {
+            startTransition(() => {
+                carregarMundosSalvos(paginaAtual + 1, false);
+            });
+        }
     }
 
+    async function carregarMundosSalvos(pagina = 1, limparLista = true) {
+        if (pagina === 1) {
+            setCarregado(true);
+        } else {
+            setCarregandoMais(true);
+        }
+        try {
+            const resposta = await getMundosSalvos(pagina, 5);
+
+            if (resposta && resposta.length > 0) {
+                if (limparLista || pagina === 1) {
+                    setMundos(resposta);
+                } else {
+                    setMundos(prev => [...prev, ...resposta]);
+                }
+                setTemMaisItens(resposta.length === 5);
+            } else {
+                if (pagina === 1) {
+                    setMundos([]);
+                }
+                setTemMaisItens(false);
+            }
+
+            setPaginaAtual(pagina);
+
+        } catch (error) {
+            console.error('Erro ao carregar mundos:', error);
+            await confirm({
+
+            })
+            setTemMaisItens(false);
+        } finally {
+            // console.log("Os mundos agora: ", mundos);
+            if (pagina === 1) {
+                setCarregado(false);
+            }
+
+            if (mundos.length > 0) {
+                setCarregandoMais(false);
+            }
+        }
+    }
+
+    function carregarMais() {
+        if (!carregandoMais && temMaisItens && !pesquisa) {
+            carregarMundosSalvos(paginaAtual + 1, false);
+        }
+    }
+
+    // useEffect(() => {
+    //     if (pesquisa) {
+    //         setTemMaisItens(false);
+    //     } else {
+    //         setTemMaisItens(mundos.length === paginaAtual * 5);
+    //     }
+    // }, [pesquisa]);
+
     useEffect(() => {
-        carregarMundosSalvos();
+        carregarMundosSalvos(1, true);
     }, [])
 
     async function excluirMundoSalvo(id) {
@@ -168,8 +231,6 @@ export default function MundosSalvos() {
         setCarregandoMinimapa(false);
     }
 
-
-
     const navigate = useNavigate();
 
     return (
@@ -212,9 +273,10 @@ export default function MundosSalvos() {
                             </div>
                         }
 
-                        {!carregado && mundos.length > 0 &&
+                        {mundosFiltrados.length > 0 &&
                             (mundosFiltrados.map((mundo, index) => {
                                 const ativo = mundoSelecionado === mundo.id;
+                                // console.log(mundo);
                                 return (
                                     <div
                                         key={index}
@@ -228,7 +290,7 @@ export default function MundosSalvos() {
                                             <h2>{mundo.nome}</h2>
                                             <p className='paragrafoInformativo'>Data de criação: {mundo.data}</p>
                                             <p className='paragrafoInformativo'>
-                                                <b>Salas:</b> {mundo.estatisticas.totalSalas} <br />
+                                                <b>Salas ativas:</b> {mundo.estatisticas.salasAtivas} <br />
                                                 <b>Buracos:</b> {mundo.estatisticas.quantidadeEntidades.buracos} <br />
                                                 <b>Ouros:</b> {mundo.estatisticas.quantidadeEntidades.ouros} <br />
                                                 <b>Wumpus:</b> {mundo.estatisticas.quantidadeEntidades.wumpus}
@@ -243,10 +305,41 @@ export default function MundosSalvos() {
                                         </div>
                                     </div>
                                 )
-                            }))
-                        }
+                            }))}
 
-                        {!carregado && mundos.length == 0 && (
+                        {/* {!carregado && mundosFiltrados.length > 0 && temMaisItens && !pesquisa && (
+                            <div className='carregarMaisContainer'>
+                                <button
+                                    className='botaoCarregarMais'
+                                    onClick={carregarMais}
+                                    disabled={carregandoMais}
+                                >
+                                    {carregandoMais ? 'Carregando...' : 'Carregar mais'}
+                                </button>
+                            </div>
+                        )} */}
+
+                        {/* caso tenha mais itens a serem carregados */}
+                        {!carregado && mundosFiltrados.length > 0 && !pesquisa && (
+                            carregandoMais ? (
+                                <div className='loadingPequeno'>
+                                    <img src={LoadingGif} alt="" />
+                                </div>
+                            ) : temMaisItens ? (
+                                <div className='loadingPequeno'>
+                                    <button
+                                        onClick={carregarMais}
+                                        disabled={carregandoMais}
+                                        style={{ padding: '10px' }}
+                                    >
+                                        Carregar mais
+                                    </button>
+                                </div>
+                            ) : null
+                        )}
+
+
+                        {!carregado && mundosFiltrados.length === 0 && (
                             <div className='loadingPequeno'>
                                 <p>Não sobrou nada 😞</p>
                             </div>
