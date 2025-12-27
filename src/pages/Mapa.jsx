@@ -623,11 +623,11 @@ export default function Mapa() {
                             </label>
                         </div>
                         <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
-                        <p className='paragrafoInformativo' style={{ width: "100%", textAlign: "center", marginTop: "10px" }}>Tamanho do pincel</p>
+                        <p className='paragrafoInformativo' style={{ width: "100%", textAlign: "center", marginTop: "5px" }}>Tamanho do pincel</p>
                         <input type="range" min={0} max={valoresInput.length - 1} step={1} value={indiceInput} onChange={(e) => setIndiceInput(Number(e.target.value))} name="" id="" />
                         <div className='valoresInputPincel'>
                             {valoresInput.map((e) => {
-                                return <p className='paragraforInformativo'>{e}</p>
+                                return <p className='paragrafoInformativo'>{e}</p>
                             })}
                         </div>
                         <div className='div-controles-auxiliar'>

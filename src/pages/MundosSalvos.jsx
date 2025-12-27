@@ -231,6 +231,19 @@ export default function MundosSalvos() {
         setCarregandoMinimapa(false);
     }
 
+    function formatarData(dateString) {
+        const date = new Date(dateString);
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+
+        return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    }
+
     const navigate = useNavigate();
 
     return (
@@ -276,10 +289,10 @@ export default function MundosSalvos() {
                         {mundosFiltrados.length > 0 &&
                             (mundosFiltrados.map((mundo, index) => {
                                 const ativo = mundoSelecionado === mundo.id;
-                                // console.log(mundo);
+                                console.log(mundo);
                                 return (
                                     <div
-                                        key={index}
+                                        key={mundo.id}
                                         className={`itemListaMundos ${ativo ? 'ativo' : ''}`}
                                         onClick={() => {
                                             setMundoSelecionado(mundo.id);
@@ -288,7 +301,7 @@ export default function MundosSalvos() {
                                     >
                                         <div className='esquerda'>
                                             <h2>{mundo.nome}</h2>
-                                            <p className='paragrafoInformativo'>Data de criação: {mundo.data}</p>
+                                            <p className='paragrafoInformativo'>Data de criação: {formatarData(mundo.data_criacao)}</p>
                                             <p className='paragrafoInformativo'>
                                                 <b>Salas ativas:</b> {mundo.estatisticas.salasAtivas} <br />
                                                 <b>Buracos:</b> {mundo.estatisticas.quantidadeEntidades.buracos} <br />
