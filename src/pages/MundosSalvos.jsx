@@ -72,15 +72,6 @@ export default function MundosSalvos() {
         return () => clearTimeout(timer);
     }, [carregado]);
 
-
-    function carregarMais() {
-        if (!carregandoMais && temMaisItens && !pesquisa) {
-            startTransition(() => {
-                carregarMundosSalvos(paginaAtual + 1, false);
-            });
-        }
-    }
-
     async function carregarMundosSalvos(pagina = 1, limparLista = true) {
         if (pagina === 1) {
             setCarregado(true);
@@ -88,15 +79,19 @@ export default function MundosSalvos() {
             setCarregandoMais(true);
         }
         try {
-            const resposta = await getMundosSalvos(pagina, 5);
+            const resposta = await getMundosSalvos(pagina, 6);
 
             if (resposta && resposta.length > 0) {
+
+                const itensParaMostrar = resposta.slice(0, 5);
+
                 if (limparLista || pagina === 1) {
-                    setMundos(resposta);
+                    setMundos(itensParaMostrar);
                 } else {
-                    setMundos(prev => [...prev, ...resposta]);
+                    setMundos(prev => [...prev, ...itensParaMostrar]);
                 }
-                setTemMaisItens(resposta.length === 5);
+
+                setTemMaisItens(resposta.length === 6);
             } else {
                 if (pagina === 1) {
                     setMundos([]);
@@ -108,12 +103,9 @@ export default function MundosSalvos() {
 
         } catch (error) {
             console.error('Erro ao carregar mundos:', error);
-            await confirm({
-
-            })
+            await confirm({})
             setTemMaisItens(false);
         } finally {
-            // console.log("Os mundos agora: ", mundos);
             if (pagina === 1) {
                 setCarregado(false);
             }
@@ -289,7 +281,9 @@ export default function MundosSalvos() {
                         {mundosFiltrados.length > 0 &&
                             (mundosFiltrados.map((mundo, index) => {
                                 const ativo = mundoSelecionado === mundo.id;
-                                // console.log(mundo);
+                                if (mundoSelecionado === mundo.id) {
+                                    console.log(mundo);
+                                }
                                 return (
                                     <div
                                         key={mundo.id}
@@ -310,7 +304,10 @@ export default function MundosSalvos() {
                                             </p>
                                         </div>
                                         <div className='direita'>
-                                            <button className='botaoEditar'>Editar</button>
+                                            <button
+                                                className='botaoEditar'
+                                                onClick={() => navigate(`/mapa?edit=${mundo.id}`)}
+                                            >Editar</button>
                                             <button
                                                 className='botaoExcluir'
                                                 onClick={() => excluirMundoSalvo(mundo.id)}

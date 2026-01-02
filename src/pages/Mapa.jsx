@@ -2,7 +2,7 @@ import './styles/mapa.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useConfirm } from '../contexts/ConfirmContext';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import LoadingPage from './LoadingPage';
 
@@ -65,7 +65,7 @@ export default function Mapa() {
     const [mapSize, setMapSize] = useState({ w: largura * 20, h: altura * 20 })
 
     const [carregado, setCarregado] = useState(false);
-    const { salvarMundo } = useAuth();
+    const { salvarMundo, atualizarMundo, getMundoById } = useAuth();
     const { confirm } = useConfirm();
     const navigate = useNavigate();
 
@@ -73,6 +73,72 @@ export default function Mapa() {
     const [indiceInput, setIndiceInput] = useState(0);
     const [tamanhoPincel, setTamanhoPincel] = useState(1);
     const [previewPosicao, setPreviewPosicao] = useState({ x: null, y: null });
+
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const mundoIdParaEditar = searchParams.get('edit');
+    const [modoEdicao, setModoEdicao] = useState(false);
+    const [mundoEditando, setMundoEditando] = useState(null);
+
+    /// caso haja mundo para edição
+    const carregarMundoParaEdicao = async (id) => {
+        setCarregado(true);
+        try {
+            const mundo = await getMundoById(id);
+            if (mundo) {
+                setModoEdicao(true);
+                setMundoEditando(mundo);
+
+                setNomeMundo(mundo.nome);
+                setLargura(mundo.largura);
+                setAltura(mundo.altura);
+
+                const novoGrid = Array.from({ length: mundo.altura }, (_, y) =>
+                    Array.from({ length: mundo.largura }, (_, x) => {
+                        const sala = mundo.salas.find(s => s.x === x && s.y === y);
+
+                        if (sala) {
+                            return {
+                                ativa: true,
+                                wumpus: sala.wumpus || false,
+                                buraco: sala.buraco || false,
+                                ouro: sala.ouro || false
+                            };
+                        } else {
+                            return {
+                                ativa: false,
+                                wumpus: false,
+                                buraco: false,
+                                ouro: false
+                            };
+                        }
+                    })
+                );
+
+                setGrid(novoGrid);
+
+                if (mundo.estatisticas) {
+                    setEstatisticas(mundo.estatisticas);
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao carregar mundo:', error);
+            await confirm({
+                title: "Erro",
+                message: "Não foi possível carregar o mundo para edição.",
+                type: "alert",
+                botao1: "OK"
+            });
+        } finally {
+            setCarregado(false);
+        }
+    };
+
+    useEffect(() => {
+        if (mundoIdParaEditar) {
+            carregarMundoParaEdicao(mundoIdParaEditar);
+        }
+    }, [mundoIdParaEditar]);
 
     useEffect(() => {
         setGrid(prev => {
@@ -182,7 +248,7 @@ export default function Mapa() {
     // }
 
     const alternarNoGrid = (x, y, valor) => {
-        console.log(`Aplicando pincel ${tamanhoPincel}x${tamanhoPincel} em (${x}, ${y})`);
+        // console.log(`Aplicando pincel ${tamanhoPincel}x${tamanhoPincel} em (${x}, ${y})`);
 
         setGrid(prev => {
             const copia = prev.map(row => row.slice())
@@ -562,13 +628,13 @@ export default function Mapa() {
         const totalOuros = grid.flat().filter(celula => celula.ouro).length;
 
         const payload = {
-            id: 1,
+            id: modoEdicao ? mundoEditando.id : 0,
             nome: nomeMundo.trim(),
             largura,
             altura,
-
+            data_criacao: modoEdicao ? mundoEditando.data_criacao : new Date().toISOString(),
             estatisticas: {
-                totalSalas: salasAtivas,
+                totalSalas: largura * altura,
                 salasAtivas: salasAtivas,
                 salasInativas: (largura * altura) - salasAtivas,
                 quantidadeEntidades: {
@@ -587,7 +653,6 @@ export default function Mapa() {
                         ? ((totalOuros / salasAtivas) * 100).toFixed(2)
                         : "0"
                 }
-
             },
             salas: grid.flatMap((row, y) =>
                 row.map((celula, x) => celula.ativa ? {
@@ -597,27 +662,33 @@ export default function Mapa() {
                     ouro: celula.ouro
                 } : null)
             ).filter(sala => sala !== null)
+        };
+
+        let salvou = false;
+
+        if (modoEdicao) {
+            salvou = await atualizarMundo(mundoEditando.id, payload);
+        } else {
+            salvou = await salvarMundo(payload);
         }
 
-        const salvou = await salvarMundo(payload);
         setCarregado(false);
         if (salvou) {
             await confirm({
                 title: "Sucesso!",
-                message: "Seu mundo foi salvo.",
+                message: modoEdicao ? "Seu mundo foi atualizado." : "Seu mundo foi salvo.",
                 type: "alert",
                 botao1: "Tá bom"
-            })
+            });
 
             navigate('/mundos-salvos');
-
         } else {
             await confirm({
                 title: "Ops!",
-                message: "Algo deu errado ao salvar seu mundo, provavlemente foi culpa do programador backend.",
+                message: "Algo deu errado ao salvar seu mundo.",
                 type: "alert",
                 botao1: "Aff"
-            })
+            });
         }
     }
 

@@ -20,29 +20,6 @@ export function AuthProvider({ children }) {
         setCarregando(false);
     }, []);
 
-    // async function login(email, password) {
-    //     const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/login", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({ email, password })
-    //     });
-
-    //     if (!resposta.ok) {
-    //         throw new Error("Email ou senha incorretos");
-    //     }
-
-    //     const data = await resposta.json();
-    //     console.log(data);
-
-    //     localStorage.setItem("access_token", data.access_token);
-    //     localStorage.setItem("user", JSON.stringify(data.user));
-
-    //     setToken(data.access_token);
-    //     setUsuario(data.user);
-
-    //     return data;
-    // }
-
     async function login(email, password) {
         const response = await api.post("/auth/login", {
             email,
@@ -67,37 +44,6 @@ export function AuthProvider({ children }) {
         setUsuario(null);
     }
 
-    // async function registrar(name, email, password) {
-    //     const resposta = await fetch("https://wumpus-verse-api.onrender.com/auth/register", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({ name, email, password })
-    //     });
-
-    //     if (!resposta.ok) {
-    //         let erro = "Erro ao registrar";
-
-    //         try {
-    //             const dataErro = await resposta.json();
-    //             if (dataErro?.detail?.[0]?.msg) {
-    //                 erro = dataErro.detail[0].msg;
-    //             }
-    //         } catch { }
-
-    //         throw new Error(erro);
-    //     }
-
-    //     const data = await resposta.json();
-
-    //     localStorage.setItem("access_token", data.access_token);
-    //     localStorage.setItem("user", JSON.stringify(data.user));
-
-    //     setToken(data.access_token);
-    //     setUsuario(data.user);
-
-    //     return data;
-    // }
-
     async function registrar(name, email, password) {
         const response = await api.post("/auth/register", {
             name,
@@ -116,30 +62,8 @@ export function AuthProvider({ children }) {
         return data;
     }
 
-    // async function getMundosSalvos(pagina = 1, limite = 5) {
-
-    //     try {
-    //         const response = await api.get("/environment/list-user");
-
-    //         const data = response.data;
-    //         return data;
-    //     } catch (error) {
-    //         if (error.response) {
-    //             console.error(
-    //                 'Erro detalhado:',
-    //                 JSON.stringify(error.response.data, null, 2)
-    //             );
-    //         } else {
-    //             console.error(error);
-    //         }
-    //         return error;
-    //     }
-
-    // }
-
-    async function getMundosSalvos(pagina = 1, limite = 5) {
+    async function getMundosSalvos(pagina = 1, limite = 6) {
         try {
-            // Adiciona os parâmetros de paginação à URL
             const response = await api.get("/environment/list-user", {
                 params: {
                     page: pagina,
@@ -209,8 +133,57 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function atualizarMundo(environment_id, mundo) {
+        try {
+            const response = await api.put(
+                "/environment/user",
+                mundo,
+                {
+                    params: {
+                        environment_id
+                    }
+                }
+            );
+
+            return true;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro detalhado:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return false;
+        }
+    }
+
+    async function getMundoById(environment_id) {
+        try {
+            const response = await api.get("/environment/user", {
+                params: {
+                    environment_id
+                }
+            });
+
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao buscar mundo:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return null;
+        }
+    }
+
+
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa, excluirmundo }}>
+        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa, excluirmundo, atualizarMundo, getMundoById }}>
             {children}
         </AuthContext.Provider>
     );
