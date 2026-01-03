@@ -27,6 +27,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 export default function MundosSalvos() {
 
     const { getMundosSalvos, getMiniMapa, excluirmundo } = useAuth();
+    const navigate = useNavigate();
     const [mundos, setMundos] = useState([]);
     const [carregado, setCarregado] = useState(false);
     const [carregandoLoading, setCarregandoLoading] = useState(false);
@@ -236,8 +237,6 @@ export default function MundosSalvos() {
         return `${day}/${month}/${year} - ${hours}:${minutes}`;
     }
 
-    const navigate = useNavigate();
-
     return (
         <>
             <main className='mundosMain'>
@@ -251,7 +250,7 @@ export default function MundosSalvos() {
                             <p className='paragrafoInformativo'>
                                 Todos os mundos que você criou e salvou
                             </p>
-                            <input
+                            {/* <input
                                 type="text"
                                 name="barraPesquisaMundosSalvos"
                                 id=""
@@ -259,7 +258,7 @@ export default function MundosSalvos() {
                                 placeholder='Pesquise qualquer coisa'
                                 value={pesquisa}
                                 onChange={(e) => setPesquisa(e.target.value)}
-                            />
+                            /> */}
                         </div>
                         <div className='topoMundosAuxiliar'>
                             <button className='botaoNovoMundo' onClick={() => navigate('/mapa')}>Novo</button>
@@ -281,9 +280,9 @@ export default function MundosSalvos() {
                         {mundosFiltrados.length > 0 &&
                             (mundosFiltrados.map((mundo, index) => {
                                 const ativo = mundoSelecionado === mundo.id;
-                                if (mundoSelecionado === mundo.id) {
-                                    console.log(mundo);
-                                }
+                                // if (mundoSelecionado === mundo.id) {
+                                //     console.log(mundo);
+                                // }
                                 return (
                                     <div
                                         key={mundo.id}

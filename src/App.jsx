@@ -33,7 +33,13 @@ export default function App() {
           <Route path="/saibamais" element={<SaibaMais />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registrar" element={<Registrar />} />
-          <Route path="/nova-partida" element={<NovaPartida />} />
+          <Route path="/nova-partida"
+            element={
+              <ProtecaoDeRotas>
+                <NovaPartida />
+              </ProtecaoDeRotas>
+            }
+          />
         </Routes>
       </Router>
     </>
