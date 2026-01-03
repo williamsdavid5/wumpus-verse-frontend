@@ -1,9 +1,27 @@
 import "./styles/novaPartida.css"
 import { useAuth } from '../contexts/AuthContext';
 import LoadingGif from '../assets/loadingGif.gif'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useConfirm } from '../contexts/ConfirmContext';
 import { useNavigate } from 'react-router-dom'
+
+function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, salaInicial }) {
+    return (
+        <div
+            className={`bloco 
+                ${selecionado ? 'selecionado' : ''} 
+                ${salaInicial ? 'salaInicial' : ''}
+            `}
+            onMouseEnter={onMouseEnter}
+            onMouseDown={onMouseDown}
+            onClick={onClick}
+        >
+            {wumpus && <div className='elemento wumpus'></div>}
+            {buraco && <div className='elemento buraco'></div>}
+            {ouro && <div className='elemento ouro'></div>}
+        </div>
+    )
+}
 
 export default function () {
     const { getMundosSalvos, getMiniMapa } = useAuth();
@@ -17,6 +35,77 @@ export default function () {
 
     const [mundoSelecionado, setMundoSelecionado] = useState();
     const [agenteSelecionado, setAgenteSelecionado] = useState(0);
+    const [salaSelecionada, setSalaSelecionada] = useState([]);
+
+    const [carregadoMinimapa, setCarregandoMinimapa] = useState(false);
+    const [miniGrid, setMiniGrid] = useState([]);
+    const [dimensoes, setDimensoes] = useState({ largura: 0, altura: 0 });
+    const [salaInvalida, setSalaInvalida] = useState(false);
+    const containerRef = useRef(null);
+    const [cellSize, setCellSize] = useState(40);
+
+
+    useEffect(() => {
+        if (!containerRef.current || dimensoes.largura === 0 || dimensoes.altura === 0) return;
+
+        const { clientWidth, clientHeight } = containerRef.current;
+
+        // Calcula o tamanho máximo que cada célula pode ter
+        const sizeX = Math.floor(clientWidth / dimensoes.largura);
+        const sizeY = Math.floor(clientHeight / dimensoes.altura);
+
+        // Usa o menor dos dois valores, mas com um limite máximo (ex: 40px)
+        setCellSize(Math.min(sizeX, sizeY, 40));
+    }, [dimensoes]);
+
+    async function carregarMinimapa(id) {
+        setCarregandoMinimapa(true);
+
+        const salasAtivas = await getMiniMapa(id);
+
+        if (!salasAtivas.length) {
+            setMiniGrid([]);
+            setDimensoes({ largura: 0, altura: 0 });
+            setCarregandoMinimapa(false);
+            return;
+        }
+
+        const xs = salasAtivas.map(s => s.x);
+        const ys = salasAtivas.map(s => s.y);
+
+        const minX = Math.min(...xs);
+        const minY = Math.min(...ys);
+        const maxX = Math.max(...xs);
+        const maxY = Math.max(...ys);
+
+        const largura = maxX - minX + 1;
+        const altura = maxY - minY + 1;
+
+        const grid = Array.from({ length: altura }, () =>
+            Array.from({ length: largura }, () => ({
+                ativa: false,
+                wumpus: false,
+                buraco: false,
+                ouro: false
+            }))
+        );
+
+        salasAtivas.forEach(sala => {
+            const x = sala.x - minX;
+            const y = sala.y - minY;
+
+            grid[y][x] = {
+                ativa: true,
+                wumpus: sala.wumpus,
+                buraco: sala.buraco,
+                ouro: sala.ouro
+            };
+        });
+
+        setMiniGrid(grid);
+        setDimensoes({ largura, altura });
+        setCarregandoMinimapa(false);
+    }
 
     async function carregarMundosSalvos(pagina = 1, limparLista = true) {
         if (pagina === 1) {
@@ -49,7 +138,6 @@ export default function () {
 
         } catch (error) {
             console.error('Erro ao carregar mundos:', error);
-            await confirm({})
             setTemMaisItens(false);
         } finally {
             if (pagina === 1) {
@@ -91,7 +179,10 @@ export default function () {
                 <aside className="esquerdaNovaPartida">
                     <div className="divControle">
                         <h1>Nova partida</h1>
-                        <p className="paragrafoInformativo">Selecione um mundo e um agente para continuar. Claro, você precisa ter criado um mundo antes de iniciar uma partida!</p>
+                        <p className="paragrafoInformativo">
+                            Selecione um mundo e um agente para continuar. Claro, você precisa ter criado um mundo antes de iniciar uma partida!
+                            <br />
+                        </p>
                     </div>
                     <div className="divControle">
                         <p>Mundos que você criou:</p>
@@ -113,6 +204,9 @@ export default function () {
                                         className={`itemListaMundos ${ativo ? 'ativo' : ''}`}
                                         onClick={() => {
                                             setMundoSelecionado(mundo.id);
+                                            setSalaSelecionada([]);
+                                            setSalaInvalida(false);
+                                            carregarMinimapa(mundo.id);
                                         }}
                                     >
                                         <h2>{mundo.nome}</h2>
@@ -160,11 +254,72 @@ export default function () {
                     </div>
                 </aside>
                 <section className="centroNovaPartida">
-                    <div className="divMapa">
-                        mapa aqui
+                    <div className="div-mapa" ref={containerRef} >
+                        {!carregadoMinimapa && (
+                            <div
+                                className='mapa-blocos'
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
+                                    gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
+                                    width: `${dimensoes.largura * cellSize}px`,
+                                    height: `${dimensoes.altura * cellSize}px`,
+                                }}
+                            >
+                                {miniGrid.map((linha, y) =>
+                                    linha.map((sala, x) => {
+
+                                        const salaInicial = salaSelecionada.length > 0 && salaSelecionada[0] === x && salaSelecionada[1] === y;
+
+                                        return (
+                                            <Bloco
+                                                key={`${x}-${y}`}
+                                                selecionado={sala.ativa}
+                                                wumpus={sala.wumpus}
+                                                buraco={sala.buraco}
+                                                ouro={sala.ouro}
+                                                onClick={() => {
+                                                    if (sala.wumpus || sala.buraco || sala.ouro || !sala.ativa) {
+                                                        setSalaInvalida(true);
+                                                        setSalaSelecionada([]);
+                                                    } else {
+                                                        setSalaSelecionada([x, y]);
+                                                        setSalaInvalida(false);
+                                                    }
+                                                    // console.log(salaInicial);
+                                                }}
+                                                salaInicial={salaInicial}
+                                            />
+                                        )
+                                    })
+                                )}
+                            </div>
+                        )}
+
+                        {carregadoMinimapa &&
+                            <>
+                                <img src={LoadingGif} alt="" style={{ width: '100px' }} />
+                            </>
+                        }
                     </div>
                     <div className="divInformacoes">
-                        <p className="paragrafoInformativo">Selecione onde seu agente será posicionado no início da partida, essa posição também será a saída do mundo, o que indica o fim da partida.</p>
+                        {miniGrid.length >= 0 &&
+                            <>
+                                <p className="paragrafoInformativo">
+                                    Selecione onde seu agente será posicionado no início da partida, essa posição também será a saída do mundo, o que indica o fim da partida. <b style={{ color: 'red' }}>Salas com buraco, wumpus, ouro, ou salas fora do mundo, não serão aceitas!</b>
+                                </p>
+                                <p className={`pSalaSelecionada`}>
+                                    <b>A sala selecionada é marcada na cor branca!</b><br />
+                                    {
+                                        !salaInvalida &&
+                                        (salaSelecionada.length > 0 ?
+                                            `Atual: ${salaSelecionada[0]}, ${salaSelecionada[1]}` : 'Selecione!')
+                                    }
+
+                                    {salaInvalida && <span style={{ color: 'red' }}>Sala inválida! Selecione outra.</span>}
+                                </p>
+                            </>
+                        }
                     </div>
                 </section>
                 <aside className="direitaNovaPartida">
@@ -190,9 +345,9 @@ export default function () {
                         </label>
                     </div>
                     <div className="divControle">
-                        <p>✓ Selecionou um mundo</p>
-                        <p>✓ Selecionou um agente</p>
-                        <p>✓ Selecionou uma posição inicial</p>
+                        <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
+                        <p>✅ Selecionou um agente</p>
+                        <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p>
                         <button className="botaoIniciarPartida">Iniciar partida</button>
                     </div>
                 </aside>

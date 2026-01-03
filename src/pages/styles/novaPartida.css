@@ -41,13 +41,23 @@
     height: 100%;
 }
 
-.centroNovaPartida .divMapa {
+.centroNovaPartida .div-mapa {
     /* background-color: gray; */
-    height: 90vh;
+    height: 80vh;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.salaInicial {
+    background-color: white !important;
+}
+
+.pSalaSelecionada {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .divInformacoes {
@@ -102,7 +112,7 @@
 }
 
 .checkMovimento {
-    font-size: 12px;
+    font-size: 14px;
     margin: 5px;
     padding: 0;
     display: flex;
