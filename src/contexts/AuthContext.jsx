@@ -2,11 +2,53 @@ import { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
 
 const AuthContext = createContext();
+const TOKEN_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hora
 
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
     const [token, setToken] = useState(null);
     const [carregando, setCarregando] = useState(true);
+
+    const salvarTokenComTimestamp = (token, timestamp) => {
+        localStorage.setItem("access_token", token);
+        localStorage.setItem("token_timestamp", timestamp.toString());
+        setToken(token);
+    };
+
+    const isTokenExpirado = () => {
+        const timestamp = localStorage.getItem("token_timestamp");
+        if (!timestamp) return true;
+
+        const tempoLogin = parseInt(timestamp);
+        const tempoAtual = new Date().getTime();
+        const diferenca = tempoAtual - tempoLogin;
+
+        return diferenca > TOKEN_EXPIRATION_TIME;
+    };
+
+    function isTokenValido() {
+        const tokenSalvo = localStorage.getItem("access_token");
+        if (!tokenSalvo) return false;
+
+        return !isTokenExpirado();
+    };
+
+    //para verificar se o token ainda é válido
+    useEffect(() => {
+        const tokenSalvo = localStorage.getItem("access_token");
+        const userSalvo = localStorage.getItem("user");
+
+        if (tokenSalvo && userSalvo) {
+            if (!isTokenExpirado()) {
+                setToken(tokenSalvo);
+                setUsuario(JSON.parse(userSalvo));
+            } else {
+                logout();
+            }
+        }
+
+        setCarregando(false);
+    }, []);
 
     useEffect(() => {
         const tokenSalvo = localStorage.getItem("access_token");
@@ -27,8 +69,10 @@ export function AuthProvider({ children }) {
         });
 
         const data = response.data;
+        const timestampAtual = new Date().getTime();
 
-        localStorage.setItem("access_token", data.access_token);
+        // localStorage.setItem("access_token", data.access_token);
+        salvarTokenComTimestamp(data.access_token, timestampAtual);
         localStorage.setItem("user", JSON.stringify(data.user));
 
         setToken(data.access_token);
@@ -183,7 +227,7 @@ export function AuthProvider({ children }) {
 
 
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa, excluirmundo, atualizarMundo, getMundoById }}>
+        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa, excluirmundo, atualizarMundo, getMundoById, isTokenExpirado }}>
             {children}
         </AuthContext.Provider>
     );

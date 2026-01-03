@@ -1,0 +1,61 @@
+.mainNovaPartida {
+    /* height: 85vh; */
+    display: flex;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.esquerdaNovaPartida {
+    height: 100%;
+    width: 25%;
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+}
+
+.esquerdaNovaPartida .divControle {
+    border: none;
+    border-bottom: 1px solid var(--bordaCor);
+}
+
+.esquerdaNovaPartida .paragrafoInformativo {
+    text-align: justify;
+}
+
+.centroNovaPartida {
+    /* background-color: blue; */
+    border-left: 1px solid var(--bordaCor);
+    border-right: 1px solid var(--bordaCor);
+    width: 50%;
+    height: 100%;
+}
+
+.centroNovaPartida .divMapa {
+    /* background-color: gray; */
+    height: 90vh;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.divInformacoes {
+    padding: 20px;
+    height: 10vh;
+    box-sizing: border-box;
+}
+
+.direitaNovaPartida {
+    /* background-color: red; */
+    height: 100%;
+    width: 25%;
+}
+
+.rodapeNovaPartida {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-top: 1px solid var(--bordaCor);
+    box-sizing: border-box;
+    height: 15vh;
+}

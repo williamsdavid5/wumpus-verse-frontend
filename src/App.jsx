@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Registrar from "./pages/Registrar";
 import { AvisoLayout } from "./pages/AvisoLayout";
 import ProtecaoDeRotas from "./pages/ProtecaoDeRotas";
+import NovaPartida from "./pages/NovaPartida";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/saibamais" element={<SaibaMais />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registrar" element={<Registrar />} />
+          <Route path="/nova-partida" element={<NovaPartida />} />
         </Routes>
       </Router>
     </>
