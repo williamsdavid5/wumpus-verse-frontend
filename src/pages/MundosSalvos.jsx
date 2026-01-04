@@ -84,7 +84,7 @@ export default function MundosSalvos() {
 
             if (resposta && resposta.length > 0) {
 
-                const itensParaMostrar = resposta.slice(0, 5);
+                const itensParaMostrar = resposta.slice(0, 6);
 
                 if (limparLista || pagina === 1) {
                     setMundos(itensParaMostrar);
@@ -157,19 +157,23 @@ export default function MundosSalvos() {
                     botao1: "Aff"
                 })
             } else {
-                setMundos(prev => prev.filter(mundo => mundo.id !== id));
+                // setMundos(prev => prev.filter(mundo => mundo.id !== id));
                 setMiniGrid([]);
                 setDimensoes({ largura: 0, altura: 0 });
                 setPesquisa('');
                 setMundoSelecionado(null);
                 setCarregandoMinimapa(false);
                 setCellSize(0);
+                setPaginaAtual(0);
+                setMundos([]);
+
                 await confirm({
                     title: "Absoluta?",
                     message: "Brincadeira, seu mundo já foi excluído.",
                     type: "alert",
                     botao1: "Palhaço",
                 });
+                carregarMundosSalvos();
             }
         }
         setCarregandoLoading(false);
