@@ -135,3 +135,30 @@
     box-sizing: border-box;
     height: 15vh;
 }
+
+@media (max-width: 1250px) {
+
+
+    .centroNovaPartida .div-mapa {
+        height: 70vh;
+    }
+
+}
+
+@media (max-width: 1050px) {
+    .esquerdaNovaPartida {
+        width: 20%;
+    }
+
+    .centroNovaPartida {
+        width: 60%;
+    }
+
+    .centroNovaPartida .div-mapa {
+        height: 70vh;
+    }
+
+    .direitaNovaPartida {
+        width: 20%;
+    }
+}
