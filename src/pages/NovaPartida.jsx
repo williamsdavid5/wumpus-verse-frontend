@@ -24,7 +24,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 }
 
 export default function () {
-    const { getMundosSalvos, getMiniMapa } = useAuth();
+    const { getMundosSalvos, getMiniMapa, iniciarPartida } = useAuth();
     const navigate = useNavigate();
     const [mundos, setMundos] = useState([]);
     const [carregando, setCarregando] = useState(false);
@@ -36,6 +36,8 @@ export default function () {
     const [mundoSelecionado, setMundoSelecionado] = useState();
     const [agenteSelecionado, setAgenteSelecionado] = useState(0);
     const [salaSelecionada, setSalaSelecionada] = useState([]);
+    const [ativarDiagonal, setAtivarDiagonal] = useState(false);
+    const [offsets, setOffsets] = useState({ offsetX: 0, offsetY: 0 });
 
     const [carregadoMinimapa, setCarregandoMinimapa] = useState(false);
     const [miniGrid, setMiniGrid] = useState([]);
@@ -58,6 +60,60 @@ export default function () {
         setCellSize(Math.min(sizeX, sizeY, 40));
     }, [dimensoes]);
 
+    async function iniciar() {
+        if (!mundoSelecionado) {
+            alert('Selecione um mundo primeiro!');
+            return;
+        }
+
+        if (salaSelecionada.length === 0) {
+            alert('Selecione uma sala inicial!');
+            return;
+        }
+
+        try {
+            // Encontre a sala real no grid
+            const sala = miniGrid[salaSelecionada[1]]?.[salaSelecionada[0]];
+
+            if (!sala || !sala.ativa) {
+                alert('Sala inválida!');
+                return;
+            }
+
+            const partidaIniciada = await iniciarPartida(
+                mundoSelecionado,
+                ativarDiagonal,
+                {
+                    id: 0,
+                    type: agenteSelecionado,
+                    position_x: sala.xReal || salaSelecionada[0] + offsets.offsetX,
+                    position_y: sala.yReal || salaSelecionada[1] + offsets.offsetY
+                }
+            );
+
+            console.log('Partida iniciada:', partidaIniciada);
+
+            if (partidaIniciada) {
+                alert('Partida iniciada com sucesso!');
+                // navigate('/partida'); // Descomente quando tiver a rota
+            }
+        } catch (err) {
+            console.log("Erro completo ao iniciar partida: ", err);
+
+            // Verifique se é erro 422 específico
+            if (err.response?.status === 422) {
+                const errorDetail = err.response.data?.detail?.[0];
+                if (errorDetail?.msg === "Input should be a valid list") {
+                    alert('Erro: O servidor espera um array de agentes. Contate o administrador.');
+                } else {
+                    alert(`Erro de validação: ${JSON.stringify(err.response.data)}`);
+                }
+            } else {
+                alert('Erro ao iniciar partida. Verifique os dados e tente novamente.');
+            }
+        }
+    }
+
     async function carregarMinimapa(id) {
         setCarregandoMinimapa(true);
 
@@ -78,29 +134,44 @@ export default function () {
         const maxX = Math.max(...xs);
         const maxY = Math.max(...ys);
 
-        const largura = maxX - minX + 1;
-        const altura = maxY - minY + 1;
+        const largura = maxX + 2;
+        const altura = maxY + 2;
+
+        setOffsets({ offsetX: 0, offsetY: 0 });
 
         const grid = Array.from({ length: altura }, () =>
             Array.from({ length: largura }, () => ({
                 ativa: false,
                 wumpus: false,
                 buraco: false,
-                ouro: false
+                ouro: false,
+                xReal: 0,
+                yReal: 0
             }))
         );
 
         salasAtivas.forEach(sala => {
-            const x = sala.x - minX;
-            const y = sala.y - minY;
+            const x = sala.x;
+            const y = sala.y;
 
-            grid[y][x] = {
-                ativa: true,
-                wumpus: sala.wumpus,
-                buraco: sala.buraco,
-                ouro: sala.ouro
-            };
+            if (y < altura && x < largura) {
+                grid[y][x] = {
+                    ativa: true,
+                    wumpus: sala.wumpus,
+                    buraco: sala.buraco,
+                    ouro: sala.ouro,
+                    xReal: sala.x,
+                    yReal: sala.y
+                };
+            }
         });
+
+        for (let y = 0; y < altura; y++) {
+            for (let x = 0; x < largura; x++) {
+                grid[y][x].xReal = x;
+                grid[y][x].yReal = y;
+            }
+        }
 
         setMiniGrid(grid);
         setDimensoes({ largura, altura });
@@ -254,8 +325,10 @@ export default function () {
                     </div>
                 </aside>
                 <section className="centroNovaPartida">
-                    <div className="div-mapa" ref={containerRef} >
-                        {!carregadoMinimapa && (
+                    <div className="div-mapa" ref={containerRef}>
+                        {carregadoMinimapa ? (
+                            <img src={LoadingGif} alt="" style={{ width: '100px' }} />
+                        ) : (
                             <div
                                 className='mapa-blocos'
                                 style={{
@@ -268,8 +341,9 @@ export default function () {
                             >
                                 {miniGrid.map((linha, y) =>
                                     linha.map((sala, x) => {
-
-                                        const salaInicial = salaSelecionada.length > 0 && salaSelecionada[0] === x && salaSelecionada[1] === y;
+                                        const salaInicial = salaSelecionada.length > 0 &&
+                                            salaSelecionada[0] === x &&
+                                            salaSelecionada[1] === y;
 
                                         return (
                                             <Bloco
@@ -286,7 +360,6 @@ export default function () {
                                                         setSalaSelecionada([x, y]);
                                                         setSalaInvalida(false);
                                                     }
-                                                    // console.log(salaInicial);
                                                 }}
                                                 salaInicial={salaInicial}
                                             />
@@ -295,12 +368,6 @@ export default function () {
                                 )}
                             </div>
                         )}
-
-                        {carregadoMinimapa &&
-                            <>
-                                <img src={LoadingGif} alt="" style={{ width: '100px' }} />
-                            </>
-                        }
                     </div>
                     <div className="divInformacoes">
                         {miniGrid.length >= 0 &&
@@ -340,7 +407,13 @@ export default function () {
                             </div>
                         </div>
                         <label htmlFor="" className="checkMovimento">
-                            <input type="checkbox" name="" id="" />
+                            <input
+                                type="checkbox"
+                                name="" id=""
+                                onChange={(e) => {
+                                    setAtivarDiagonal(e.target.checked);
+                                    // console.log(e.target.checked);
+                                }} />
                             Permitir movimentos na diagonal
                         </label>
                     </div>
@@ -348,7 +421,7 @@ export default function () {
                         <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
                         <p>✅ Selecionou um agente</p>
                         <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p>
-                        <button className="botaoIniciarPartida">Iniciar partida</button>
+                        <button className="botaoIniciarPartida" onClick={iniciar}>Iniciar partida</button>
                     </div>
                 </aside>
             </main>

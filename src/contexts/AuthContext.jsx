@@ -50,17 +50,17 @@ export function AuthProvider({ children }) {
         setCarregando(false);
     }, []);
 
-    useEffect(() => {
-        const tokenSalvo = localStorage.getItem("access_token");
-        const userSalvo = localStorage.getItem("user");
+    // useEffect(() => {
+    //     const tokenSalvo = localStorage.getItem("access_token");
+    //     const userSalvo = localStorage.getItem("user");
 
-        if (tokenSalvo && userSalvo) {
-            setToken(tokenSalvo);
-            setUsuario(JSON.parse(userSalvo));
-        }
+    //     if (tokenSalvo && userSalvo) {
+    //         setToken(tokenSalvo);
+    //         setUsuario(JSON.parse(userSalvo));
+    //     }
 
-        setCarregando(false);
-    }, []);
+    //     setCarregando(false);
+    // }, []);
 
     async function login(email, password) {
         const response = await api.post("/auth/login", {
@@ -225,9 +225,57 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function iniciarPartida(environment_id, diagonal_movement, agentesConfig) {
+        // console.log('chegou');
+        try {
+            console.log('Enviando requisição:', {
+                environment_id,
+                diagonal_movement,
+                agentesConfig
+            });
+
+            // O backend espera um ARRAY de agentes, mesmo que seja apenas um
+            const response = await api.post(
+                "/environment/execution",
+                [agentesConfig], // Envolva em um array
+                {
+                    params: {
+                        environment_id,
+                        diagonal_movement
+                    }
+                }
+            );
+
+            console.log('Resposta recebida:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(
+                'Erro ao iniciar partida:',
+                error.response ? {
+                    status: error.response.status,
+                    data: error.response.data
+                } : error.message
+            );
+            // Propague o erro para que o componente possa tratá-lo
+            throw error;
+        }
+    }
 
     return (
-        <AuthContext.Provider value={{ usuario, token, carregando, login, logout, registrar, getMundosSalvos, salvarMundo, getMiniMapa, excluirmundo, atualizarMundo, getMundoById, isTokenExpirado }}>
+        <AuthContext.Provider value={{
+            usuario, token, carregando,
+            login,
+            logout,
+            registrar,
+            getMundosSalvos,
+            salvarMundo,
+            getMiniMapa,
+            excluirmundo,
+            atualizarMundo,
+            getMundoById,
+            isTokenExpirado,
+            iniciarPartida
+        }}>
             {children}
         </AuthContext.Provider>
     );

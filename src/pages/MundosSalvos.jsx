@@ -123,14 +123,6 @@ export default function MundosSalvos() {
         }
     }
 
-    // useEffect(() => {
-    //     if (pesquisa) {
-    //         setTemMaisItens(false);
-    //     } else {
-    //         setTemMaisItens(mundos.length === paginaAtual * 5);
-    //     }
-    // }, [pesquisa]);
-
     useEffect(() => {
         carregarMundosSalvos(1, true);
     }, [])
@@ -199,8 +191,8 @@ export default function MundosSalvos() {
         const maxX = Math.max(...xs);
         const maxY = Math.max(...ys);
 
-        const largura = maxX - minX + 1;
-        const altura = maxY - minY + 1;
+        const largura = maxX + 2;
+        const altura = maxY + 2;
 
         const grid = Array.from({ length: altura }, () =>
             Array.from({ length: largura }, () => ({
@@ -212,8 +204,8 @@ export default function MundosSalvos() {
         );
 
         salasAtivas.forEach(sala => {
-            const x = sala.x - minX;
-            const y = sala.y - minY;
+            const x = sala.x;
+            const y = sala.y;
 
             grid[y][x] = {
                 ativa: true,

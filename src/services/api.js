@@ -7,6 +7,13 @@ const api = axios.create({
     }
 });
 
+// const api = axios.create({
+//     baseURL: "/api",
+//     headers: {
+//         "Content-Type": "application/json"
+//     }
+// });
+
 
 api.interceptors.request.use(
     (config) => {
@@ -61,6 +68,14 @@ api.interceptors.response.use(
     (error) => {
         const status = error.response?.status;
         const url = error.config?.url;
+        const method = error.config?.method;
+
+        console.log('Interceptor error:', {
+            url,
+            method,
+            status,
+            data: error.response?.data
+        });
 
         const rotasIgnoradas = [
             "/auth/login",
@@ -69,13 +84,15 @@ api.interceptors.response.use(
 
         const ignorar = rotasIgnoradas.some(r => url?.includes(r));
 
-        if (!ignorar && (status === 401 || status === 422)) {
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("user");
-            window.location.replace("/login");
+        // if (!ignorar && (status === 401 || status === 422)) {
+        //     console.log('Token inválido ou expirado, redirecionando para login');
+        //     localStorage.removeItem("access_token");
+        //     localStorage.removeItem("user");
+        //     localStorage.removeItem("token_timestamp");
+        //     window.location.replace("/login");
 
-            return new Promise(() => { });
-        }
+        //     return new Promise(() => { });
+        // }
 
         return Promise.reject(error);
     }
