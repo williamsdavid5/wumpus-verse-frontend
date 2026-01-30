@@ -4,6 +4,7 @@ import LoadingGif from '../assets/loadingGif.gif'
 import { useState, useEffect, useRef } from "react";
 import { useConfirm } from '../contexts/ConfirmContext';
 import { useNavigate } from 'react-router-dom'
+import { useExecution } from "../contexts/ExecutionContext";
 
 function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, onClick, salaInicial }) {
     return (
@@ -24,7 +25,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 }
 
 export default function () {
-    const { getMundosSalvos, getMiniMapa, iniciarPartida } = useAuth();
+    const { getMundosSalvos, getMiniMapa } = useAuth();
     const navigate = useNavigate();
     const [mundos, setMundos] = useState([]);
     const [carregando, setCarregando] = useState(false);
@@ -38,6 +39,7 @@ export default function () {
     const [salaSelecionada, setSalaSelecionada] = useState([]);
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
     const [offsets, setOffsets] = useState({ offsetX: 0, offsetY: 0 });
+    const { setExecutionConfig } = useExecution();
 
     const [carregadoMinimapa, setCarregandoMinimapa] = useState(false);
     const [miniGrid, setMiniGrid] = useState([]);
@@ -72,7 +74,6 @@ export default function () {
         }
 
         try {
-            // Encontre a sala real no grid
             const sala = miniGrid[salaSelecionada[1]]?.[salaSelecionada[0]];
 
             if (!sala || !sala.ativa) {
@@ -80,37 +81,16 @@ export default function () {
                 return;
             }
 
-            const partidaIniciada = await iniciarPartida(
+            setExecutionConfig({
                 mundoSelecionado,
                 ativarDiagonal,
-                {
-                    id: 0,
-                    type: agenteSelecionado,
-                    position_x: sala.xReal || salaSelecionada[0] + offsets.offsetX,
-                    position_y: sala.yReal || salaSelecionada[1] + offsets.offsetY
-                }
-            );
+                agenteSelecionado,
+                salaSelecionada
+            })
 
-            console.log('Partida iniciada:', partidaIniciada);
-
-            if (partidaIniciada) {
-                alert('Partida iniciada com sucesso!');
-                // navigate('/partida'); // Descomente quando tiver a rota
-            }
+            navigate('/execucao');
         } catch (err) {
             console.log("Erro completo ao iniciar partida: ", err);
-
-            // Verifique se é erro 422 específico
-            if (err.response?.status === 422) {
-                const errorDetail = err.response.data?.detail?.[0];
-                if (errorDetail?.msg === "Input should be a valid list") {
-                    alert('Erro: O servidor espera um array de agentes. Contate o administrador.');
-                } else {
-                    alert(`Erro de validação: ${JSON.stringify(err.response.data)}`);
-                }
-            } else {
-                alert('Erro ao iniciar partida. Verifique os dados e tente novamente.');
-            }
         }
     }
 
@@ -421,7 +401,10 @@ export default function () {
                         <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
                         <p>✅ Selecionou um agente</p>
                         <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p>
-                        <button className="botaoIniciarPartida" onClick={iniciar}>Iniciar partida</button>
+                        <button
+                            className="botaoIniciarPartida"
+                            onClick={iniciar}
+                        >Iniciar partida</button>
                     </div>
                 </aside>
             </main>

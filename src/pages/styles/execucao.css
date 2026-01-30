@@ -1,0 +1,20 @@
+.execucaoMain {
+    background-color: black;
+    display: flex;
+}
+
+.secaoMapaExecucao {
+    /* background-color: gray; */
+    width: 60%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.configsExecucao {
+    /* background-color: crimson; */
+    width: 40%;
+    height: 100vh;
+    border-left: 1px solid var(--bordaCor);
+}

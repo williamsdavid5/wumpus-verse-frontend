@@ -8,6 +8,7 @@ import Registrar from "./pages/Registrar";
 import { AvisoLayout } from "./pages/AvisoLayout";
 import ProtecaoDeRotas from "./pages/ProtecaoDeRotas";
 import NovaPartida from "./pages/NovaPartida";
+import Execucao from "./pages/Execucao";
 
 export default function App() {
   return (
@@ -37,6 +38,13 @@ export default function App() {
             element={
               <ProtecaoDeRotas>
                 <NovaPartida />
+              </ProtecaoDeRotas>
+            }
+          />
+          <Route path="/execucao"
+            element={
+              <ProtecaoDeRotas>
+                <Execucao />
               </ProtecaoDeRotas>
             }
           />
