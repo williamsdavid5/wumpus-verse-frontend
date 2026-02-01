@@ -189,6 +189,10 @@ button:hover {
     background-color: red;
 }
 
+.elemento.agente {
+    background-color: greenyellow;
+}
+
 .elemento.buraco {
     background-color: blueviolet;
 }

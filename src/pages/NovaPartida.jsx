@@ -169,7 +169,7 @@ export default function () {
 
             if (resposta && resposta.length > 0) {
                 // console.log(resposta);
-                const itensParaMostrar = resposta.slice(0, 5);
+                const itensParaMostrar = resposta.slice(0, 6);
 
                 if (limparLista || pagina === 1) {
                     setMundos(itensParaMostrar);
