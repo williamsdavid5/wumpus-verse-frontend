@@ -32,6 +32,7 @@
 
 .botoesExecucaoo {
     width: 100%;
+    height: 40px;
     /* background-color: gray; */
     display: flex;
 }
@@ -41,6 +42,14 @@
     color: white;
 }
 
+.botaoNovaExecucao {
+    background-color: white;
+    color: black;
+}
+
 .botoesExecucaoo button {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

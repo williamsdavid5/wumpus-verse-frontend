@@ -72,7 +72,7 @@ export default function Execucao() {
             setExecutandoAnimacao(true);
 
             if (partidaIniciada) {
-                alert('Partida iniciada com sucesso! A animação começará automaticamente.');
+                alert('Partida baixada, execute!');
                 setModoEditarSala(false);
             }
         } catch (err) {
@@ -183,20 +183,22 @@ export default function Execucao() {
 
                     <div className="divControle">
                         <div className="botoesExecucaoo">
-                            <button
-                                className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
-                                onClick={() => setModoEditarSala(!modoEditarSala)}
-                                disabled={passosExecucao.length > 0}
-                            >
-                                {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
-                            </button>
                             {podeIniciar && (
-                                <button
-                                    className="botaoIniciar"
-                                    onClick={iniciar}
-                                >
-                                    Iniciar Execução
-                                </button>
+                                <>
+                                    <button
+                                        className="botaoIniciar"
+                                        onClick={iniciar}
+                                    >
+                                        Iniciar Execução
+                                    </button>
+                                    <button
+                                        className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
+                                        onClick={() => setModoEditarSala(!modoEditarSala)}
+                                        disabled={passosExecucao.length > 0}
+                                    >
+                                        {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
+                                    </button>
+                                </>
                             )}
                             {passosExecucao.length > 0 && (
 
