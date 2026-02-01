@@ -8,7 +8,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, salaInicial, onClick, clicav
 
     return (
         <div
-            className={`bloco ${selecionado ? 'selecionado' : ''} ${salaInicial ? 'salaInicial' : ''} ${clicavel ? 'clicavel' : ''}`}
+            className={`bloco ${selecionado ? 'selecionado' : ''} ${salaInicial ? 'salaInicialExecucao' : ''} ${clicavel ? 'clicavel' : ''}`}
             onClick={onClick}
             style={{ cursor: clicavel ? 'pointer' : 'default' }}
         >
@@ -149,7 +149,7 @@ export default function Minimapa({
     }, []);
 
     const handleMouseDown = useCallback((e) => {
-        if (e.button !== 0) return; // Apenas botão esquerdo
+        if (e.button !== 0) return;
         setIsPanning(true);
 
         const rect = containerRef.current.getBoundingClientRect();
@@ -188,23 +188,19 @@ export default function Minimapa({
         };
     }, [handleMouseDown, handleMouseMove, handleMouseUp]);
 
-    // Funções de execução
     const toggleExecucao = useCallback(() => {
         if (passosExecucao.length === 0) return;
 
         if (modoManual) {
-            // Sai do modo manual e volta para a execução automática
             setModoManual(false);
             setExecutando(true);
         } else if (executando) {
-            // Pausa a execução automática
             if (intervaloRef.current) {
                 clearInterval(intervaloRef.current);
             }
             setExecutando(false);
-            setModoManual(true); // Ativa modo manual ao pausar
+            setModoManual(true);
         } else {
-            // Inicia execução automática
             setModoManual(false);
             setExecutando(true);
         }
@@ -213,12 +209,10 @@ export default function Minimapa({
     const irParaPasso = useCallback((novoPasso) => {
         if (passosExecucao.length === 0) return;
 
-        // Limita o passo entre 0 e o total de passos - 1
         const passoLimitado = Math.max(0, Math.min(novoPasso, passosExecucao.length - 1));
 
         setPassoAtual(passoLimitado);
 
-        // Atualiza a posição do agente para o passo selecionado
         const passo = passosExecucao[passoLimitado];
         if (passo) {
             setAgentePosicao({
@@ -227,7 +221,6 @@ export default function Minimapa({
             });
         }
 
-        // Se estiver executando automaticamente, pausa e vai para modo manual
         if (executando) {
             if (intervaloRef.current) {
                 clearInterval(intervaloRef.current);
@@ -237,7 +230,6 @@ export default function Minimapa({
         }
     }, [passosExecucao, executando]);
 
-    // Funções para navegar um passo por vez
     const passoAnterior = useCallback(() => {
         if (passoAtual > 0) {
             irParaPasso(passoAtual - 1);
@@ -337,25 +329,20 @@ export default function Minimapa({
 
         const { clientWidth, clientHeight } = containerRef.current;
 
-        // Calcula o tamanho máximo baseado no espaço disponível
-        const maxWidth = clientWidth * 0.9; // 90% da largura do container
-        const maxHeight = clientHeight * 0.8; // 80% da altura do container
+        const maxWidth = clientWidth * 0.9;
+        const maxHeight = clientHeight * 0.8;
 
         const sizeBasedOnWidth = Math.floor(maxWidth / dimensoes.largura);
         const sizeBasedOnHeight = Math.floor(maxHeight / dimensoes.altura);
 
-        // Usa o menor valor, mas com limites mínimos e máximos
-        // MULTIPLICA pelo zoom diretamente aqui
         const calculatedSize = Math.min(sizeBasedOnWidth, sizeBasedOnHeight);
-        const finalSize = Math.max(15, Math.min(calculatedSize, 40)) * zoom; // Aplica zoom direto
+        const finalSize = Math.max(15, Math.min(calculatedSize, 40)) * zoom;
 
         setCellSize(finalSize);
 
-        // Ajustar pan para centralizar
         const mapaWidth = dimensoes.largura * finalSize;
         const mapaHeight = dimensoes.altura * finalSize;
 
-        // Se o mapa for menor que o container, centralizar
         if (mapaWidth < clientWidth && mapaHeight < clientHeight) {
             setPan({
                 x: (clientWidth - mapaWidth) / 2,
@@ -370,7 +357,6 @@ export default function Minimapa({
 
     return (
         <div className="minimapaContainer">
-            {/* Container principal do mapa com overflow */}
             <div
                 ref={containerRef}
                 className="mapaContainer"
@@ -435,28 +421,29 @@ export default function Minimapa({
             <footer className='rodapeControlesExecucao'>
                 <div className="secaoNoRodape botoesExecucao">
                     <button
-                        className="botaoControle botaoContinuar"
+                        className={`botaoControle ${passosExecucao.length > 0 ? 'botaoExecutarRoxo' : 'botaoExecutarBlack'}`}
                         onClick={toggleExecucao}
                         disabled={passosExecucao.length === 0}
                         title={modoManual ? "Continuar execução automática" : executando ? "Pausar execução" : "Iniciar execução"}
                     >
-                        {modoManual ? 'Continuar' : executando ? 'Pausar' : 'Executar'}
+                        {modoManual ? 'Continuar' : executando ? '▐▐' : 'Executar'}
                     </button>
-                    <button
+                    {/* <button
                         className="botaoControle botaoResetar"
                         onClick={resetarExecucao}
                         disabled={passosExecucao.length === 0}
                         title="Voltar ao início"
                     >
                         Resetar
-                    </button>
+                    </button> */}
                     <button
                         className="botaoControle botaoPasso"
                         onClick={passoAnterior}
                         disabled={passosExecucao.length === 0 || passoAtual === 0}
                         title="Passo anterior"
                     >
-                        Anterior
+                        {/* &lt;&lt; */}
+                        ⏮ Anterior
                     </button>
                     <button
                         className="botaoControle botaoPasso"
@@ -464,16 +451,14 @@ export default function Minimapa({
                         disabled={passosExecucao.length === 0 || passoAtual >= passosExecucao.length - 1}
                         title="Próximo passo"
                     >
-                        Próximo
+                        Próximo ⏭
+                        {/* &gt;&gt; */}
                     </button>
                 </div>
 
                 <div className="secaoNoRodape secaoProgresso">
                     <div className="infoPasso">
                         <span>Passo {passoAtual + 1} de {passosExecucao.length}</span>
-                        {/* <span className={`modo-indicador ${modoManual ? 'manual' : 'auto'}`}>
-                            {modoManual ? '🔧 Manual' : executando ? '⚡ Executando' : '⏸️ Pausado'}
-                        </span> */}
                     </div>
 
                     <div className="sliderProgresso">

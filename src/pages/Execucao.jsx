@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import { useExecution } from "../contexts/ExecutionContext";
 import { useAuth } from '../contexts/AuthContext';
+import { useConfirm } from '../contexts/ConfirmContext';
 import './styles/execucao.css'
 import Minimapa from "./Minimapa";
+import LoadingPage from './LoadingPage';
 
 export default function Execucao() {
     const { iniciarPartida } = useAuth();
@@ -18,6 +20,8 @@ export default function Execucao() {
     const [salaInvalida, setSalaInvalida] = useState(false);
     const [modoEditarSala, setModoEditarSala] = useState(false);
     const [executandoAnimacao, setExecutandoAnimacao] = useState(false);
+    const [carregando, setCarregando] = useState(false);
+    const { confirm } = useConfirm();
 
     const podeIniciar =
         mundoSelecionado &&
@@ -54,6 +58,7 @@ export default function Execucao() {
 
         try {
             setExecutandoAnimacao(false);
+            setCarregando(true);
 
             const partidaIniciada = await iniciarPartida(
                 mundoSelecionado,
@@ -72,12 +77,14 @@ export default function Execucao() {
             setExecutandoAnimacao(true);
 
             if (partidaIniciada) {
-                alert('Partida baixada, execute!');
+                // alert('Partida baixada, execute!');
                 setModoEditarSala(false);
             }
         } catch (err) {
             console.log("Erro ao iniciar partida: ", err);
-            alert('Erro ao iniciar partida: ' + (err.message || 'Verifique os dados'));
+            // alert('Erro ao iniciar partida: ' + (err.message || 'Verifique os dados'));
+        } finally {
+            setCarregando(false);
         }
     }
 
@@ -100,48 +107,13 @@ export default function Execucao() {
                 <section className="secaoMapaExecucao">
                     {mundoSelecionado && mundoSelecionado !== -1 ? (
                         <>
-                            {/* <div className="infoMundo">
-                                <h3>Execução em Tempo Real</h3>
-                                {passosExecucao.length > 0 && (
-                                    <div className="infoExecucaoResumo">
-                                        <p>
-                                            <b>Total de passos:</b> {passosExecucao.length}<br />
-                                            <b>Passo atual:</b> {passosExecucao[0] ? '1' : '0'} de {passosExecucao.length}<br />
-                                            <b>Status:</b> {executandoAnimacao ? '▶️ Em execução' : '⏸️ Pausado'}
-                                        </p>
-                                    </div>
-                                )}
-                            </div> */}
-
                             <Minimapa
                                 mundoId={mundoSelecionado}
                                 salaInicial={salaSelecionada}
                                 onSalaSelecionada={handleSalaSelecionada}
                                 modoEdicao={modoEditarSala}
-                                passosExecucao={passosExecucao} // Passar os passos para o Minimapa
+                                passosExecucao={passosExecucao}
                             />
-
-                            {/* <div className="statusSala">
-                                {salaSelecionada.length > 0 ? (
-                                    <div className={`infoSala ${salaInvalida ? 'invalida' : 'valida'}`}>
-                                        <h4>Sala Inicial Selecionada</h4>
-                                        <p>
-                                            <b>Coordenadas:</b> ({salaSelecionada[0]}, {salaSelecionada[1]})<br />
-                                            <b>Status:</b> {salaInvalida ? '❌ Inválida' : '✅ Válida'}<br />
-                                            {passosExecucao.length > 0 && (
-                                                <>
-                                                    <b>Execução:</b> {passosExecucao.length} passos carregados
-                                                </>
-                                            )}
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="infoSala">
-                                        <h4>Sala Inicial</h4>
-                                        <p>Nenhuma sala selecionada. {modoEditarSala ? 'Clique no mapa para selecionar.' : 'Ative o modo edição para selecionar.'}</p>
-                                    </div>
-                                )}
-                            </div> */}
                         </>
                     ) : (
                         <div className="semMundo">
@@ -154,23 +126,37 @@ export default function Execucao() {
                     <div className="divControle">
                         <h2>Controle de Execução</h2>
                         <p>
-                            Configure a execução e observe o agente caminhando pelo ambiente.
+                            Configure a execução e observe o agente caminhando pelo ambiente. O agente vence o jogo se conseguir coletar um ouro e voltar para a sala inical.
                         </p>
                     </div>
-                    <label htmlFor="" className="checkMovimento">
-                        <input
-                            type="checkbox"
-                            name=""
-                            id=""
-                            onChange={(e) => { setAtivarDiagonal(e.target.checked) }}
-                            checked={ativarDiagonal}
-                            disabled={passosExecucao.length > 0}
-                        />
-                        Ativar movimento diagonal
-                    </label>
-
-                    <div className="divControle">
-                        <p><b>Agente:</b> Tipo {agenteSelecionado}</p>
+                    <div className="divControle reconfigurar">
+                        <p className="paragrafoInformativo">
+                            Reconfigure a execução atual. Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial, para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
+                        </p>
+                        <div className="reconfiguracoes">
+                            <label htmlFor="" className="checkMovimento">
+                                <input
+                                    type="checkbox"
+                                    name=""
+                                    id=""
+                                    onChange={(e) => { setAtivarDiagonal(e.target.checked) }}
+                                    checked={ativarDiagonal}
+                                    disabled={passosExecucao.length > 0}
+                                />
+                                Ativar movimento diagonal
+                            </label>
+                            <button
+                                className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
+                                onClick={() => setModoEditarSala(!modoEditarSala)}
+                                disabled={passosExecucao.length > 0}
+                            >
+                                {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
+                            </button>
+                            <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
+                        </div>
+                    </div>
+                    {/* <div className="divControle">
+                        <p><b>Agente:</b> {agenteSelecionado}</p>
                         <p><b>Mundo:</b> ID {mundoSelecionado}</p>
                         <p className={salaSelecionada.length > 0 ? 'valido' : 'invalido'}>
                             <b>Sala inicial:</b> {
@@ -179,7 +165,7 @@ export default function Execucao() {
                                     : 'Não definida'
                             }
                         </p>
-                    </div>
+                    </div> */}
 
                     <div className="divControle">
                         <div className="botoesExecucaoo">
@@ -189,61 +175,32 @@ export default function Execucao() {
                                         className="botaoIniciar"
                                         onClick={iniciar}
                                     >
-                                        Iniciar Execução
-                                    </button>
-                                    <button
-                                        className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
-                                        onClick={() => setModoEditarSala(!modoEditarSala)}
-                                        disabled={passosExecucao.length > 0}
-                                    >
-                                        {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
+                                        Baixar uma partida
                                     </button>
                                 </>
                             )}
                             {passosExecucao.length > 0 && (
+                                <>
+                                    <p style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>Partida baixada! Mas se preferir: </p><br />
+                                    <button
+                                        className="botaoNovaExecucao"
+                                        onClick={() => {
+                                            setPassosExecucao([]);
+                                            setPartida([]);
+                                            setExecutandoAnimacao(false);
 
-                                <button
-                                    className="botaoNovaExecucao"
-                                    onClick={() => {
-                                        setPassosExecucao([]);
-                                        setPartida([]);
-                                        setExecutandoAnimacao(false);
-                                    }}
-                                >
-                                    Nova Execução
-                                </button>
-
+                                        }}
+                                    >
+                                        Baixar Nova partida
+                                    </button>
+                                </>
                             )}
                         </div>
 
                     </div>
-
-
-                    {/* {partida && partida.length > 0 && (
-                        <div className="divControles">
-                            <h3>Detalhes da Execução</h3>
-                            <p><b>Total de passos:</b> {partida.length}</p>
-                            <p><b>Primeiro passo:</b>
-                                {partida[0] && ` Posição (${partida[0].posicao_x}, ${partida[0].posicao_y}), Ação: ${partida[0].acao}`}
-                            </p>
-                            <p><b>Último passo:</b>
-                                {partida[partida.length - 1] && ` Posição (${partida[partida.length - 1].posicao_x}, ${partida[partida.length - 1].posicao_y})`}
-                            </p>
-
-                            <div className="listaPassos">
-                                <h4>Últimos 5 passos:</h4>
-                                {partida.slice(-5).map((passo, index) => (
-                                    <div key={index} className="passoItem">
-                                        <span>Passo {partida.indexOf(passo) + 1}:</span>
-                                        <span>Posição ({passo.posicao_x}, {passo.posicao_y})</span>
-                                        <span>Ação: {passo.acao}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )} */}
                 </aside>
             </main>
+            {carregando && <LoadingPage></LoadingPage>}
         </>
     )
 }

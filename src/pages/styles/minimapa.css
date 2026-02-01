@@ -29,11 +29,15 @@
 }
 
 .botoesExecucao button {
-    font-size: 10px;
+    /* font-size: 1px; */
     flex: 1;
     height: 100%;
     border: none;
     margin: 0;
+}
+
+.roxo {
+    background-color: var(--roxoDestaque);
 }
 
 .botaoPasso {
@@ -45,8 +49,15 @@
     color: white;
 }
 
-.botaoContinuar {
+.botaoExecutarRoxo {
+    /* background-color: var(--roxoDestaque); */
     background-color: var(--roxoDestaque);
+    /* color: black; */
+}
+
+.botaoContinuar:hover {
+    background-color: var(--roxoDestaque);
+    color: white;
 }
 
 .secaoZoom {
@@ -71,6 +82,11 @@
 .osBotoesDeZoom button {
     flex: 1;
     margin: 0;
+    background-color: white;
+    color: black;
+    font-weight: bolder;
+    font-size: 20px;
+    margin: 0;
 }
 
 .rodapeControlesExecucao {
@@ -88,4 +104,8 @@
     color: white;
     /* padding: 5px; */
     /* justify-content: space-between; */
+}
+
+.salaInicialExecucao {
+    border: solid 2px white;
 }

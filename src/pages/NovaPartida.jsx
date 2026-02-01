@@ -64,12 +64,22 @@ export default function () {
 
     async function iniciar() {
         if (!mundoSelecionado) {
-            alert('Selecione um mundo primeiro!');
+            await confirm({
+                title: "Vai fazer o que?",
+                message: "Como você vai executar uma partida sem selecionar um mundo?",
+                type: "alert",
+                botao1: "ops kkk"
+            })
             return;
         }
 
         if (salaSelecionada.length === 0) {
-            alert('Selecione uma sala inicial!');
+            await confirm({
+                title: "Espera um pouco",
+                message: "Não me diga que você queria iniciar uma partida sem selecionar uma sala inicial.",
+                type: "alert",
+                botao1: "Droga"
+            })
             return;
         }
 

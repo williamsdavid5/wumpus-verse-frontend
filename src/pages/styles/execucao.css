@@ -28,6 +28,8 @@
 
 .botaoIniciar {
     padding: 10px;
+    background-color: var(--roxoDestaque);
+    border: none;
 }
 
 .botoesExecucaoo {
@@ -52,4 +54,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.reconfigurar {
+    display: flex;
+    /* background-color: gray; */
+}
+
+.reconfiguracoes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reconfiguracoes label {
+    width: auto;
+    flex: none;
+}
+
+.botaoEditarSala {
+    background-color: white;
+    color: black;
+    padding: 8px;
+    margin-bottom: 10px;
 }
