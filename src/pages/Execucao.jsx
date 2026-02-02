@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useExecution } from "../contexts/ExecutionContext";
 import { useAuth } from '../contexts/AuthContext';
 import { useConfirm } from '../contexts/ConfirmContext';
@@ -101,6 +101,80 @@ export default function Execucao() {
         setExecutandoAnimacao(false);
     }
 
+    const baixarJSON = useCallback(() => {
+        if (passosExecucao.length === 0) {
+            alert('Nenhuma partida para baixar!');
+            return;
+        }
+
+        const dadosPartida = {
+            mundoId: mundoSelecionado,
+            agente: agenteSelecionado,
+            salaInicial: salaSelecionada,
+            movimentoDiagonal: ativarDiagonal,
+            passos: passosExecucao,
+            dataGeracao: new Date().toISOString(),
+            metadata: {
+                totalPassos: passosExecucao.length,
+                agenteTipo: `Tipo ${agenteSelecionado}`
+            }
+        };
+
+        const jsonString = JSON.stringify(dadosPartida, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `partida_mundo_${mundoSelecionado}_${new Date().getTime()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        alert('Partida baixada com sucesso!');
+    }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
+
+
+    const importarJSON = useCallback(() => {
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                setCarregando(true);
+                const texto = await file.text();
+                const dados = JSON.parse(texto);
+
+                if (!dados.passos || !Array.isArray(dados.passos)) {
+                    throw new Error('Formato de arquivo inválido: faltam passos da execução');
+                }
+
+                setMundoSelecionado(dados.mundoId || mundoSelecionado);
+                setAgenteSelecionado(dados.agente || agenteSelecionado);
+                setSalaSelecionada(dados.salaInicial || salaSelecionada);
+                setAtivarDiagonal(dados.movimentoDiagonal || ativarDiagonal);
+                setPassosExecucao(dados.passos);
+                setPartida(dados.passos);
+
+                alert(`Partida importada com sucesso! ${dados.passos.length} passos carregados.`);
+
+            } catch (error) {
+                console.error('Erro ao importar JSON:', error);
+                alert('Erro ao importar arquivo: ' + error.message);
+            } finally {
+                setCarregando(false);
+            }
+        };
+
+        input.click();
+    }, [mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
+
     return (
         <>
             <main className="execucaoMain">
@@ -158,21 +232,10 @@ export default function Execucao() {
                         </div>
                     )}
 
-                    {/* <div className="divControle">
-                        <p><b>Agente:</b> {agenteSelecionado}</p>
-                        <p><b>Mundo:</b> ID {mundoSelecionado}</p>
-                        <p className={salaSelecionada.length > 0 ? 'valido' : 'invalido'}>
-                            <b>Sala inicial:</b> {
-                                salaSelecionada.length > 0
-                                    ? `(${salaSelecionada[0]}, ${salaSelecionada[1]})`
-                                    : 'Não definida'
-                            }
-                        </p>
-                    </div> */}
-
                     <div className="divControle">
                         <div className="botoesExecucaoo">
-                            {podeIniciar && (
+
+                            {passosExecucao.length == 0 && (
                                 <div className="divIniciarNova">
                                     <button
                                         className="botaoIniciar"
@@ -183,11 +246,19 @@ export default function Execucao() {
                                     <p><span style={{ fontWeight: 'bold', marginTop: '20px' }}>Funcionamento</span><br />
                                         As partidas são individuais, ao iniciar uma nova, essa partida é baixada para o seu computador onde você poderá exibi-la de diversas maneiras. Caso você deseje outra, esta será baixada individualmente da mesma maneira. Faça um teste, baixe uma partida!
                                     </p>
+                                    <button
+                                        onClick={importarJSON}
+                                        className="botaoImportar"
+                                        disabled={passosExecucao.length > 0}
+                                    >
+                                        Importar JSON
+                                    </button>
                                 </div>
                             )}
+
                             {passosExecucao.length > 0 && (
                                 <>
-                                    <p style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>Partida baixada! Mas se preferir: </p><br />
+                                    <p style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>Partida Gerada! Mas se preferir: </p><br />
                                     <button
                                         className="botaoNovaExecucao"
                                         onClick={() => {
@@ -202,8 +273,27 @@ export default function Execucao() {
                                 </>
                             )}
                         </div>
-
                     </div>
+                    {passosExecucao.length > 0 && (
+                        <>
+                            <div className="divControle">
+                                <p><span style={{ fontWeight: 'bold' }}>Salvar partida</span><br />
+                                    Você pode salvar a partida completa em formato de arquivo no seu próprio computador, ou você pode salvar os resultados desta partida no banco de dados. Por limitações técnicas, as partidas salvas no banco <span className="destaqueRed">não são salvas de forma completa</span>, apenas os seus resultados.
+                                </p>
+                                <div className="divAuxBotoesEmLinha">
+                                    <button
+                                        onClick={baixarJSON}
+                                        className="botaoBaixar"
+                                    >
+                                        Baixar JSON da partida
+                                    </button>
+                                    <button>
+                                        Salvar resultados da minha conta
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </aside>
             </main>
             {carregando && <LoadingPage></LoadingPage>}

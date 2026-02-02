@@ -76,7 +76,7 @@ export default function () {
         if (salaSelecionada.length === 0) {
             await confirm({
                 title: "Espera um pouco",
-                message: "Não me diga que você queria iniciar uma partida sem selecionar uma sala inicial.",
+                message: "Por favor, não me diga que você queria iniciar uma partida sem selecionar uma sala inicial.",
                 type: "alert",
                 botao1: "Droga"
             })

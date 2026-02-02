@@ -89,4 +89,18 @@
 .divIniciarNova button {
     width: 100%;
     margin: 0;
+    height: 35px;
+}
+
+.divIniciarNova p {
+    margin: 10px 0px;
+}
+
+.divAuxBotoesEmLinha {
+    display: flex;
+    height: 50px;
+}
+
+.divAuxBotoesEmLinha button {
+    flex: 1;
 }
