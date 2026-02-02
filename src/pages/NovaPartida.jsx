@@ -64,12 +64,17 @@ export default function () {
 
     async function iniciar() {
         if (!mundoSelecionado) {
-            await confirm({
+            const resposta = await confirm({
                 title: "Vai fazer o que?",
                 message: "Como você vai executar uma partida sem selecionar um mundo?",
-                type: "alert",
-                botao1: "ops kkk"
+                type: "confirm",
+                botao1: "ops kkk",
+                botao2: 'Eu tenho um arquivo JSON'
             })
+            console.log(resposta);
+            if (resposta == 'no') {
+                navigate('/execucao');
+            }
             return;
         }
 

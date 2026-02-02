@@ -42,7 +42,12 @@ export default function Execucao() {
 
     async function iniciar() {
         if (!mundoSelecionado || mundoSelecionado === -1) {
-            alert('Selecione um mundo primeiro!');
+            await confirm({
+                title: "Bobão",
+                message: "Vai executar o que? onde? kkkkkkkkkkkkk selecione um mundo",
+                type: "alert",
+                botao1: "Droga"
+            })
             return;
         }
 
@@ -109,15 +114,25 @@ export default function Execucao() {
 
         const dadosPartida = {
             mundoId: mundoSelecionado,
-            agente: agenteSelecionado,
+            agenteSelecionado: agenteSelecionado,
             salaInicial: salaSelecionada,
-            movimentoDiagonal: ativarDiagonal,
-            passos: passosExecucao,
-            dataGeracao: new Date().toISOString(),
+            ativarDiagonal: ativarDiagonal,
+
+            passosExecucao: passosExecucao,
+            partida: partida,
+
             metadata: {
                 totalPassos: passosExecucao.length,
-                agenteTipo: `Tipo ${agenteSelecionado}`
-            }
+                agenteTipo: `Agente ${agenteSelecionado}`,
+                dataGeracao: new Date().toISOString(),
+                mundoSelecionado: mundoSelecionado,
+                salaSelecionada: salaSelecionada,
+                ativarDiagonal: ativarDiagonal
+            },
+
+            agente: agenteSelecionado,
+            movimentoDiagonal: ativarDiagonal,
+            dataGeracao: new Date().toISOString()
         };
 
         const jsonString = JSON.stringify(dadosPartida, null, 2);
@@ -132,12 +147,10 @@ export default function Execucao() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        alert('Partida baixada com sucesso!');
-    }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
+    }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal, partida]);
 
 
     const importarJSON = useCallback(() => {
-
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
@@ -151,18 +164,43 @@ export default function Execucao() {
                 const texto = await file.text();
                 const dados = JSON.parse(texto);
 
-                if (!dados.passos || !Array.isArray(dados.passos)) {
+                if (!dados.passosExecucao && !dados.passos) {
                     throw new Error('Formato de arquivo inválido: faltam passos da execução');
                 }
 
-                setMundoSelecionado(dados.mundoId || mundoSelecionado);
-                setAgenteSelecionado(dados.agente || agenteSelecionado);
-                setSalaSelecionada(dados.salaInicial || salaSelecionada);
-                setAtivarDiagonal(dados.movimentoDiagonal || ativarDiagonal);
-                setPassosExecucao(dados.passos);
-                setPartida(dados.passos);
+                const passos = dados.passosExecucao || dados.passos;
 
-                alert(`Partida importada com sucesso! ${dados.passos.length} passos carregados.`);
+                const agente = dados.agenteSelecionado !== undefined ? dados.agenteSelecionado :
+                    (dados.agente !== undefined ? dados.agente : 0);
+
+                const mundoId = dados.mundoId || dados.mundoSelecionado || mundoSelecionado;
+
+                const salaInicial = dados.salaInicial || dados.salaSelecionada || salaSelecionada;
+
+                const movimentoDiagonal = dados.ativarDiagonal !== undefined ? dados.ativarDiagonal :
+                    (dados.movimentoDiagonal !== undefined ? dados.movimentoDiagonal : ativarDiagonal);
+
+                if (!Array.isArray(passos)) {
+                    throw new Error('Os passos da execução não estão em formato válido');
+                }
+
+                if (mundoId === -1 || mundoId === undefined) {
+                    throw new Error('ID do mundo não encontrado no arquivo');
+                }
+
+                if (!salaInicial || !Array.isArray(salaInicial) || salaInicial.length !== 2) {
+                    throw new Error('Sala inicial inválida no arquivo');
+                }
+
+                setMundoSelecionado(mundoId);
+                setAgenteSelecionado(agente);
+                setSalaSelecionada(salaInicial);
+                setAtivarDiagonal(movimentoDiagonal);
+                setPassosExecucao(passos);
+                setPartida(passos);
+                setSalaInvalida(false);
+                setModoEditarSala(false);
+                setExecutandoAnimacao(false);
 
             } catch (error) {
                 console.error('Erro ao importar JSON:', error);
@@ -192,8 +230,15 @@ export default function Execucao() {
                     ) : (
                         <div className="semMundo">
                             <p>Nenhum mundo selecionado para execução.</p>
-                            <p>Volte à página anterior e selecione um mundo.</p>
+                            <p>Volte à página anterior e selecione um mundo, ou importe algum JSON que você tenha salvo.</p>
                         </div>
+                    )}
+                    {passosExecucao.length == 0 && (
+                        <>
+                            <footer className="rodapeControlesExecucao">
+                                <p></p>
+                            </footer>
+                        </>
                     )}
                 </section>
                 <aside className="configsExecucao">
@@ -261,9 +306,10 @@ export default function Execucao() {
                                     <p style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>Partida Gerada! Mas se preferir: </p><br />
                                     <button
                                         className="botaoNovaExecucao"
-                                        onClick={() => {
+                                        onClick={async () => {
                                             setPassosExecucao([]);
                                             setPartida([]);
+                                            console.log("agente selecionado: ", agenteSelecionado);
                                             setExecutandoAnimacao(false);
 
                                         }}

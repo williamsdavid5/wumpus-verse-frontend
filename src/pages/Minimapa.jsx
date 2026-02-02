@@ -405,18 +405,6 @@ export default function Minimapa({
                 )}
             </div>
 
-            {modoEdicao && (
-                <div className="instrucoesSelecao">
-                    <p className="paragrafoInformativo">
-                        <b>Clique em uma sala para definir a posição inicial do agente.</b><br />
-                        <span style={{ color: salaInvalida ? '#ff6b6b' : '#a0a0a0' }}>
-                            {salaInvalida
-                                ? 'Sala inválida! Escolha uma sala ativa sem wumpus, buraco ou ouro.'
-                                : 'Salas com wumpus, buraco ou ouro não podem ser selecionadas.'}
-                        </span>
-                    </p>
-                </div>
-            )}
             <footer className='rodapeControlesExecucao'>
 
                 {passosExecucao.length > 0 && (
