@@ -73,6 +73,55 @@ export default function MundosSalvos() {
         return () => clearTimeout(timer);
     }, [carregado]);
 
+    // async function carregarMundosSalvos(pagina = 1, limparLista = true) {
+    //     if (pagina === 1) {
+    //         setCarregado(true);
+    //     } else {
+    //         setCarregandoMais(true);
+    //     }
+    //     try {
+    //         const resposta = await getMundosSalvos(pagina, 6);
+
+    //         if (resposta && resposta.length > 0) {
+
+    //             const itensParaMostrar = resposta.slice(0, 6);
+    //             // console.log(itensParaMostrar);
+    //             // const itensParaMostrar = resposta;
+
+    //             if (limparLista || pagina === 1) {
+    //                 setMundos(itensParaMostrar);
+    //             } else {
+    //                 setMundos(prev => [...prev, ...itensParaMostrar]);
+    //             }
+
+    //             const mais = !resposta[resposta.length - 1]
+    //             setTemMaisItens(mais);
+    //             console.log("Tem mais itens?", mais);
+    //             // setTemMaisItens(resposta.length === 6);
+    //         } else {
+    //             if (pagina === 1) {
+    //                 setMundos([]);
+    //             }
+    //             setTemMaisItens(false);
+    //         }
+
+    //         setPaginaAtual(pagina);
+
+    //     } catch (error) {
+    //         console.error('Erro ao carregar mundos:', error);
+    //         await confirm({})
+    //         setTemMaisItens(false);
+    //     } finally {
+    //         if (pagina === 1) {
+    //             setCarregado(false);
+    //         }
+
+    //         if (mundos.length > 0) {
+    //             setCarregandoMais(false);
+    //         }
+    //     }
+    // }
+
     async function carregarMundosSalvos(pagina = 1, limparLista = true) {
         if (pagina === 1) {
             setCarregado(true);
@@ -82,23 +131,29 @@ export default function MundosSalvos() {
         try {
             const resposta = await getMundosSalvos(pagina, 6);
 
-            if (resposta && resposta.length > 0) {
-
-                const itensParaMostrar = resposta.slice(0, 6);
-
-                if (limparLista || pagina === 1) {
-                    setMundos(itensParaMostrar);
-                } else {
-                    setMundos(prev => [...prev, ...itensParaMostrar]);
-                }
-
-                setTemMaisItens(resposta.length === 6);
-            } else {
+            if (!resposta || !Array.isArray(resposta) || resposta.length === 0) {
                 if (pagina === 1) {
                     setMundos([]);
                 }
                 setTemMaisItens(false);
+                return;
             }
+
+            const temMais = !resposta[resposta.length - 1];
+            const itensMundos = resposta.slice(0, resposta.length - 1);
+
+            if (itensMundos.length > 0) {
+                if (limparLista || pagina === 1) {
+                    setMundos(itensMundos);
+                } else {
+                    setMundos(prev => [...prev, ...itensMundos]);
+                }
+            } else if (pagina === 1) {
+                setMundos([]);
+            }
+
+            setTemMaisItens(temMais);
+            // console.log("Tem mais itens?", temMais);
 
             setPaginaAtual(pagina);
 
@@ -139,7 +194,6 @@ export default function MundosSalvos() {
         if (confirmar === "yes") {
             setCarregandoLoading(true);
             const resposta = await excluirmundo(id);
-            //vefificação de resposta da API
             if (!resposta) {
                 console.log('algo deu errado');
                 await confirm({

@@ -168,6 +168,49 @@ export default function () {
         setCarregandoMinimapa(false);
     }
 
+    // async function carregarMundosSalvos(pagina = 1, limparLista = true) {
+    //     if (pagina === 1) {
+    //         setCarregando(true);
+    //     } else {
+    //         setCarregandoMais(true);
+    //     }
+    //     try {
+    //         const resposta = await getMundosSalvos(pagina, 6);
+
+    //         if (resposta && resposta.length > 0) {
+    //             // console.log(resposta);
+    //             const itensParaMostrar = resposta.slice(0, 6);
+
+    //             if (limparLista || pagina === 1) {
+    //                 setMundos(itensParaMostrar);
+    //             } else {
+    //                 setMundos(prev => [...prev, ...itensParaMostrar]);
+    //             }
+
+    //             setTemMaisItens(resposta.length === 6);
+    //         } else {
+    //             if (pagina === 1) {
+    //                 setMundos([]);
+    //             }
+    //             setTemMaisItens(false);
+    //         }
+
+    //         setPaginaAtual(pagina);
+
+    //     } catch (error) {
+    //         console.error('Erro ao carregar mundos:', error);
+    //         setTemMaisItens(false);
+    //     } finally {
+    //         if (pagina === 1) {
+    //             setCarregando(false);
+    //         }
+
+    //         if (mundos.length > 0) {
+    //             setCarregandoMais(false);
+    //         }
+    //     }
+    // }
+
     async function carregarMundosSalvos(pagina = 1, limparLista = true) {
         if (pagina === 1) {
             setCarregando(true);
@@ -177,23 +220,31 @@ export default function () {
         try {
             const resposta = await getMundosSalvos(pagina, 6);
 
-            if (resposta && resposta.length > 0) {
-                // console.log(resposta);
-                const itensParaMostrar = resposta.slice(0, 6);
-
-                if (limparLista || pagina === 1) {
-                    setMundos(itensParaMostrar);
-                } else {
-                    setMundos(prev => [...prev, ...itensParaMostrar]);
-                }
-
-                setTemMaisItens(resposta.length === 6);
-            } else {
+            // Se a resposta não for um array ou estiver vazia
+            if (!resposta || !Array.isArray(resposta) || resposta.length === 0) {
                 if (pagina === 1) {
                     setMundos([]);
                 }
                 setTemMaisItens(false);
+                return;
             }
+
+            // O último item é o booleano que indica se tem mais itens
+            const temMais = !resposta[resposta.length - 1];
+            const itensMundos = resposta.slice(0, resposta.length - 1); // Remove o último item (booleano)
+
+            if (itensMundos.length > 0) {
+                if (limparLista || pagina === 1) {
+                    setMundos(itensMundos);
+                } else {
+                    setMundos(prev => [...prev, ...itensMundos]);
+                }
+            } else if (pagina === 1) {
+                setMundos([]);
+            }
+
+            setTemMaisItens(temMais);
+            // console.log("Tem mais itens?", temMais);
 
             setPaginaAtual(pagina);
 
