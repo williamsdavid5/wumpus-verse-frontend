@@ -73,6 +73,7 @@ export default function () {
             })
             console.log(resposta);
             if (resposta == 'no') {
+                setExecutionConfig(null);
                 navigate('/execucao');
             }
             return;
@@ -83,7 +84,7 @@ export default function () {
                 title: "Espera um pouco",
                 message: "Por favor, não me diga que você queria iniciar uma partida sem selecionar uma sala inicial.",
                 type: "alert",
-                botao1: "Droga"
+                botao1: "Não digo"
             })
             return;
         }

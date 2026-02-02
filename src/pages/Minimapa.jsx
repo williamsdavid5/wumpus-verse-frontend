@@ -33,16 +33,14 @@ export default function Minimapa({
     const [dimensoes, setDimensoes] = useState({ largura: 0, altura: 0 });
     const containerRef = useRef(null);
     const mapaRef = useRef(null);
-    const [cellSize, setCellSize] = useState(30); // Reduzido para 30px
+    const [cellSize, setCellSize] = useState(40);
     const [salaInvalida, setSalaInvalida] = useState(false);
 
-    // Estados para zoom e pan
     const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isPanning, setIsPanning] = useState(false);
     const panStartRef = useRef({ x: 0, y: 0 });
 
-    // Estados para animação
     const [executando, setExecutando] = useState(false);
     const [passoAtual, setPassoAtual] = useState(0);
     const [agentePosicao, setAgentePosicao] = useState(null);
@@ -50,41 +48,6 @@ export default function Minimapa({
 
     const [modoManual, setModoManual] = useState(false);
 
-    // Ajustar tamanho das células baseado no zoom e no tamanho do container
-    useEffect(() => {
-        if (!containerRef.current || dimensoes.largura === 0 || dimensoes.altura === 0) return;
-
-        const { clientWidth, clientHeight } = containerRef.current;
-
-        // Calcula o tamanho máximo baseado no espaço disponível
-        const maxWidth = clientWidth * 0.9; // 90% da largura do container
-        const maxHeight = clientHeight * 0.8; // 80% da altura do container
-
-        const sizeBasedOnWidth = Math.floor(maxWidth / dimensoes.largura);
-        const sizeBasedOnHeight = Math.floor(maxHeight / dimensoes.altura);
-
-        // Usa o menor valor, mas com limites mínimos e máximos
-        const calculatedSize = Math.min(sizeBasedOnWidth, sizeBasedOnHeight);
-        const finalSize = Math.max(15, Math.min(calculatedSize, 40)) * zoom; // Limites: 15px-40px * zoom
-
-        setCellSize(finalSize);
-
-        // Centralizar o mapa se for a primeira vez
-        if (pan.x === 0 && pan.y === 0) {
-            const mapaWidth = dimensoes.largura * finalSize;
-            const mapaHeight = dimensoes.altura * finalSize;
-
-            if (mapaWidth > clientWidth || mapaHeight > clientHeight) {
-                // Se o mapa for maior que o container, centralizar
-                setPan({
-                    x: (clientWidth - mapaWidth) / 2,
-                    y: (clientHeight - mapaHeight) / 2
-                });
-            }
-        }
-    }, [dimensoes, zoom, containerRef.current?.clientWidth, containerRef.current?.clientHeight]);
-
-    // Carregar minimapa quando o mundoId mudar
     useEffect(() => {
         if (mundoId && mundoId !== -1) {
             carregarMinimapa(mundoId);
@@ -94,7 +57,55 @@ export default function Minimapa({
         }
     }, [mundoId]);
 
-    // Efeito para animação dos passos
+    useEffect(() => {
+        const ajustarTamanhoMinimapa = () => {
+            if (!containerRef.current || dimensoes.largura === 0 || dimensoes.altura === 0) return;
+
+            const container = containerRef.current;
+            const { clientWidth, clientHeight } = container;
+
+            const padding = 20;
+            const larguraDisponivel = clientWidth - padding * 2;
+            const alturaDisponivel = clientHeight - padding * 2;
+
+            const tamanhoPorLargura = Math.floor(larguraDisponivel / dimensoes.largura);
+            const tamanhoPorAltura = Math.floor(alturaDisponivel / dimensoes.altura);
+
+            let novoCellSize = Math.min(tamanhoPorLargura, tamanhoPorAltura);
+
+            const MIN_CELL_SIZE = 15;
+            const MAX_CELL_SIZE = 60;
+
+            novoCellSize = Math.max(MIN_CELL_SIZE, Math.min(novoCellSize, MAX_CELL_SIZE));
+
+            const tamanhoFinal = novoCellSize * zoom;
+            setCellSize(tamanhoFinal);
+
+            const mapaWidth = dimensoes.largura * tamanhoFinal;
+            const mapaHeight = dimensoes.altura * tamanhoFinal;
+
+            if (mapaWidth < larguraDisponivel && mapaHeight < alturaDisponivel) {
+                setPan({
+                    x: (larguraDisponivel - mapaWidth) / 2 + padding,
+                    y: (alturaDisponivel - mapaHeight) / 2 + padding
+                });
+            } else {
+                setPan(prev => ({
+                    x: Math.max(padding - mapaWidth + larguraDisponivel, Math.min(prev.x, padding)),
+                    y: Math.max(padding - mapaHeight + alturaDisponivel, Math.min(prev.y, padding))
+                }));
+            }
+        };
+
+        ajustarTamanhoMinimapa();
+
+        window.addEventListener('resize', ajustarTamanhoMinimapa);
+
+        return () => {
+            window.removeEventListener('resize', ajustarTamanhoMinimapa);
+        };
+    }, [dimensoes, zoom]);
+
     useEffect(() => {
         if (passosExecucao.length > 0 && executando) {
             setModoManual(false);
@@ -136,11 +147,11 @@ export default function Minimapa({
     }, [passosExecucao, executando, passoAtual]);
 
     const handleZoomIn = useCallback(() => {
-        setZoom(prev => Math.min(prev + 0.2, 3)); // Zoom máximo 3x
+        setZoom(prev => Math.min(prev + 0.2, 3));
     }, []);
 
     const handleZoomOut = useCallback(() => {
-        setZoom(prev => Math.max(prev - 0.2, 0.5)); // Zoom mínimo 0.5x
+        setZoom(prev => Math.max(prev - 0.2, 0.5));
     }, []);
 
     const handleResetZoom = useCallback(() => {
@@ -324,59 +335,34 @@ export default function Minimapa({
         }
     }
 
-    useEffect(() => {
-        if (!containerRef.current || dimensoes.largura === 0 || dimensoes.altura === 0) return;
-
-        const { clientWidth, clientHeight } = containerRef.current;
-
-        const maxWidth = clientWidth * 0.9;
-        const maxHeight = clientHeight * 0.8;
-
-        const sizeBasedOnWidth = Math.floor(maxWidth / dimensoes.largura);
-        const sizeBasedOnHeight = Math.floor(maxHeight / dimensoes.altura);
-
-        const calculatedSize = Math.min(sizeBasedOnWidth, sizeBasedOnHeight);
-        const finalSize = Math.max(15, Math.min(calculatedSize, 40)) * zoom;
-
-        setCellSize(finalSize);
-
-        const mapaWidth = dimensoes.largura * finalSize;
-        const mapaHeight = dimensoes.altura * finalSize;
-
-        if (mapaWidth < clientWidth && mapaHeight < clientHeight) {
-            setPan({
-                x: (clientWidth - mapaWidth) / 2,
-                y: (clientHeight - mapaHeight) / 2
-            });
-        }
-    }, [dimensoes, zoom, containerRef.current?.clientWidth, containerRef.current?.clientHeight]);
-
     const progresso = passosExecucao.length > 0
         ? Math.round((passoAtual / (passosExecucao.length - 1)) * 100)
         : 0;
 
     return (
-        <div className="minimapaContainer">
+        <div className="minimapaContainerExecucao">
             <div
                 ref={containerRef}
-                className="mapaContainer"
+                className="mapaContainerExecucao"
                 style={{ cursor: isPanning ? 'grabbing' : 'grab', overflow: 'auto' }}
             >
                 {carregando ? (
-                    <div className='loadingPequeno'>
+                    <div className='loadingPequeno carregandoMinimapaExecucao'>
                         <img src={LoadingGif} alt="Carregando..." style={{ width: '100px' }} />
                         <p>Carregando mapa...</p>
                     </div>
                 ) : (
                     <div
-                        className='mapa-blocos'
+                        className='mapa-blocos-execucao'
                         style={{
                             display: "grid",
                             gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
                             gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
                             width: `${dimensoes.largura * cellSize}px`,
                             height: `${dimensoes.altura * cellSize}px`,
+                            transform: `translate(${pan.x}px, ${pan.y}px)`,
                         }}
+                        ref={mapaRef}
                     >
                         {miniGrid.map((linha, y) =>
                             linha.map((sala, x) => {

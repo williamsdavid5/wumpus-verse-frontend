@@ -44,7 +44,7 @@ export default function Execucao() {
         if (!mundoSelecionado || mundoSelecionado === -1) {
             await confirm({
                 title: "Bobão",
-                message: "Vai executar o que? onde? kkkkkkkkkkkkk selecione um mundo",
+                message: "Vai executar o que? onde? kkkkkkkkkkkkk selecione um mundo ou importe um JSON",
                 type: "alert",
                 botao1: "Droga"
             })
@@ -233,7 +233,7 @@ export default function Execucao() {
                             <p>Volte à página anterior e selecione um mundo, ou importe algum JSON que você tenha salvo.</p>
                         </div>
                     )}
-                    {passosExecucao.length == 0 && (
+                    {mundoSelecionado == -1 && (
                         <>
                             <footer className="rodapeControlesExecucao">
                                 <p></p>
@@ -307,11 +307,20 @@ export default function Execucao() {
                                     <button
                                         className="botaoNovaExecucao"
                                         onClick={async () => {
-                                            setPassosExecucao([]);
-                                            setPartida([]);
-                                            console.log("agente selecionado: ", agenteSelecionado);
-                                            setExecutandoAnimacao(false);
+                                            const resposta = await confirm({
+                                                title: "Tem certeza?",
+                                                message: "Se você fizer isso, você perderá essa partida para sempre...",
+                                                type: "confirm",
+                                                botao1: "Sem problemas",
+                                                botao2: 'Vou baixar o JSON'
+                                            })
 
+                                            if (resposta == 'yes') {
+                                                setPassosExecucao([]);
+                                                setPartida([]);
+                                                console.log("agente selecionado: ", agenteSelecionado);
+                                                setExecutandoAnimacao(false);
+                                            }
                                         }}
                                     >
                                         Gerar Nova partida
