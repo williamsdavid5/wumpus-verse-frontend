@@ -129,32 +129,35 @@ export default function Execucao() {
                             Configure a execução e observe o agente caminhando pelo ambiente. O agente vence o jogo se conseguir coletar um ouro e voltar para a sala inical.
                         </p>
                     </div>
-                    <div className="divControle reconfigurar">
-                        <p className="paragrafoInformativo">
-                            Reconfigure a execução atual. Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial, para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
-                        </p>
-                        <div className="reconfiguracoes">
-                            <label htmlFor="" className="checkMovimento">
-                                <input
-                                    type="checkbox"
-                                    name=""
-                                    id=""
-                                    onChange={(e) => { setAtivarDiagonal(e.target.checked) }}
-                                    checked={ativarDiagonal}
+                    {passosExecucao.length == 0 && (
+                        <div className="divControle reconfigurar">
+                            <p className="paragrafoInformativo">
+                                Reconfigure a execução atual. Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial. Para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
+                            </p>
+                            <div className="reconfiguracoes">
+                                <label htmlFor="" className="checkMovimento">
+                                    <input
+                                        type="checkbox"
+                                        name=""
+                                        id=""
+                                        onChange={(e) => { setAtivarDiagonal(e.target.checked) }}
+                                        checked={ativarDiagonal}
+                                        disabled={passosExecucao.length > 0}
+                                    />
+                                    Ativar movimento diagonal
+                                </label>
+                                <button
+                                    className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
+                                    onClick={() => setModoEditarSala(!modoEditarSala)}
                                     disabled={passosExecucao.length > 0}
-                                />
-                                Ativar movimento diagonal
-                            </label>
-                            <button
-                                className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
-                                onClick={() => setModoEditarSala(!modoEditarSala)}
-                                disabled={passosExecucao.length > 0}
-                            >
-                                {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
-                            </button>
-                            <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
+                                >
+                                    {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
+                                </button>
+                                <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
+                            </div>
                         </div>
-                    </div>
+                    )}
+
                     {/* <div className="divControle">
                         <p><b>Agente:</b> {agenteSelecionado}</p>
                         <p><b>Mundo:</b> ID {mundoSelecionado}</p>
@@ -170,14 +173,17 @@ export default function Execucao() {
                     <div className="divControle">
                         <div className="botoesExecucaoo">
                             {podeIniciar && (
-                                <>
+                                <div className="divIniciarNova">
                                     <button
                                         className="botaoIniciar"
                                         onClick={iniciar}
                                     >
-                                        Baixar uma partida
+                                        Iniciar nova partida
                                     </button>
-                                </>
+                                    <p><span style={{ fontWeight: 'bold', marginTop: '20px' }}>Funcionamento</span><br />
+                                        As partidas são individuais, ao iniciar uma nova, essa partida é baixada para o seu computador onde você poderá exibi-la de diversas maneiras. Caso você deseje outra, esta será baixada individualmente da mesma maneira. Faça um teste, baixe uma partida!
+                                    </p>
+                                </div>
                             )}
                             {passosExecucao.length > 0 && (
                                 <>
@@ -191,7 +197,7 @@ export default function Execucao() {
 
                                         }}
                                     >
-                                        Baixar Nova partida
+                                        Gerar Nova partida
                                     </button>
                                 </>
                             )}

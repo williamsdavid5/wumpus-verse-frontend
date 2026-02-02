@@ -417,18 +417,20 @@ export default function Minimapa({
                     </p>
                 </div>
             )}
-
             <footer className='rodapeControlesExecucao'>
-                <div className="secaoNoRodape botoesExecucao">
-                    <button
-                        className={`botaoControle ${passosExecucao.length > 0 ? 'botaoExecutarRoxo' : 'botaoExecutarBlack'}`}
-                        onClick={toggleExecucao}
-                        disabled={passosExecucao.length === 0}
-                        title={modoManual ? "Continuar execução automática" : executando ? "Pausar execução" : "Iniciar execução"}
-                    >
-                        {modoManual ? 'Continuar' : executando ? '▐▐' : 'Executar'}
-                    </button>
-                    {/* <button
+
+                {passosExecucao.length > 0 && (
+                    <>
+                        <div className="secaoNoRodape botoesExecucao">
+                            <button
+                                className={`botaoControle ${passosExecucao.length > 0 ? 'botaoExecutarRoxo' : 'botaoExecutarBlack'}`}
+                                onClick={toggleExecucao}
+                                disabled={passosExecucao.length === 0}
+                                title={modoManual ? "Continuar execução automática" : executando ? "Pausar execução" : "Iniciar execução"}
+                            >
+                                {modoManual ? 'Continuar' : executando ? '▐▐' : 'Executar'}
+                            </button>
+                            {/* <button
                         className="botaoControle botaoResetar"
                         onClick={resetarExecucao}
                         disabled={passosExecucao.length === 0}
@@ -436,48 +438,48 @@ export default function Minimapa({
                     >
                         Resetar
                     </button> */}
-                    <button
-                        className="botaoControle botaoPasso"
-                        onClick={passoAnterior}
-                        disabled={passosExecucao.length === 0 || passoAtual === 0}
-                        title="Passo anterior"
-                    >
-                        {/* &lt;&lt; */}
-                        ⏮ Anterior
-                    </button>
-                    <button
-                        className="botaoControle botaoPasso"
-                        onClick={proximoPasso}
-                        disabled={passosExecucao.length === 0 || passoAtual >= passosExecucao.length - 1}
-                        title="Próximo passo"
-                    >
-                        Próximo ⏭
-                        {/* &gt;&gt; */}
-                    </button>
-                </div>
-
-                <div className="secaoNoRodape secaoProgresso">
-                    <div className="infoPasso">
-                        <span>Passo {passoAtual + 1} de {passosExecucao.length}</span>
-                    </div>
-
-                    <div className="sliderProgresso">
-                        <input
-                            type="range"
-                            min="0"
-                            max={Math.max(0, passosExecucao.length - 1)}
-                            value={passoAtual}
-                            onChange={(e) => irParaPasso(parseInt(e.target.value))}
-                            disabled={passosExecucao.length === 0}
-                            className="sliderPassos"
-                        />
-                        <div className="sliderLabels">
-                            <span>Progresso: {progresso}%</span>
+                            <button
+                                className="botaoControle botaoPasso"
+                                onClick={passoAnterior}
+                                disabled={passosExecucao.length === 0 || passoAtual === 0}
+                                title="Passo anterior"
+                            >
+                                {/* &lt;&lt; */}
+                                ⏮ Anterior
+                            </button>
+                            <button
+                                className="botaoControle botaoPasso"
+                                onClick={proximoPasso}
+                                disabled={passosExecucao.length === 0 || passoAtual >= passosExecucao.length - 1}
+                                title="Próximo passo"
+                            >
+                                Próximo ⏭
+                                {/* &gt;&gt; */}
+                            </button>
                         </div>
-                    </div>
-                </div>
 
+                        <div className="secaoNoRodape secaoProgresso">
+                            <div className="infoPasso">
+                                <span>Passo {passoAtual + 1} de {passosExecucao.length}</span>
+                            </div>
 
+                            <div className="sliderProgresso">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max={Math.max(0, passosExecucao.length - 1)}
+                                    value={passoAtual}
+                                    onChange={(e) => irParaPasso(parseInt(e.target.value))}
+                                    disabled={passosExecucao.length === 0}
+                                    className="sliderPassos"
+                                />
+                                <div className="sliderLabels">
+                                    <span>Progresso: {progresso}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
                 <div className="secaoNoRodape secaoZoom">
                     <p className='pZoom'>
                         Zoom: {(zoom * 100).toFixed(0)}% <br />
