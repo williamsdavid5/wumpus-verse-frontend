@@ -1,10 +1,22 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingGif from '../assets/loadingGif.gif';
-import './styles/minimapa.css'; // Vamos criar este arquivo
+import './styles/minimapa.css';
 
-function Bloco({ selecionado, wumpus, buraco, ouro, salaInicial, onClick, clicavel, agente, agentePosicao }) {
+function Bloco({
+    selecionado,
+    wumpus,
+    buraco,
+    ouro,
+    salaInicial,
+    onClick,
+    clicavel,
+    agente,
+    agentePosicao,
+    ouroColetado
+}) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
+    const temOuro = ouro && !ouroColetado;
 
     return (
         <div
@@ -15,7 +27,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, salaInicial, onClick, clicav
             {wumpus && <div className='elemento wumpus'></div>}
             {temAgenteAqui && <div className='elemento agente'></div>}
             {buraco && <div className='elemento buraco'></div>}
-            {ouro && <div className='elemento ouro'></div>}
+            {temOuro && <div className='elemento ouro'></div>}
         </div>
     );
 }
@@ -45,6 +57,7 @@ export default function Minimapa({
     const [passoAtual, setPassoAtual] = useState(0);
     const [agentePosicao, setAgentePosicao] = useState(null);
     const intervaloRef = useRef(null);
+    const [salasComOuro, setSalasComOuro] = useState([]);
 
     const [modoManual, setModoManual] = useState(false);
 
@@ -107,8 +120,32 @@ export default function Minimapa({
     }, [dimensoes, zoom]);
 
     useEffect(() => {
+        if (miniGrid.length > 0) {
+            const salasIniciaisComOuro = [];
+            miniGrid.forEach((linha, y) => {
+                linha.forEach((sala, x) => {
+                    if (sala.ouro) {
+                        salasIniciaisComOuro.push({ x, y });
+                    }
+                });
+            });
+            setSalasComOuro(salasIniciaisComOuro);
+        }
+    }, [miniGrid]);
+
+    useEffect(() => {
         if (passosExecucao.length > 0 && executando) {
             setModoManual(false);
+
+            const salasIniciaisComOuro = [];
+            miniGrid.forEach((linha, y) => {
+                linha.forEach((sala, x) => {
+                    if (sala.ouro) {
+                        salasIniciaisComOuro.push({ x, y });
+                    }
+                });
+            });
+            setSalasComOuro(salasIniciaisComOuro);
 
             if (passoAtual === 0 && passosExecucao[0]) {
                 const primeiroPasso = passosExecucao[0];
@@ -134,6 +171,19 @@ export default function Minimapa({
                         y: passo.posicao_y
                     });
 
+                    setSalasComOuro(prevSalas => {
+                        const novasSalas = [...prevSalas];
+                        if (passo.acao === 'PEGAR') {
+                            const indice = novasSalas.findIndex(
+                                sala => sala.x === passo.posicao_x && sala.y === passo.posicao_y
+                            );
+                            if (indice !== -1) {
+                                novasSalas.splice(indice, 1);
+                            }
+                        }
+                        return novasSalas;
+                    });
+
                     return proximoPasso;
                 });
             }, 500);
@@ -144,7 +194,7 @@ export default function Minimapa({
                 }
             };
         }
-    }, [passosExecucao, executando, passoAtual]);
+    }, [passosExecucao, executando, passoAtual, miniGrid]);
 
     const handleZoomIn = useCallback(() => {
         setZoom(prev => Math.min(prev + 0.2, 3));
@@ -221,7 +271,6 @@ export default function Minimapa({
         if (passosExecucao.length === 0) return;
 
         const passoLimitado = Math.max(0, Math.min(novoPasso, passosExecucao.length - 1));
-
         setPassoAtual(passoLimitado);
 
         const passo = passosExecucao[passoLimitado];
@@ -230,6 +279,29 @@ export default function Minimapa({
                 x: passo.posicao_x,
                 y: passo.posicao_y
             });
+
+            const salasComOuroAteAgora = [];
+            miniGrid.forEach((linha, y) => {
+                linha.forEach((sala, x) => {
+                    if (sala.ouro) {
+                        salasComOuroAteAgora.push({ x, y });
+                    }
+                });
+            });
+
+            for (let i = 0; i <= passoLimitado; i++) {
+                const p = passosExecucao[i];
+                if (p.acao === 'x') {
+                    const indice = salasComOuroAteAgora.findIndex(
+                        sala => sala.x === p.posicao_x && sala.y === p.posicao_y
+                    );
+                    if (indice !== -1) {
+                        salasComOuroAteAgora.splice(indice, 1);
+                    }
+                }
+            }
+
+            setSalasComOuro(salasComOuroAteAgora);
         }
 
         if (executando) {
@@ -239,7 +311,7 @@ export default function Minimapa({
             setExecutando(false);
             setModoManual(true);
         }
-    }, [passosExecucao, executando]);
+    }, [passosExecucao, executando, miniGrid]);
 
     const passoAnterior = useCallback(() => {
         if (passoAtual > 0) {
@@ -259,6 +331,17 @@ export default function Minimapa({
         }
         setExecutando(false);
         setPassoAtual(0);
+
+        const salasIniciaisComOuro = [];
+        miniGrid.forEach((linha, y) => {
+            linha.forEach((sala, x) => {
+                if (sala.ouro) {
+                    salasIniciaisComOuro.push({ x, y });
+                }
+            });
+        });
+        setSalasComOuro(salasIniciaisComOuro);
+
         if (passosExecucao.length > 0 && passosExecucao[0]) {
             const primeiroPasso = passosExecucao[0];
             setAgentePosicao({
@@ -266,7 +349,7 @@ export default function Minimapa({
                 y: primeiroPasso.posicao_y
             });
         }
-    }, [passosExecucao]);
+    }, [passosExecucao, miniGrid]);
 
     useEffect(() => {
         resetarExecucao();
@@ -370,6 +453,8 @@ export default function Minimapa({
                                     salaInicial[0] === x &&
                                     salaInicial[1] === y;
 
+                                const ouroColetado = sala.ouro && !salasComOuro.some(s => s.x === x && s.y === y);
+
                                 return (
                                     <Bloco
                                         key={`${x}-${y}`}
@@ -382,6 +467,7 @@ export default function Minimapa({
                                         clicavel={modoEdicao}
                                         agente={{ x, y }}
                                         agentePosicao={agentePosicao}
+                                        ouroColetado={ouroColetado}
                                     />
                                 );
                             })

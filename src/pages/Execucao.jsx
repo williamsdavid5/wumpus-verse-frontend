@@ -331,6 +331,21 @@ export default function Execucao() {
                     </div>
                     {passosExecucao.length > 0 && (
                         <>
+                            <div className="divControle divPontos">
+                                <p>Pontuação para esta partida</p>
+                                <h1
+                                    className={`${partida[partida.length - 1].pontos < 1 ? 'pontosNegativo' : ''}`}
+                                >{partida[partida.length - 1].pontos}</h1>
+                                {
+                                    partida[partida.length - 1].pontos < 1 ?
+                                        <>
+                                            <p>Seu agente perdeu esta partida, meus pêsames.</p>
+                                        </> :
+                                        <>
+                                            <p>Seu agente venceu!</p>
+                                        </>
+                                }
+                            </div>
                             <div className="divControle">
                                 <p><span style={{ fontWeight: 'bold' }}>Salvar partida</span><br />
                                     Você pode salvar a partida completa em formato de arquivo no seu próprio computador, ou você pode salvar os resultados desta partida no banco de dados. Por limitações técnicas, as partidas salvas no banco <span className="destaqueRed">não são salvas de forma completa</span>, apenas os seus resultados.

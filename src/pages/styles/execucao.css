@@ -104,3 +104,12 @@
 .divAuxBotoesEmLinha button {
     flex: 1;
 }
+
+.divPontos {
+    justify-content: center;
+    align-items: center;
+}
+
+.pontosNegativo {
+    color: red;
+}
