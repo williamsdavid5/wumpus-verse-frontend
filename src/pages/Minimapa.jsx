@@ -160,15 +160,17 @@ export default function Minimapa({
         if (passosExecucao.length > 0 && executando) {
             setModoManual(false);
 
-            const salasIniciaisComOuro = [];
-            miniGrid.forEach((linha, y) => {
-                linha.forEach((sala, x) => {
-                    if (sala.ouro) {
-                        salasIniciaisComOuro.push({ x, y });
-                    }
+            if (salasComOuro.length === 0) {
+                const salasIniciaisComOuro = [];
+                miniGrid.forEach((linha, y) => {
+                    linha.forEach((sala, x) => {
+                        if (sala.ouro) {
+                            salasIniciaisComOuro.push({ x, y });
+                        }
+                    });
                 });
-            });
-            setSalasComOuro(salasIniciaisComOuro);
+                setSalasComOuro(salasIniciaisComOuro);
+            }
 
             if (passoAtual === 0 && passosExecucao[0]) {
                 const primeiroPasso = passosExecucao[0];
@@ -194,18 +196,18 @@ export default function Minimapa({
                         y: passo.posicao_y
                     });
 
-                    setSalasComOuro(prevSalas => {
-                        const novasSalas = [...prevSalas];
-                        if (passo.acao === 'x') {
+                    if (passo.acao === 'coletar_ouro' || passo.acao === 'x' || passo.ouro_coletado) {
+                        setSalasComOuro(prevSalas => {
+                            const novasSalas = [...prevSalas];
                             const indice = novasSalas.findIndex(
                                 sala => sala.x === passo.posicao_x && sala.y === passo.posicao_y
                             );
                             if (indice !== -1) {
                                 novasSalas.splice(indice, 1);
                             }
-                        }
-                        return novasSalas;
-                    });
+                            return novasSalas;
+                        });
+                    }
 
                     return proximoPasso;
                 });
@@ -217,7 +219,7 @@ export default function Minimapa({
                 }
             };
         }
-    }, [passosExecucao, executando, passoAtual, miniGrid]);
+    }, [passosExecucao, executando, passoAtual, miniGrid, salasComOuro]);
 
     const handleZoomIn = useCallback(() => {
         setZoom(prev => Math.min(prev + 0.2, 3));
