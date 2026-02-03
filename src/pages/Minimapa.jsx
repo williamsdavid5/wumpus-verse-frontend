@@ -3,6 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import LoadingGif from '../assets/loadingGif.gif';
 import './styles/minimapa.css';
 
+import ouroSkin from '../assets/skins/ouro.png';
+import buracoSkin from '../assets/skins/buraco.png';
+import wumpusVivo from '../assets/skins/wumpus_vivo.png';
+import agenteSkin from '../assets/skins/lino_Armado.png';
+
 function Bloco({
     selecionado,
     wumpus,
@@ -13,21 +18,39 @@ function Bloco({
     clicavel,
     agente,
     agentePosicao,
-    ouroColetado
+    ouroColetado,
+    noTop,
+    noLeft,
+    noRight,
+    noBottom
 }) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
     const temOuro = ouro && !ouroColetado;
 
     return (
         <div
-            className={`bloco ${selecionado ? 'selecionado' : ''} ${salaInicial ? 'salaInicialExecucao' : ''} ${clicavel ? 'clicavel' : ''}`}
+            className={`blocoExecucao ${selecionado ? 'selecionado' : ''} ${salaInicial ? 'salaInicialExecucao' : ''} ${clicavel ? 'clicavel' : ''}
+                       ${noTop ? 'noTop' : ''} ${noLeft ? 'noLeft' : ''} ${noRight ? 'noRight' : ''} ${noBottom ? 'noBottom' : ''}`}
             onClick={onClick}
             style={{ cursor: clicavel ? 'pointer' : 'default' }}
         >
-            {wumpus && <div className='elemento wumpus'></div>}
-            {temAgenteAqui && <div className='elemento agente'></div>}
-            {buraco && <div className='elemento buraco'></div>}
-            {temOuro && <div className='elemento ouro'></div>}
+            {wumpus
+                &&
+                // <div className='elemento wumpus'></div>
+                <img src={wumpusVivo} className='skin wumpusVivo' alt="" />
+            }
+            {temAgenteAqui &&
+                // <div className='elemento agente'></div>
+                <img src={agenteSkin} alt="" className='skin skinAgenteArmado' />
+            }
+            {buraco &&
+                // <div className='elemento buraco'></div>
+                <img src={buracoSkin} className='skin skiBuraco' alt="" />
+            }
+            {temOuro &&
+                <img src={ouroSkin} className='skin skinOuro' alt="" />
+                // <div className='elemento ouro'></div>
+            }
         </div>
     );
 }
@@ -173,7 +196,7 @@ export default function Minimapa({
 
                     setSalasComOuro(prevSalas => {
                         const novasSalas = [...prevSalas];
-                        if (passo.acao === 'PEGAR') {
+                        if (passo.acao === 'x') {
                             const indice = novasSalas.findIndex(
                                 sala => sala.x === passo.posicao_x && sala.y === passo.posicao_y
                             );
@@ -422,6 +445,20 @@ export default function Minimapa({
         ? Math.round((passoAtual / (passosExecucao.length - 1)) * 100)
         : 0;
 
+    const verificarAdjacencias = (x, y) => {
+        const temSalaAcima = y > 0 && miniGrid[y - 1] && miniGrid[y - 1][x] && miniGrid[y - 1][x].ativa;
+        const temSalaEsquerda = x > 0 && miniGrid[y] && miniGrid[y][x - 1] && miniGrid[y][x - 1].ativa;
+        const temSalaDireita = x < dimensoes.largura - 1 && miniGrid[y] && miniGrid[y][x + 1] && miniGrid[y][x + 1].ativa;
+        const temSalaAbaixo = y < dimensoes.altura - 1 && miniGrid[y + 1] && miniGrid[y + 1][x] && miniGrid[y + 1][x].ativa;
+
+        return {
+            noTop: !temSalaAcima,
+            noLeft: !temSalaEsquerda,
+            noRight: !temSalaDireita,
+            noBottom: !temSalaAbaixo
+        };
+    };
+
     return (
         <div className="minimapaContainerExecucao">
             <div
@@ -455,6 +492,13 @@ export default function Minimapa({
 
                                 const ouroColetado = sala.ouro && !salasComOuro.some(s => s.x === x && s.y === y);
 
+                                const adjacencias = sala.ativa ? verificarAdjacencias(x, y) : {
+                                    noTop: false,
+                                    noLeft: false,
+                                    noRight: false,
+                                    noBottom: false
+                                };
+
                                 return (
                                     <Bloco
                                         key={`${x}-${y}`}
@@ -468,6 +512,10 @@ export default function Minimapa({
                                         agente={{ x, y }}
                                         agentePosicao={agentePosicao}
                                         ouroColetado={ouroColetado}
+                                        noTop={adjacencias.noTop}
+                                        noLeft={adjacencias.noLeft}
+                                        noRight={adjacencias.noRight}
+                                        noBottom={adjacencias.noBottom}
                                     />
                                 );
                             })
