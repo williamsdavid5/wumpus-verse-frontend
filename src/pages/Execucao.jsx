@@ -277,6 +277,7 @@ export default function Execucao() {
                                     className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
                                     onClick={() => setModoEditarSala(!modoEditarSala)}
                                     disabled={passosExecucao.length > 0}
+                                    title="A sala inicial define onde o agente começa e termina a partida"
                                 >
                                     {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
                                 </button>
@@ -293,6 +294,7 @@ export default function Execucao() {
                                     <button
                                         className="botaoIniciar"
                                         onClick={iniciar}
+                                        title="Peça uma nova partida ao backend para que possa ser visualizada aqui"
                                     >
                                         Iniciar nova partida
                                     </button>
@@ -303,6 +305,7 @@ export default function Execucao() {
                                         onClick={importarJSON}
                                         className="botaoImportar"
                                         disabled={passosExecucao.length > 0}
+                                        title="Caso você tenha um JSON guardado, importe e execute uma partida aqui!"
                                     >
                                         Importar JSON
                                     </button>
@@ -314,6 +317,7 @@ export default function Execucao() {
                                     <p style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>Partida Gerada! Mas se preferir: </p><br />
                                     <button
                                         className="botaoNovaExecucao"
+                                        title="Peça uma nova partida ao backend para que possa ser visualizada aqui"
                                         onClick={async () => {
                                             const resposta = await confirm({
                                                 title: "Tem certeza?",
@@ -360,12 +364,15 @@ export default function Execucao() {
                                 </p>
                                 <div className="divAuxBotoesEmLinha">
                                     <button
+                                        title="Baixe o arquivo referente à essa partida, assim você poderá executá-la de novo futuramente"
                                         onClick={baixarJSON}
                                         className="botaoBaixar"
                                     >
                                         Baixar JSON da partida
                                     </button>
-                                    <button>
+                                    <button
+                                        title="Salve o resultado desta partida na sua conta, mas apenas dados básicos, você não poder executar novamente esta partida!"
+                                    >
                                         Salvar resultados na minha conta
                                     </button>
                                 </div>

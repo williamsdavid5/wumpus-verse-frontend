@@ -16,9 +16,9 @@
     justify-content: center;
 }
 
-.blocoExecucao:hover {
+/* .blocoExecucao:hover {
     background-color: #444;
-}
+} */
 
 .blocoExecucao.selecionado {
     background-color: rgb(20, 20, 20);
@@ -27,18 +27,22 @@
 
 .blocoExecucao.noTop {
     border-top: 2px solid white !important;
+    /* box-shadow: inset 0px 10px 10px rgba(0, 0, 0, 1); */
 }
 
 .blocoExecucao.noLeft {
     border-left: 2px solid white !important;
+    /* box-shadow: inset 10px 0 10px rgba(0, 0, 0, 1); */
 }
 
 .blocoExecucao.noRight {
     border-right: 2px solid white !important;
+    /* box-shadow: inset -10px 0 10px rgba(0, 0, 0, 1); */
 }
 
 .blocoExecucao.noBottom {
     border-bottom: 2px solid white !important;
+    /* box-shadow: inset 0px -10px 10px rgba(0, 0, 0, 1); */
 }
 
 .skin {
@@ -56,7 +60,7 @@
 }
 
 .skiBuraco {
-    width: 150%;
+    width: 120%;
     /* -webkit-box-shadow: 0px 0px 31px 17px #FF0000;
     box-shadow: 0px 0px 31px 17px #FF0000; */
     filter: drop-shadow(0 0 10px rgb(255, 0, 0));
@@ -68,6 +72,7 @@
 }
 
 .wumpusVivo {
+    width: 110%;
     filter: drop-shadow(0 0 10px blueviolet);
 }
 
@@ -192,14 +197,14 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: hidden; */
 
 }
 
 .mapaContainerExecucao {
     flex: 1;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
     /* background-color: #f0f0f0; */
     /* border-radius: 8px; */
 
@@ -215,7 +220,7 @@
     box-sizing: border-box;
     max-width: 100%;
     max-height: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
     border: 1px solid var(--bordaCor);
 }
 
