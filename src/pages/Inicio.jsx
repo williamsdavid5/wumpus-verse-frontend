@@ -95,7 +95,7 @@ export default function Inicio() {
                     <p className='paragrafoInicio'>
                         Baseado no jogo lógico “mundo de wumpus“, a plataforma <span className='destaqueRoxo' style={{ fontWeight: 'bold' }}>WUMPUS VERSE</span> permite
                         que qualquer pessoa crie mundos e personalize agentes inteligentes para testar
-                        as diversas formas de vencer esse jogo. <br /><a href="/saibamais">Saiba mais</a>
+                        as diversas formas de vencer esse jogo. <br /><a href="/saibamais" className='animarTexto'>Saiba mais</a>
                     </p>
                     <div className='divBotoesInicio'>
                         {/* <button onClick={() => navigate('/mundos-salvos')} >Mundos</button> */}
@@ -117,7 +117,7 @@ export default function Inicio() {
                 <footer>
                     {logado && (
                         <>
-                            <button onClick={sair} className='botaoLogado'>
+                            <button onClick={sair} className='botaoLogado' title='Clique para deslogar da sua conta'>
                                 <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
                                 clique para sair
                             </button>
@@ -139,6 +139,7 @@ export default function Inicio() {
                         onClick={botoes[3].acao}
                         onMouseEnter={() => setBotaoHover(4)}
                         onMouseLeave={() => setBotaoHover(null)}
+                        title={`${logado ? 'Escolha um agente e um mundo e inicie uma partida' : ''}`}
                     >
                         {logado
                             ? botoes[3].texto

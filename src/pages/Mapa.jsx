@@ -748,7 +748,7 @@ export default function Mapa() {
                                 Apagar
                             </label>
                         </div>
-                        <p className='paragrafoInformativo'>Pressione 'Ctrl' para usar os controles sobre os blocos.</p>
+                        <p className='paragrafoInformativo'>Pressione <span style={{ fontWeight: 'bold' }}>'Ctrl'</span> para usar os controles sobre os blocos.</p>
                         <p className='paragrafoInformativo' style={{ width: "100%", textAlign: "center", marginTop: "5px" }}>Tamanho do pincel</p>
                         <input
                             type="range"
@@ -777,8 +777,8 @@ export default function Mapa() {
                             })}
                         </div>
                         <div className='div-controles-auxiliar'>
-                            <button className='botaoPreencher-apagar' onClick={preencherTodos}>Preencher todos</button>
-                            <button className='botaoPreencher-apagar' onClick={limpar}>Limpar blocos</button>
+                            <button title='Preencha todos os blocos do mapa com salas ativas' className='botaoPreencher-apagar' onClick={preencherTodos}>Preencher todos</button>
+                            <button title='Remova todas as salas e entidades do mapa' className='botaoPreencher-apagar' onClick={limpar}>Limpar blocos</button>
                         </div>
                     </div>
                     <div className='divControle'>
@@ -798,9 +798,9 @@ export default function Mapa() {
                             placeholder='Nome do mundo'
                             className='nomeDoMundo'
                         />
-                        <button onClick={exportarJSON}>Exportar JSON</button>
-                        <button onClick={importarJSON}>Importar JSON</button>
-                        <button onClick={salvar} className='botaoSalvar'>Salvar</button>
+                        <button title='Baixe o arquivo deste mundo no seu computador' onClick={exportarJSON}>Exportar JSON</button>
+                        <button title='Importe o arquivo de um mundo do seu computador' onClick={importarJSON}>Importar JSON</button>
+                        <button title='Salve este mundo na sua conta' onClick={salvar} className='botaoSalvar'>Salvar</button>
                     </div>
                 </aside>
                 <section className='janelaCentralizada'>
@@ -860,25 +860,29 @@ export default function Mapa() {
                         <button
                             className={`botaoWumpus ${modoInsercao === 'wumpus' ? 'ativo' : ''}`}
                             onClick={() => toggleModoInsercao('wumpus')}
+                            title='Clique para inserir wumpus no mapa. Clique novamente para desativar o modo de inserção'
                         >
                             Wumpus
                         </button>
                         <button
+                            title='Clique para inserir buracos no mapa. Clique novamente para desativar o modo de inserção'
+
                             className={`botaoBuraco ${modoInsercao === 'buraco' ? 'ativo' : ''}`}
                             onClick={() => toggleModoInsercao('buraco')}
                         >
                             Buraco
                         </button>
                         <button
+                            title='Clique para inserir ouro no mapa. Clique novamente para desativar o modo de inserção'
                             className={`botaoOuro ${modoInsercao === 'ouro' ? 'ativo' : ''}`}
                             onClick={() => toggleModoInsercao('ouro')}
                         >
                             Ouro
                         </button>
-                        <button onClick={() => limparEntidades()} style={{ backgroundColor: 'red', border: 'none' }}>Limpar Todas as Entidades</button>
+                        <button title='Apague todas as entidades inseridas no mapa (wumpus, ouro, buraco)' onClick={() => limparEntidades()} style={{ backgroundColor: 'red', border: 'none' }}>Limpar Todas as Entidades</button>
                         <div className='div-entidades-aleatorio'>
                             <input type="number" min={0} max={95} name="" id="" placeholder='% prenchimento' />
-                            <button onClick={gerarEntidadesAleatorias}>Aleatório</button>
+                            <button onClick={gerarEntidadesAleatorias} title='Gere todos esses elementos aleatoriamente no mapa. Você pode definir uma porcentagem de densidade'>Aleatório</button>
                         </div>
                         <p className='paragrafoInformativo'>
                             Gere entidades de forma aleatória no ambiente, você pode ou não definir

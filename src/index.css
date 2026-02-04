@@ -54,3 +54,31 @@ h2 {
 .destaqueRoxo {
   color: #8800B5;
 }
+
+.animarTexto {
+  animation: mudarCor 1s infinite alternate ease-in-out;
+}
+
+/* @keyframes mudarCor {
+  0% {
+    color: blueviolet;
+  }
+
+  50% {
+    color: red;
+  }
+
+  100% {
+    color: white;
+  }
+} */
+
+@keyframes mudarCor {
+  0% {
+    color: blueviolet;
+  }
+
+  100% {
+    color: red;
+  }
+}
