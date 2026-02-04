@@ -39,9 +39,9 @@ function Bloco({
                 // <div className='elemento wumpus'></div>
                 <img src={wumpusVivo} className='skin wumpusVivo' alt="" />
             }
-            {temAgenteAqui &&
+            {temAgenteAqui && !buraco &&
                 // <div className='elemento agente'></div>
-                <img src={agenteSkin} alt="" className='skin skinAgenteArmado' />
+                < img src={agenteSkin} alt="" className='skin skinAgenteArmado' />
             }
             {buraco &&
                 // <div className='elemento buraco'></div>

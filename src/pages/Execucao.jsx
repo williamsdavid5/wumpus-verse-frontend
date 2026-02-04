@@ -244,14 +244,22 @@ export default function Execucao() {
                 <aside className="configsExecucao">
                     <div className="divControle">
                         <h2>Controle de Execução</h2>
-                        <p>
-                            Configure a execução e observe o agente caminhando pelo ambiente. O agente vence o jogo se conseguir coletar um ouro e voltar para a sala inical.
+                        <p className="paragrafoInformativo">
+                            Envie seu agente para esta perigosa missão de recuperar suas barras de ouro de dentro de uma caverna escura. Ele enfrentará o perigoso (mas nem tanto) Wumpus, e tentará não cair em nenhum buraco pelo caminho. Não se proecupe, ele tem uma shotgun e não tem medo de usá-la!
+                        </p>
+
+                        <h3 className="h3PequenoTituloSecao">Regras Atuais</h3>
+                        <p className="paragrafoInformativo">Você escolherá o ponto de entrada no mapa, este também será o ponto de saída. Seu agente possui a missão de recolher uma barra de ouro e retornar vivo para a saída da caverna. Detectando brisa, ele poderá se desviar de buracos. Detectando fedor, ele poderá deduzir onde está o wumpus e descer o chumbo no desgraçado! <br />
+                            Você poderá reconfigurar o básico da execução quando desejar.
                         </p>
                     </div>
                     {passosExecucao.length == 0 && (
                         <div className="divControle reconfigurar">
+                            <h3 className="h3PequenoTituloSecao">
+                                Reconfigure a exeução
+                            </h3>
                             <p className="paragrafoInformativo">
-                                Reconfigure a execução atual. Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial. Para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
+                                Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial. Para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
                             </p>
                             <div className="reconfiguracoes">
                                 <label htmlFor="" className="checkMovimento">
@@ -339,7 +347,7 @@ export default function Execucao() {
                                 {
                                     partida[partida.length - 1].pontos < 1 ?
                                         <>
-                                            <p>Seu agente perdeu esta partida, meus pêsames.</p>
+                                            <p>Seu agente perdeu, meus pêsames.</p>
                                         </> :
                                         <>
                                             <p>Seu agente venceu!</p>
@@ -358,7 +366,7 @@ export default function Execucao() {
                                         Baixar JSON da partida
                                     </button>
                                     <button>
-                                        Salvar resultados da minha conta
+                                        Salvar resultados na minha conta
                                     </button>
                                 </div>
                             </div>

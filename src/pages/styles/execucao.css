@@ -24,6 +24,7 @@
     height: 90vh;
     border-left: 1px solid var(--bordaCor);
     box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .botaoIniciar {
@@ -112,4 +113,9 @@
 
 .pontosNegativo {
     color: red;
+}
+
+.h3PequenoTituloSecao {
+    margin: 3px 0px;
+    margin-top: 10px;
 }
