@@ -167,17 +167,17 @@ export default function Minimapa({
         if (passosExecucao.length > 0 && executando) {
             setModoManual(false);
 
-            if (salasComOuro.length === 0) {
-                const salasIniciaisComOuro = [];
-                miniGrid.forEach((linha, y) => {
-                    linha.forEach((sala, x) => {
-                        if (sala.ouro) {
-                            salasIniciaisComOuro.push({ x, y });
-                        }
-                    });
-                });
-                setSalasComOuro(salasIniciaisComOuro);
-            }
+            // if (salasComOuro.length === 0) {
+            //     const salasIniciaisComOuro = [];
+            //     miniGrid.forEach((linha, y) => {
+            //         linha.forEach((sala, x) => {
+            //             if (sala.ouro) {
+            //                 salasIniciaisComOuro.push({ x, y });
+            //             }
+            //         });
+            //     });
+            //     setSalasComOuro(salasIniciaisComOuro);
+            // }
 
             if (passoAtual === 0 && passosExecucao[0]) {
                 const passo = passosExecucao[0];
@@ -229,12 +229,35 @@ export default function Minimapa({
                     //     y: passo.posicao_y
                     // });
 
+                    // if (passo.acao === 'coletar_ouro' || passo.acao === 'x' || passo.ouro_coletado) {
+                    //     setSalasComOuro(prevSalas => {
+                    //         const novasSalas = [...prevSalas];
+                    //         const indice = novasSalas.findIndex(
+                    //             sala => sala.x === passo.posicao_x && sala.y === passo.posicao_y
+                    //         );
+                    //         if (indice !== -1) {
+                    //             novasSalas.splice(indice, 1);
+                    //         }
+                    //         return novasSalas;
+                    //     });
+                    // }
+
                     if (passo.acao === 'coletar_ouro' || passo.acao === 'x' || passo.ouro_coletado) {
                         setSalasComOuro(prevSalas => {
                             const novasSalas = [...prevSalas];
+
+                            let salaX = passo.posicao_x;
+                            let salaY = passo.posicao_y;
+
+                            if (inverterCoordenadas) {
+
+                                [salaX, salaY] = [passo.posicao_y, passo.posicao_x];
+                            }
+
                             const indice = novasSalas.findIndex(
-                                sala => sala.x === passo.posicao_x && sala.y === passo.posicao_y
+                                sala => sala.x === salaX && sala.y === salaY
                             );
+
                             if (indice !== -1) {
                                 novasSalas.splice(indice, 1);
                             }
@@ -325,6 +348,72 @@ export default function Minimapa({
         }
     }, [executando, passosExecucao, modoManual]);
 
+    // const irParaPasso = useCallback((novoPasso) => {
+    //     if (passosExecucao.length === 0) return;
+
+    //     const passoLimitado = Math.max(0, Math.min(novoPasso, passosExecucao.length - 1));
+    //     setPassoAtual(passoLimitado);
+
+    //     const passo = passosExecucao[passoLimitado];
+    //     if (passo) {
+    //         // setAgentePosicao({
+    //         //     x: passo.posicao_x,
+    //         //     y: passo.posicao_y
+    //         // });
+
+    //         let agenteX = passo.posicao_x;
+    //         let agenteY = passo.posicao_y;
+
+    //         if (inverterCoordenadas) {
+    //             [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+    //         }
+
+    //         setAgentePosicao({
+    //             x: agenteX,
+    //             y: agenteY
+    //         });
+
+    //         const salasComOuroAteAgora = [];
+    //         miniGrid.forEach((linha, y) => {
+    //             linha.forEach((sala, x) => {
+    //                 if (sala.ouro) {
+    //                     salasComOuroAteAgora.push({ x, y });
+    //                 }
+    //             });
+    //         });
+
+    //         for (let i = 0; i <= passoLimitado; i++) {
+    //             const p = passosExecucao[i];
+
+    //             let salaX = passo.posicao_x;
+    //             let salaY = passo.posicao_y;
+
+    //             if (inverterCoordenadas) {
+    //                 [salaX, salaY] = [passo.posicao_y, passo.posicao_x];
+    //             }
+
+    //             if (p.acao === 'x') {
+    //                 const indice = salasComOuroAteAgora.findIndex(
+    //                     sala => salaX === p.posicao_x && salaY === p.posicao_y
+    //                 );
+    //                 if (indice !== -1) {
+    //                     salasComOuroAteAgora.splice(indice, 1);
+    //                 }
+    //             }
+    //         }
+
+    //         setSalasComOuro(salasComOuroAteAgora);
+    //     }
+
+    //     if (executando) {
+    //         if (intervaloRef.current) {
+    //             clearInterval(intervaloRef.current);
+    //         }
+    //         setExecutando(false);
+    //         setModoManual(true);
+    //     }
+    // }, [passosExecucao, executando, miniGrid]);
+
     const irParaPasso = useCallback((novoPasso) => {
         if (passosExecucao.length === 0) return;
 
@@ -333,11 +422,6 @@ export default function Minimapa({
 
         const passo = passosExecucao[passoLimitado];
         if (passo) {
-            // setAgentePosicao({
-            //     x: passo.posicao_x,
-            //     y: passo.posicao_y
-            // });
-
             let agenteX = passo.posicao_x;
             let agenteY = passo.posicao_y;
 
@@ -350,6 +434,7 @@ export default function Minimapa({
                 y: agenteY
             });
 
+            // Começa com todos os ouros do grid inicial
             const salasComOuroAteAgora = [];
             miniGrid.forEach((linha, y) => {
                 linha.forEach((sala, x) => {
@@ -359,19 +444,20 @@ export default function Minimapa({
                 });
             });
 
+            // Remove apenas os ouros coletados até este passo
             for (let i = 0; i <= passoLimitado; i++) {
                 const p = passosExecucao[i];
 
-                let salaX = passo.posicao_x;
-                let salaY = passo.posicao_y;
+                if (p.acao === 'coletar_ouro' || p.acao === 'x' || p.ouro_coletado) {
+                    let salaX = p.posicao_x;
+                    let salaY = p.posicao_y;
 
-                if (inverterCoordenadas) {
-                    [salaX, salaY] = [passo.posicao_y, passo.posicao_x];
-                }
+                    if (inverterCoordenadas) {
+                        [salaX, salaY] = [p.posicao_y, p.posicao_x];
+                    }
 
-                if (p.acao === 'x') {
                     const indice = salasComOuroAteAgora.findIndex(
-                        sala => salaX === p.posicao_x && salaY === p.posicao_y
+                        sala => sala.x === salaX && sala.y === salaY
                     );
                     if (indice !== -1) {
                         salasComOuroAteAgora.splice(indice, 1);
@@ -389,7 +475,7 @@ export default function Minimapa({
             setExecutando(false);
             setModoManual(true);
         }
-    }, [passosExecucao, executando, miniGrid]);
+    }, [passosExecucao, executando, miniGrid, inverterCoordenadas]);
 
     const passoAnterior = useCallback(() => {
         if (passoAtual > 0) {
@@ -403,13 +489,54 @@ export default function Minimapa({
         }
     }, [passoAtual, passosExecucao.length, irParaPasso]);
 
+    // const resetarExecucao = useCallback(() => {
+    //     if (intervaloRef.current) {
+    //         clearInterval(intervaloRef.current);
+    //     }
+    //     setExecutando(false);
+    //     setPassoAtual(0);
+
+    //     const salasIniciaisComOuro = [];
+    //     miniGrid.forEach((linha, y) => {
+    //         linha.forEach((sala, x) => {
+    //             if (sala.ouro) {
+    //                 salasIniciaisComOuro.push({ x, y });
+    //             }
+    //         });
+    //     });
+    //     setSalasComOuro(salasIniciaisComOuro);
+
+    //     if (passosExecucao.length > 0 && passosExecucao[0]) {
+    //         const passo = passosExecucao[0];
+
+    //         let agenteX = passo.posicao_x;
+    //         let agenteY = passo.posicao_y;
+
+    //         if (inverterCoordenadas) {
+    //             [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+    //         }
+
+    //         setAgentePosicao({
+    //             x: agenteX,
+    //             y: agenteY
+    //         });
+
+    //         // setAgentePosicao({
+    //         //     x: primeiroPasso.posicao_x,
+    //         //     y: primeiroPasso.posicao_y
+    //         // });
+    //     }
+    // }, [passosExecucao, miniGrid]);
+
     const resetarExecucao = useCallback(() => {
         if (intervaloRef.current) {
             clearInterval(intervaloRef.current);
         }
         setExecutando(false);
         setPassoAtual(0);
+        setModoManual(false);
 
+        // Resetar para os ouros iniciais
         const salasIniciaisComOuro = [];
         miniGrid.forEach((linha, y) => {
             linha.forEach((sala, x) => {
@@ -434,13 +561,8 @@ export default function Minimapa({
                 x: agenteX,
                 y: agenteY
             });
-
-            // setAgentePosicao({
-            //     x: primeiroPasso.posicao_x,
-            //     y: primeiroPasso.posicao_y
-            // });
         }
-    }, [passosExecucao, miniGrid]);
+    }, [passosExecucao, miniGrid, inverterCoordenadas]);
 
     useEffect(() => {
         resetarExecucao();
