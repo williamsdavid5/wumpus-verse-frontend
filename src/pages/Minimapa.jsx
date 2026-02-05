@@ -82,6 +82,13 @@ export default function Minimapa({
     const intervaloRef = useRef(null);
     const [salasComOuro, setSalasComOuro] = useState([]);
 
+    const [inverterCoordenadas, setInverterCoordenadas] = useState(true);
+
+    const coordenada = (x, y) => {
+        if (!inverterCoordenadas) return { x, y };
+        return { x: y, y: x };
+    };
+
     const [modoManual, setModoManual] = useState(false);
 
     useEffect(() => {
@@ -173,11 +180,24 @@ export default function Minimapa({
             }
 
             if (passoAtual === 0 && passosExecucao[0]) {
-                const primeiroPasso = passosExecucao[0];
+                const passo = passosExecucao[0];
+
+                let agenteX = passo.posicao_x;
+                let agenteY = passo.posicao_y;
+
+                if (inverterCoordenadas) {
+                    [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+                }
+
                 setAgentePosicao({
-                    x: primeiroPasso.posicao_x,
-                    y: primeiroPasso.posicao_y
+                    x: agenteX,
+                    y: agenteY
                 });
+
+                // setAgentePosicao({
+                //     x: primeiroPasso.posicao_x,
+                //     y: primeiroPasso.posicao_y
+                // });
             }
 
             intervaloRef.current = setInterval(() => {
@@ -191,10 +211,23 @@ export default function Minimapa({
                     }
 
                     const passo = passosExecucao[proximoPasso];
+
+                    let agenteX = passo.posicao_x;
+                    let agenteY = passo.posicao_y;
+
+                    if (inverterCoordenadas) {
+                        [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+                    }
+
                     setAgentePosicao({
-                        x: passo.posicao_x,
-                        y: passo.posicao_y
+                        x: agenteX,
+                        y: agenteY
                     });
+
+                    // setAgentePosicao({
+                    //     x: passo.posicao_x,
+                    //     y: passo.posicao_y
+                    // });
 
                     if (passo.acao === 'coletar_ouro' || passo.acao === 'x' || passo.ouro_coletado) {
                         setSalasComOuro(prevSalas => {
@@ -300,9 +333,21 @@ export default function Minimapa({
 
         const passo = passosExecucao[passoLimitado];
         if (passo) {
+            // setAgentePosicao({
+            //     x: passo.posicao_x,
+            //     y: passo.posicao_y
+            // });
+
+            let agenteX = passo.posicao_x;
+            let agenteY = passo.posicao_y;
+
+            if (inverterCoordenadas) {
+                [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+            }
+
             setAgentePosicao({
-                x: passo.posicao_x,
-                y: passo.posicao_y
+                x: agenteX,
+                y: agenteY
             });
 
             const salasComOuroAteAgora = [];
@@ -316,9 +361,17 @@ export default function Minimapa({
 
             for (let i = 0; i <= passoLimitado; i++) {
                 const p = passosExecucao[i];
+
+                let salaX = passo.posicao_x;
+                let salaY = passo.posicao_y;
+
+                if (inverterCoordenadas) {
+                    [salaX, salaY] = [passo.posicao_y, passo.posicao_x];
+                }
+
                 if (p.acao === 'x') {
                     const indice = salasComOuroAteAgora.findIndex(
-                        sala => sala.x === p.posicao_x && sala.y === p.posicao_y
+                        sala => salaX === p.posicao_x && salaY === p.posicao_y
                     );
                     if (indice !== -1) {
                         salasComOuroAteAgora.splice(indice, 1);
@@ -368,11 +421,24 @@ export default function Minimapa({
         setSalasComOuro(salasIniciaisComOuro);
 
         if (passosExecucao.length > 0 && passosExecucao[0]) {
-            const primeiroPasso = passosExecucao[0];
+            const passo = passosExecucao[0];
+
+            let agenteX = passo.posicao_x;
+            let agenteY = passo.posicao_y;
+
+            if (inverterCoordenadas) {
+                [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+            }
+
             setAgentePosicao({
-                x: primeiroPasso.posicao_x,
-                y: primeiroPasso.posicao_y
+                x: agenteX,
+                y: agenteY
             });
+
+            // setAgentePosicao({
+            //     x: primeiroPasso.posicao_x,
+            //     y: primeiroPasso.posicao_y
+            // });
         }
     }, [passosExecucao, miniGrid]);
 
@@ -426,10 +492,47 @@ export default function Minimapa({
             }
         });
 
+        // salasAtivas.forEach(sala => {
+        //     let x = sala.x;
+        //     let y = sala.y;
+
+        //     if (inverterCoordenadas) {
+        //         [x, y] = [sala.y, sala.x];
+        //     }
+
+        //     if (y < altura && x < largura) {
+        //         grid[y][x] = {
+        //             ativa: true,
+        //             wumpus: sala.wumpus,
+        //             buraco: sala.buraco,
+        //             ouro: sala.ouro
+        //         };
+        //     }
+        // });
+
         setMiniGrid(grid);
         setDimensoes({ largura, altura });
         setCarregando(false);
     }
+
+    // function handleSalaClick(x, y, sala) {
+    //     if (!modoEdicao || !onSalaSelecionada) return;
+
+    //     let coordX = x;
+    //     let coordY = y;
+
+    //     if (inverterCoordenadas) {
+    //         [coordX, coordY] = [y, x];
+    //     }
+
+    //     if (sala.wumpus || sala.buraco || sala.ouro || !sala.ativa) {
+    //         setSalaInvalida(true);
+    //         onSalaSelecionada([], true);
+    //     } else {
+    //         setSalaInvalida(false);
+    //         onSalaSelecionada([coordX, coordY], false, true);
+    //     }
+    // }
 
     function handleSalaClick(x, y, sala) {
         if (!modoEdicao || !onSalaSelecionada) return;
@@ -491,6 +594,15 @@ export default function Minimapa({
                                 const ehSalaInicial = salaInicial.length > 0 &&
                                     salaInicial[0] === x &&
                                     salaInicial[1] === y;
+
+                                // const ehSalaInicial = salaInicial.length > 0 && (() => {
+                                //     let [sx, sy] = salaInicial;
+                                //     if (inverterCoordenadas) {
+                                //         [sx, sy] = [sy, sx];
+                                //     }
+                                //     return sx === x && sy === y;
+                                // })();
+
 
                                 const ouroColetado = sala.ouro && !salasComOuro.some(s => s.x === x && s.y === y);
 
