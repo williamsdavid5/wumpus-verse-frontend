@@ -7,6 +7,7 @@ import ouroSkin from '../assets/skins/ouro.png';
 import buracoSkin from '../assets/skins/buraco.png';
 import wumpusVivo from '../assets/skins/wumpus_vivo.png';
 import agenteSkin from '../assets/skins/lino_Armado.png';
+import agenteSemMunicao from '../assets/skins/lino_semBalas.png'
 
 function Bloco({
     selecionado,
@@ -22,7 +23,8 @@ function Bloco({
     noTop,
     noLeft,
     noRight,
-    noBottom
+    noBottom,
+    flechas
 }) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
     const temOuro = ouro && !ouroColetado;
@@ -39,9 +41,17 @@ function Bloco({
                 // <div className='elemento wumpus'></div>
                 <img src={wumpusVivo} className='skin wumpusVivo' alt="" />
             }
-            {temAgenteAqui && !buraco &&
-                // <div className='elemento agente'></div>
-                < img src={agenteSkin} alt="" className='skin skinAgenteArmado' />
+            {temAgenteAqui && !buraco && (
+                <>
+                    {flechas > 0 &&
+                        <img src={agenteSkin} className='skin skinAgenteArmado' alt="" />
+                    }
+
+                    {flechas == 0 &&
+                        <img src={agenteSemMunicao} className='skin skinAgenteDesarmado' alt="" />
+                    }
+                </>
+            )
             }
             {buraco &&
                 // <div className='elemento buraco'></div>
@@ -82,6 +92,12 @@ export default function Minimapa({
     const intervaloRef = useRef(null);
     const [salasComOuro, setSalasComOuro] = useState([]);
 
+    const [dadosAgente, setDadosAgente] = useState({
+        ouros: 0,
+        flechas: 0,
+        pontos: 0
+    });
+
     const [inverterCoordenadas, setInverterCoordenadas] = useState(true);
 
     const coordenada = (x, y) => {
@@ -90,6 +106,10 @@ export default function Minimapa({
     };
 
     const [modoManual, setModoManual] = useState(false);
+
+    useEffect(() => {
+        console.log(passosExecucao);
+    }, []);
 
     useEffect(() => {
         if (mundoId && mundoId !== -1) {
@@ -194,6 +214,12 @@ export default function Minimapa({
                     y: agenteY
                 });
 
+                setDadosAgente({
+                    ouros: passo.ouros || 0,
+                    flechas: passo.flechas || 0,
+                    pontos: passo.pontos || 0
+                });
+
                 // setAgentePosicao({
                 //     x: primeiroPasso.posicao_x,
                 //     y: primeiroPasso.posicao_y
@@ -222,6 +248,12 @@ export default function Minimapa({
                     setAgentePosicao({
                         x: agenteX,
                         y: agenteY
+                    });
+
+                    setDadosAgente({
+                        ouros: passo.ouros || 0,
+                        flechas: passo.flechas || 0,
+                        pontos: passo.pontos || 0
                     });
 
                     // setAgentePosicao({
@@ -276,6 +308,43 @@ export default function Minimapa({
             };
         }
     }, [passosExecucao, executando, passoAtual, miniGrid, salasComOuro]);
+
+    useEffect(() => {
+        if (passosExecucao.length > 0) {
+            console.log("tem passos!");
+            const primeiroPasso = passosExecucao[0];
+
+            if (primeiroPasso) {
+                let agenteX = primeiroPasso.posicao_x;
+                let agenteY = primeiroPasso.posicao_y;
+
+                if (inverterCoordenadas) {
+                    [agenteX, agenteY] = [primeiroPasso.posicao_y, primeiroPasso.posicao_x];
+                }
+
+                setAgentePosicao({
+                    x: agenteX,
+                    y: agenteY
+                });
+
+                setDadosAgente({
+                    ouros: primeiroPasso.ouros || 0,
+                    flechas: primeiroPasso.flechas || 0,
+                    pontos: primeiroPasso.pontos || 0
+                });
+
+                setPassoAtual(0);
+            }
+        } else {
+            setAgentePosicao(null);
+            setDadosAgente({
+                ouros: 0,
+                flechas: 1,
+                pontos: 0
+            });
+            setPassoAtual(0);
+        }
+    }, [passosExecucao]);
 
     const handleZoomIn = useCallback(() => {
         setZoom(prev => Math.min(prev + 0.2, 3));
@@ -434,6 +503,12 @@ export default function Minimapa({
                 y: agenteY
             });
 
+            setDadosAgente({
+                ouros: passo.ouros || 0,
+                flechas: passo.flechas || 0,
+                pontos: passo.pontos || 0
+            });
+
             // Começa com todos os ouros do grid inicial
             const salasComOuroAteAgora = [];
             miniGrid.forEach((linha, y) => {
@@ -489,6 +564,53 @@ export default function Minimapa({
         }
     }, [passoAtual, passosExecucao.length, irParaPasso]);
 
+    const resetarExecucao = useCallback(() => {
+        if (intervaloRef.current) {
+            clearInterval(intervaloRef.current);
+        }
+        setExecutando(false);
+        setPassoAtual(0);
+        setModoManual(false);
+
+        const salasIniciaisComOuro = [];
+        miniGrid.forEach((linha, y) => {
+            linha.forEach((sala, x) => {
+                if (sala.ouro) {
+                    salasIniciaisComOuro.push({ x, y });
+                }
+            });
+        });
+        setSalasComOuro(salasIniciaisComOuro);
+
+        if (passosExecucao.length > 0 && passosExecucao[0]) {
+            const passo = passosExecucao[0];
+
+            let agenteX = passo.posicao_x;
+            let agenteY = passo.posicao_y;
+
+            if (inverterCoordenadas) {
+                [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
+            }
+
+            setAgentePosicao({
+                x: agenteX,
+                y: agenteY
+            });
+
+            setDadosAgente({
+                ouros: passo.ouros || 0,
+                flechas: passo.flechas || 0,
+                pontos: passo.pontos || 0
+            });
+        } else {
+            setDadosAgente({
+                ouros: 0,
+                flechas: 1,
+                pontos: 0
+            });
+        }
+    }, [passosExecucao, miniGrid, inverterCoordenadas]);
+
     // const resetarExecucao = useCallback(() => {
     //     if (intervaloRef.current) {
     //         clearInterval(intervaloRef.current);
@@ -528,44 +650,27 @@ export default function Minimapa({
     //     }
     // }, [passosExecucao, miniGrid]);
 
-    const resetarExecucao = useCallback(() => {
-        if (intervaloRef.current) {
-            clearInterval(intervaloRef.current);
-        }
-        setExecutando(false);
-        setPassoAtual(0);
-        setModoManual(false);
 
-        // Resetar para os ouros iniciais
-        const salasIniciaisComOuro = [];
-        miniGrid.forEach((linha, y) => {
-            linha.forEach((sala, x) => {
-                if (sala.ouro) {
-                    salasIniciaisComOuro.push({ x, y });
-                }
-            });
-        });
-        setSalasComOuro(salasIniciaisComOuro);
 
-        if (passosExecucao.length > 0 && passosExecucao[0]) {
-            const passo = passosExecucao[0];
-
-            let agenteX = passo.posicao_x;
-            let agenteY = passo.posicao_y;
-
-            if (inverterCoordenadas) {
-                [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
-            }
-
-            setAgentePosicao({
-                x: agenteX,
-                y: agenteY
-            });
-        }
-    }, [passosExecucao, miniGrid, inverterCoordenadas]);
+    // useEffect(() => {
+    //     resetarExecucao();
+    // }, [passosExecucao]);
 
     useEffect(() => {
-        resetarExecucao();
+        if (passosExecucao.length > 0) {
+            resetarExecucao();
+        } else {
+            // Resetar para estado vazio
+            setAgentePosicao(null);
+            setDadosAgente({
+                ouros: 0,
+                flechas: 0,
+                pontos: 0
+            });
+            setPassoAtual(0);
+            setExecutando(false);
+            setModoManual(false);
+        }
     }, [passosExecucao]);
 
     async function carregarMinimapa(id) {
@@ -699,65 +804,82 @@ export default function Minimapa({
                         <p>Carregando mapa...</p>
                     </div>
                 ) : (
-                    <div
-                        className='mapa-blocos-execucao'
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
-                            gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
-                            width: `${dimensoes.largura * cellSize}px`,
-                            height: `${dimensoes.altura * cellSize}px`,
-                            transform: `translate(${pan.x}px, ${pan.y}px)`,
-                        }}
-                        ref={mapaRef}
-                    >
-                        {miniGrid.map((linha, y) =>
-                            linha.map((sala, x) => {
-                                const ehSalaInicial = salaInicial.length > 0 &&
-                                    salaInicial[0] === x &&
-                                    salaInicial[1] === y;
-
-                                // const ehSalaInicial = salaInicial.length > 0 && (() => {
-                                //     let [sx, sy] = salaInicial;
-                                //     if (inverterCoordenadas) {
-                                //         [sx, sy] = [sy, sx];
-                                //     }
-                                //     return sx === x && sy === y;
-                                // })();
-
-
-                                const ouroColetado = sala.ouro && !salasComOuro.some(s => s.x === x && s.y === y);
-
-                                const adjacencias = sala.ativa ? verificarAdjacencias(x, y) : {
-                                    noTop: false,
-                                    noLeft: false,
-                                    noRight: false,
-                                    noBottom: false
-                                };
-
-                                return (
-                                    <Bloco
-                                        key={`${x}-${y}`}
-                                        selecionado={sala.ativa}
-                                        wumpus={sala.wumpus}
-                                        buraco={sala.buraco}
-                                        ouro={sala.ouro}
-                                        salaInicial={ehSalaInicial}
-                                        onClick={() => handleSalaClick(x, y, sala)}
-                                        clicavel={modoEdicao}
-                                        agente={{ x, y }}
-                                        agentePosicao={agentePosicao}
-                                        ouroColetado={ouroColetado}
-                                        noTop={adjacencias.noTop}
-                                        noLeft={adjacencias.noLeft}
-                                        noRight={adjacencias.noRight}
-                                        noBottom={adjacencias.noBottom}
-                                    />
-                                );
-                            })
+                    <>
+                        {passosExecucao.length > 0 && (
+                            <>
+                                <div className='janelaTempoReal'>
+                                    <div className='auxiliarTempoReal'>
+                                        <h3>Inventário</h3>
+                                        <p>Munição disponível: {dadosAgente.flechas}</p>
+                                        <p>Barras de ouro coletadas: {dadosAgente.ouros}</p>
+                                    </div>
+                                    <div className='auxiliarTempoReal direita'>
+                                        <h3>Pontuação<br />{dadosAgente.pontos}</h3>
+                                    </div>
+                                </div>
+                                <p className='paragrafoInformativo pArrastarMapa'>Você pode arrastar o mapa!</p>
+                            </>
                         )}
-                    </div>
+                        <div
+                            className='mapa-blocos-execucao'
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
+                                gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
+                                width: `${dimensoes.largura * cellSize}px`,
+                                height: `${dimensoes.altura * cellSize}px`,
+                                transform: `translate(${pan.x}px, ${pan.y}px)`,
+                            }}
+                            ref={mapaRef}
+                        >
+                            {miniGrid.map((linha, y) =>
+                                linha.map((sala, x) => {
+                                    const ehSalaInicial = salaInicial.length > 0 &&
+                                        salaInicial[0] === x &&
+                                        salaInicial[1] === y;
 
+                                    // const ehSalaInicial = salaInicial.length > 0 && (() => {
+                                    //     let [sx, sy] = salaInicial;
+                                    //     if (inverterCoordenadas) {
+                                    //         [sx, sy] = [sy, sx];
+                                    //     }
+                                    //     return sx === x && sy === y;
+                                    // })();
+
+
+                                    const ouroColetado = sala.ouro && !salasComOuro.some(s => s.x === x && s.y === y);
+
+                                    const adjacencias = sala.ativa ? verificarAdjacencias(x, y) : {
+                                        noTop: false,
+                                        noLeft: false,
+                                        noRight: false,
+                                        noBottom: false
+                                    };
+
+                                    return (
+                                        <Bloco
+                                            key={`${x}-${y}`}
+                                            selecionado={sala.ativa}
+                                            wumpus={sala.wumpus}
+                                            buraco={sala.buraco}
+                                            ouro={sala.ouro}
+                                            salaInicial={ehSalaInicial}
+                                            onClick={() => handleSalaClick(x, y, sala)}
+                                            clicavel={modoEdicao}
+                                            agente={{ x, y }}
+                                            agentePosicao={agentePosicao}
+                                            ouroColetado={ouroColetado}
+                                            noTop={adjacencias.noTop}
+                                            noLeft={adjacencias.noLeft}
+                                            noRight={adjacencias.noRight}
+                                            noBottom={adjacencias.noBottom}
+                                            flechas={dadosAgente.flechas}
+                                        />
+                                    );
+                                })
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -774,14 +896,6 @@ export default function Minimapa({
                             >
                                 {modoManual ? 'Continuar' : executando ? '▐▐' : 'Executar'}
                             </button>
-                            {/* <button
-                        className="botaoControle botaoResetar"
-                        onClick={resetarExecucao}
-                        disabled={passosExecucao.length === 0}
-                        title="Voltar ao início"
-                    >
-                        Resetar
-                    </button> */}
                             <button
                                 className="botaoControle botaoPasso"
                                 onClick={passoAnterior}

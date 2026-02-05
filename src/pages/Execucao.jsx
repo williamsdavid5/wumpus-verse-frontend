@@ -76,7 +76,9 @@ export default function Execucao() {
                 }
             );
 
-            console.log('Partida iniciada:', partidaIniciada);
+            partidaIniciada[0].flechas = partidaIniciada[1].flechas;
+
+            // console.log('Partida iniciada:', partidaIniciada);
             setPartida(partidaIniciada);
             setPassosExecucao(partidaIniciada);
             setExecutandoAnimacao(true);

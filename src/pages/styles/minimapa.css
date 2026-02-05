@@ -71,6 +71,11 @@
     filter: drop-shadow(0 0 10px white);
 }
 
+.skinAgenteDesarmado {
+    width: 85%;
+    filter: drop-shadow(0 0 10px white);
+}
+
 .wumpusVivo {
     width: 110%;
     filter: drop-shadow(0 0 10px blueviolet);
@@ -233,4 +238,44 @@
 .carregandoMinimapaExecucao img {
     /* background-color: gainsboro; */
     flex: 0;
+}
+
+.janelaTempoReal {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: black;
+    color: white;
+    border-right: 1px solid var(--bordaCor);
+    border-bottom: 1px solid var(--bordaCor);
+    /* padding: 15px; */
+    display: flex;
+    z-index: 2000;
+}
+
+.auxiliarTempoReal.direita {
+    border-left: 1px solid var(--bordaCor);
+}
+
+.auxiliarTempoReal {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.auxiliarTempoReal p {
+    font-size: 13px;
+}
+
+.auxiliarTempoReal h3 {
+    margin: 0;
+}
+
+.pArrastarMapa {
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    z-index: 2010;
 }
