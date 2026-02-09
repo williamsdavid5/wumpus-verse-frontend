@@ -130,8 +130,8 @@ export default function () {
         const maxX = Math.max(...xs);
         const maxY = Math.max(...ys);
 
-        const largura = maxX + 2;
-        const altura = maxY + 2;
+        const largura = maxX + 1;
+        const altura = maxY + 1;
 
         setOffsets({ offsetX: 0, offsetY: 0 });
 
@@ -301,6 +301,14 @@ export default function () {
                             Selecione um mundo e um agente para continuar. Claro, você precisa ter criado um mundo antes de iniciar uma partida!
                             <br />
                         </p>
+                        <button
+                            className='botaoInicio telaNovaPartida'
+                            onClick={() => {
+                                navigate('/', { replace: true });
+                            }}
+                        >
+                            Ir para o início
+                        </button>
                     </div>
                     <div className="divControle">
                         <p>Mundos que você criou:</p>

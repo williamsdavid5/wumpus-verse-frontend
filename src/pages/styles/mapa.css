@@ -287,3 +287,14 @@ button:hover {
         width: 25%;
     }
 }
+
+.botaoInicio.telaEditor {
+    background-color: var(--roxoDestaque);
+    color: white;
+    padding: 5px;
+}
+
+.botaoInicio.telaEditor:hover {
+    color: black;
+    background-color: white;
+}

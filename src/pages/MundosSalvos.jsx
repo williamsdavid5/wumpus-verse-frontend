@@ -245,8 +245,8 @@ export default function MundosSalvos() {
         const maxX = Math.max(...xs);
         const maxY = Math.max(...ys);
 
-        const largura = maxX + 2;
-        const altura = maxY + 2;
+        const largura = maxX + 1;
+        const altura = maxY + 1;
 
         const grid = Array.from({ length: altura }, () =>
             Array.from({ length: largura }, () => ({
@@ -408,6 +408,15 @@ export default function MundosSalvos() {
                 </aside>
                 <section className='mundosVisualizador'>
                     <div ref={containerRef} className='div-mapa'>
+
+                        <button
+                            className='botaoInicio mundosSalvoss'
+                            onClick={() => {
+                                navigate('/', { replace: true });
+                            }}
+                        >
+                            Ir para o início
+                        </button>
 
                         {!carregadoMinimapa && (
                             <div

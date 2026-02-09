@@ -113,3 +113,21 @@
         width: 50%;
     }
 }
+
+.botaoInicio {
+    padding: 10px;
+    color: black;
+    background-color: white;
+    border: none;
+}
+
+.botaoInicio:hover {
+    background-color: var(--roxoDestaque);
+    color: white;
+}
+
+.botaoInicio.mundosSalvoss {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+}

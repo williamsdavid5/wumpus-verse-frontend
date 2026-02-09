@@ -699,6 +699,14 @@ export default function Mapa() {
                     <div className='divControle' style={{ border: 'none' }}>
                         <h1>EDITOR DE MUNDOS</h1>
                         <p className='paragrafoInformativo'>Preencha os blocos para definir o formato do seu mundo.</p>
+                        <button
+                            className='botaoInicio telaEditor'
+                            onClick={() => {
+                                navigate('/', { replace: true });
+                            }}
+                        >
+                            Ir para o início
+                        </button>
                     </div>
                     <div className='divControle'>
                         <div className='div-controles-auxiliar'>

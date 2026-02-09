@@ -162,3 +162,7 @@
         width: 20%;
     }
 }
+
+.botaoInicio.telaNovaPartida {
+    padding: 5px;
+}
