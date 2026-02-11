@@ -119,3 +119,15 @@
     margin: 3px 0px;
     margin-top: 10px;
 }
+
+@media (max-width: 600px) {
+    .execucaoMain {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .secaoMapaExecucao,
+    .configsExecucao {
+        width: 100%;
+    }
+}

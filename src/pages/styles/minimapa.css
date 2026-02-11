@@ -283,3 +283,40 @@
     bottom: 0;
     z-index: 2010;
 }
+
+@media (max-width: 600px) {
+
+    .secaoMapaExecucao {
+        height: 100vh;
+    }
+
+    .rodapeControlesExecucao {
+        width: 100%;
+        height: auto;
+        position: static;
+        flex-direction: column;
+        /* background-color: gray; */
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .secaoZoom,
+    .botoesExecucao,
+    .secaoProgresso {
+        width: auto;
+        border: none;
+        border-bottom: 1px solid var(--bordaCor);
+        height: 10vh;
+    }
+
+    .secaoNoRodape {}
+
+    .janelaTempoReal {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .configsExecucao {
+        overflow-y: visible;
+    }
+}
