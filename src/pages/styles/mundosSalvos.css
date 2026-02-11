@@ -131,3 +131,28 @@
     right: 0;
     bottom: 0;
 }
+
+@media (max-width: 600px) {
+    .mundosMain {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mundosLista {
+        /* height: 50vh; */
+        height: 65%;
+        width: 100%;
+    }
+
+    .mundosVisualizador {
+        height: 35%;
+        width: 100%;
+        border-top: solid 1px var(--bordaCor);
+    }
+
+    .botaoEditar,
+    .botaoExcluir,
+    .botaoNovoMundo {
+        display: none;
+    }
+}

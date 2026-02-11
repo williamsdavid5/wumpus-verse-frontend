@@ -18,3 +18,14 @@
         opacity: 1;
     }
 }
+
+@media (max-width: 600px) {
+    .linoDormindoImg {
+        width: 80px;
+        bottom: 50px;
+    }
+
+    .paragrafoLoagindPage {
+        width: 80%;
+    }
+}

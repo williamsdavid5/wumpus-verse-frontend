@@ -2,7 +2,7 @@
     display: none;
 }
 
-@media (max-width: 700px) {
+/* @media (max-width: 700px) {
     .divAvisoTela {
         position: fixed;
         top: 0;
@@ -28,4 +28,4 @@
     .mainInicio {
         display: none;
     }
-}
+} */

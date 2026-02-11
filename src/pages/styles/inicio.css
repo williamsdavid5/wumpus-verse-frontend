@@ -103,8 +103,35 @@
     }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
+    html {
+        background-color: black;
+    }
+
+    .tituloInicio {
+        font-size: 30px;
+        margin-bottom: 20px;
+    }
+
+    .mainInicio {
+        height: 100vh;
+        box-sizing: border-box;
+    }
+
+    .inicioJanela {
+        height: auto;
+        flex: 1;
+    }
+
+    .mainInicio footer {
+        position: fixed;
+        bottom: 0;
+
+    }
+}
+
+/* @media (max-width: 700px) {
     .mainInicio {
         display: none;
     }
-}
+} */

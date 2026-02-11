@@ -78,3 +78,16 @@ input[type="password"]::-webkit-textfield-decoration-container {
     border: 1px solid red;
     color: red;
 }
+
+@media (max-width: 600px) {
+    .loginJanela {
+        width: 100%;
+        height: 100vh;
+    }
+
+    .loginJanela input,
+    .loginJanela button,
+    .loginJanela p {
+        width: 80%;
+    }
+}

@@ -38,7 +38,7 @@ export default function LoadingPage() {
                     src={LoadingGif}
                     alt="" />
                 <p>Carregando...</p>
-                <p className='paragrafoInformativo'>Se demorar, provavelmente a API está dormindo, mas aguarde.</p>
+                <p className='paragrafoInformativo paragrafoLoagindPage'>Se demorar, provavelmente a API está dormindo, mas aguarde.</p>
                 {mostrarLinoDormindo && <>
                     <img
                         src={LinoDormindo} alt=""
