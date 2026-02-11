@@ -8,6 +8,7 @@ import buracoSkin from '../assets/skins/buraco.png';
 import wumpusVivo from '../assets/skins/wumpus_vivo.png';
 import agenteSkin from '../assets/skins/lino_Armado.png';
 import agenteSemMunicao from '../assets/skins/lino_semBalas.png'
+import wumpusMortoSkin from '../assets/skins/wumpus_morto.png'
 
 function Bloco({
     selecionado,
@@ -24,7 +25,8 @@ function Bloco({
     noLeft,
     noRight,
     noBottom,
-    flechas
+    flechas,
+    wumpusMorto
 }) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
     const temOuro = ouro && !ouroColetado;
@@ -36,11 +38,19 @@ function Bloco({
             onClick={onClick}
             style={{ cursor: clicavel ? 'pointer' : 'default' }}
         >
-            {wumpus
+            {/* {wumpus
                 &&
                 // <div className='elemento wumpus'></div>
                 <img src={wumpusVivo} className='skin wumpusVivo' alt="" />
-            }
+            } */}
+
+            {wumpus && !wumpusMorto && (
+                <img src={wumpusVivo} className='skin wumpusVivo' alt="Wumpus Vivo" />
+            )}
+            {wumpus && wumpusMorto && (
+                <img src={wumpusMortoSkin} className='skin wumpusMorto' alt="Wumpus Morto" />
+            )}
+
             {temAgenteAqui && !buraco && (
                 <>
                     {flechas > 0 &&
@@ -91,11 +101,14 @@ export default function Minimapa({
     const [agentePosicao, setAgentePosicao] = useState(null);
     const intervaloRef = useRef(null);
     const [salasComOuro, setSalasComOuro] = useState([]);
+    const [tiroPosicao, setTiroPosicao] = useState([]);
+    const [wumpusMortos, setWumpusMortos] = useState([]);
 
     const [dadosAgente, setDadosAgente] = useState({
         ouros: 0,
         flechas: 0,
-        pontos: 0
+        pontos: 0,
+        wumpusMortosQTD: 0
     });
 
     const [inverterCoordenadas, setInverterCoordenadas] = useState(true);
@@ -187,18 +200,6 @@ export default function Minimapa({
         if (passosExecucao.length > 0 && executando) {
             setModoManual(false);
 
-            // if (salasComOuro.length === 0) {
-            //     const salasIniciaisComOuro = [];
-            //     miniGrid.forEach((linha, y) => {
-            //         linha.forEach((sala, x) => {
-            //             if (sala.ouro) {
-            //                 salasIniciaisComOuro.push({ x, y });
-            //             }
-            //         });
-            //     });
-            //     setSalasComOuro(salasIniciaisComOuro);
-            // }
-
             if (passoAtual === 0 && passosExecucao[0]) {
                 const passo = passosExecucao[0];
 
@@ -219,11 +220,6 @@ export default function Minimapa({
                     flechas: passo.flechas || 0,
                     pontos: passo.pontos || 0
                 });
-
-                // setAgentePosicao({
-                //     x: primeiroPasso.posicao_x,
-                //     y: primeiroPasso.posicao_y
-                // });
             }
 
             intervaloRef.current = setInterval(() => {
@@ -250,30 +246,6 @@ export default function Minimapa({
                         y: agenteY
                     });
 
-                    setDadosAgente({
-                        ouros: passo.ouros || 0,
-                        flechas: passo.flechas || 0,
-                        pontos: passo.pontos || 0
-                    });
-
-                    // setAgentePosicao({
-                    //     x: passo.posicao_x,
-                    //     y: passo.posicao_y
-                    // });
-
-                    // if (passo.acao === 'coletar_ouro' || passo.acao === 'x' || passo.ouro_coletado) {
-                    //     setSalasComOuro(prevSalas => {
-                    //         const novasSalas = [...prevSalas];
-                    //         const indice = novasSalas.findIndex(
-                    //             sala => sala.x === passo.posicao_x && sala.y === passo.posicao_y
-                    //         );
-                    //         if (indice !== -1) {
-                    //             novasSalas.splice(indice, 1);
-                    //         }
-                    //         return novasSalas;
-                    //     });
-                    // }
-
                     if (passo.acao === 'coletar_ouro' || passo.acao === 'x' || passo.ouro_coletado) {
                         setSalasComOuro(prevSalas => {
                             const novasSalas = [...prevSalas];
@@ -296,6 +268,46 @@ export default function Minimapa({
                             return novasSalas;
                         });
                     }
+
+                    const wumpusMortosAteAgora = [];
+
+                    for (let i = 0; i <= proximoPasso; i++) {
+                        const p = passosExecucao[i];
+
+                        if (p.tiro_position &&
+                            p.tiro_position[0] !== -1 &&
+                            p.tiro_position[1] !== -1) {
+
+                            let tiroX = p.tiro_position[0];
+                            let tiroY = p.tiro_position[1];
+
+                            if (inverterCoordenadas) {
+                                [tiroX, tiroY] = [p.tiro_position[1], p.tiro_position[0]];
+                            }
+
+                            if (miniGrid[tiroY] &&
+                                miniGrid[tiroY][tiroX] &&
+                                miniGrid[tiroY][tiroX].wumpus) {
+
+                                const jaEstaMorto = wumpusMortosAteAgora.some(
+                                    w => w.x === tiroX && w.y === tiroY
+                                );
+
+                                if (!jaEstaMorto) {
+                                    wumpusMortosAteAgora.push({ x: tiroX, y: tiroY });
+                                }
+                            }
+                        }
+                    }
+
+                    setWumpusMortos(wumpusMortosAteAgora);
+
+                    setDadosAgente({
+                        ouros: passo.ouros || 0,
+                        flechas: passo.flechas || 0,
+                        pontos: passo.pontos || 0,
+                        wumpusMortosQTD: wumpusMortosAteAgora.length
+                    });
 
                     return proximoPasso;
                 });
@@ -327,20 +339,44 @@ export default function Minimapa({
                     y: agenteY
                 });
 
+                setPassoAtual(0);
+
+                const wumpusMortosIniciais = [];
+
+                if (primeiroPasso.tiro_position &&
+                    primeiroPasso.tiro_position[0] !== -1 &&
+                    primeiroPasso.tiro_position[1] !== -1) {
+
+                    let tiroX = primeiroPasso.tiro_position[0];
+                    let tiroY = primeiroPasso.tiro_position[1];
+
+                    if (inverterCoordenadas) {
+                        [tiroX, tiroY] = [primeiroPasso.tiro_position[1], primeiroPasso.tiro_position[0]];
+                    }
+
+                    if (miniGrid[tiroY] &&
+                        miniGrid[tiroY][tiroX] &&
+                        miniGrid[tiroY][tiroX].wumpus) {
+                        wumpusMortosIniciais.push({ x: tiroX, y: tiroY });
+                    }
+                }
+
+                setWumpusMortos(wumpusMortosIniciais);
+
                 setDadosAgente({
                     ouros: primeiroPasso.ouros || 0,
                     flechas: primeiroPasso.flechas || 0,
-                    pontos: primeiroPasso.pontos || 0
+                    pontos: primeiroPasso.pontos || 0,
+                    wumpusMortosQTD: wumpusMortosIniciais.length
                 });
-
-                setPassoAtual(0);
             }
         } else {
             setAgentePosicao(null);
             setDadosAgente({
                 ouros: 0,
                 flechas: 1,
-                pontos: 0
+                pontos: 0,
+                wumpusMortosQTD: 0
             });
             setPassoAtual(0);
         }
@@ -417,72 +453,6 @@ export default function Minimapa({
         }
     }, [executando, passosExecucao, modoManual]);
 
-    // const irParaPasso = useCallback((novoPasso) => {
-    //     if (passosExecucao.length === 0) return;
-
-    //     const passoLimitado = Math.max(0, Math.min(novoPasso, passosExecucao.length - 1));
-    //     setPassoAtual(passoLimitado);
-
-    //     const passo = passosExecucao[passoLimitado];
-    //     if (passo) {
-    //         // setAgentePosicao({
-    //         //     x: passo.posicao_x,
-    //         //     y: passo.posicao_y
-    //         // });
-
-    //         let agenteX = passo.posicao_x;
-    //         let agenteY = passo.posicao_y;
-
-    //         if (inverterCoordenadas) {
-    //             [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
-    //         }
-
-    //         setAgentePosicao({
-    //             x: agenteX,
-    //             y: agenteY
-    //         });
-
-    //         const salasComOuroAteAgora = [];
-    //         miniGrid.forEach((linha, y) => {
-    //             linha.forEach((sala, x) => {
-    //                 if (sala.ouro) {
-    //                     salasComOuroAteAgora.push({ x, y });
-    //                 }
-    //             });
-    //         });
-
-    //         for (let i = 0; i <= passoLimitado; i++) {
-    //             const p = passosExecucao[i];
-
-    //             let salaX = passo.posicao_x;
-    //             let salaY = passo.posicao_y;
-
-    //             if (inverterCoordenadas) {
-    //                 [salaX, salaY] = [passo.posicao_y, passo.posicao_x];
-    //             }
-
-    //             if (p.acao === 'x') {
-    //                 const indice = salasComOuroAteAgora.findIndex(
-    //                     sala => salaX === p.posicao_x && salaY === p.posicao_y
-    //                 );
-    //                 if (indice !== -1) {
-    //                     salasComOuroAteAgora.splice(indice, 1);
-    //                 }
-    //             }
-    //         }
-
-    //         setSalasComOuro(salasComOuroAteAgora);
-    //     }
-
-    //     if (executando) {
-    //         if (intervaloRef.current) {
-    //             clearInterval(intervaloRef.current);
-    //         }
-    //         setExecutando(false);
-    //         setModoManual(true);
-    //     }
-    // }, [passosExecucao, executando, miniGrid]);
-
     const irParaPasso = useCallback((novoPasso) => {
         if (passosExecucao.length === 0) return;
 
@@ -503,13 +473,6 @@ export default function Minimapa({
                 y: agenteY
             });
 
-            setDadosAgente({
-                ouros: passo.ouros || 0,
-                flechas: passo.flechas || 0,
-                pontos: passo.pontos || 0
-            });
-
-            // Começa com todos os ouros do grid inicial
             const salasComOuroAteAgora = [];
             miniGrid.forEach((linha, y) => {
                 linha.forEach((sala, x) => {
@@ -519,7 +482,6 @@ export default function Minimapa({
                 });
             });
 
-            // Remove apenas os ouros coletados até este passo
             for (let i = 0; i <= passoLimitado; i++) {
                 const p = passosExecucao[i];
 
@@ -541,6 +503,46 @@ export default function Minimapa({
             }
 
             setSalasComOuro(salasComOuroAteAgora);
+
+            const wumpusMortosAteAgora = [];
+
+            for (let i = 0; i <= passoLimitado; i++) {
+                const p = passosExecucao[i];
+
+                if (p.tiro_position &&
+                    p.tiro_position[0] !== -1 &&
+                    p.tiro_position[1] !== -1) {
+
+                    let tiroX = p.tiro_position[0];
+                    let tiroY = p.tiro_position[1];
+
+                    if (inverterCoordenadas) {
+                        [tiroX, tiroY] = [p.tiro_position[1], p.tiro_position[0]];
+                    }
+
+                    if (miniGrid[tiroY] &&
+                        miniGrid[tiroY][tiroX] &&
+                        miniGrid[tiroY][tiroX].wumpus) {
+
+                        const jaEstaMorto = wumpusMortosAteAgora.some(
+                            w => w.x === tiroX && w.y === tiroY
+                        );
+
+                        if (!jaEstaMorto) {
+                            wumpusMortosAteAgora.push({ x: tiroX, y: tiroY });
+                        }
+                    }
+                }
+            }
+
+            setWumpusMortos(wumpusMortosAteAgora);
+
+            setDadosAgente({
+                ouros: passo.ouros || 0,
+                flechas: passo.flechas || 0,
+                pontos: passo.pontos || 0,
+                wumpusMortosQTD: wumpusMortosAteAgora.length
+            });
         }
 
         if (executando) {
@@ -571,6 +573,7 @@ export default function Minimapa({
         setExecutando(false);
         setPassoAtual(0);
         setModoManual(false);
+        setWumpusMortos([]);
 
         const salasIniciaisComOuro = [];
         miniGrid.forEach((linha, y) => {
@@ -600,61 +603,18 @@ export default function Minimapa({
             setDadosAgente({
                 ouros: passo.ouros || 0,
                 flechas: passo.flechas || 0,
-                pontos: passo.pontos || 0
+                pontos: passo.pontos || 0,
+                wumpusMortosQTD: 0
             });
         } else {
             setDadosAgente({
                 ouros: 0,
                 flechas: 1,
-                pontos: 0
+                pontos: 0,
+                wumpusMortosQTD: 0
             });
         }
     }, [passosExecucao, miniGrid, inverterCoordenadas]);
-
-    // const resetarExecucao = useCallback(() => {
-    //     if (intervaloRef.current) {
-    //         clearInterval(intervaloRef.current);
-    //     }
-    //     setExecutando(false);
-    //     setPassoAtual(0);
-
-    //     const salasIniciaisComOuro = [];
-    //     miniGrid.forEach((linha, y) => {
-    //         linha.forEach((sala, x) => {
-    //             if (sala.ouro) {
-    //                 salasIniciaisComOuro.push({ x, y });
-    //             }
-    //         });
-    //     });
-    //     setSalasComOuro(salasIniciaisComOuro);
-
-    //     if (passosExecucao.length > 0 && passosExecucao[0]) {
-    //         const passo = passosExecucao[0];
-
-    //         let agenteX = passo.posicao_x;
-    //         let agenteY = passo.posicao_y;
-
-    //         if (inverterCoordenadas) {
-    //             [agenteX, agenteY] = [passo.posicao_y, passo.posicao_x];
-    //         }
-
-    //         setAgentePosicao({
-    //             x: agenteX,
-    //             y: agenteY
-    //         });
-
-    //         // setAgentePosicao({
-    //         //     x: primeiroPasso.posicao_x,
-    //         //     y: primeiroPasso.posicao_y
-    //         // });
-    //     }
-    // }, [passosExecucao, miniGrid]);
-
-
-
-    // useEffect(() => {
-    //     resetarExecucao();
-    // }, [passosExecucao]);
 
     useEffect(() => {
         if (passosExecucao.length > 0) {
@@ -812,6 +772,7 @@ export default function Minimapa({
                                         <h3>Inventário</h3>
                                         <p>Munição disponível: {dadosAgente.flechas}</p>
                                         <p>Barras de ouro coletadas: {dadosAgente.ouros}</p>
+                                        <p>Wumpus mortos: {dadosAgente.wumpusMortosQTD}</p>
                                     </div>
                                     <div className='auxiliarTempoReal direita'>
                                         <h3>Pontuação<br />{dadosAgente.pontos}</h3>
@@ -838,15 +799,6 @@ export default function Minimapa({
                                         salaInicial[0] === x &&
                                         salaInicial[1] === y;
 
-                                    // const ehSalaInicial = salaInicial.length > 0 && (() => {
-                                    //     let [sx, sy] = salaInicial;
-                                    //     if (inverterCoordenadas) {
-                                    //         [sx, sy] = [sy, sx];
-                                    //     }
-                                    //     return sx === x && sy === y;
-                                    // })();
-
-
                                     const ouroColetado = sala.ouro && !salasComOuro.some(s => s.x === x && s.y === y);
 
                                     const adjacencias = sala.ativa ? verificarAdjacencias(x, y) : {
@@ -855,6 +807,8 @@ export default function Minimapa({
                                         noRight: false,
                                         noBottom: false
                                     };
+
+                                    const wumpusMortoo = wumpusMortos.some(w => w.x === x && w.y === y);
 
                                     return (
                                         <Bloco
@@ -874,6 +828,7 @@ export default function Minimapa({
                                             noRight={adjacencias.noRight}
                                             noBottom={adjacencias.noBottom}
                                             flechas={dadosAgente.flechas}
+                                            wumpusMorto={wumpusMortoo}
                                         />
                                     );
                                 })

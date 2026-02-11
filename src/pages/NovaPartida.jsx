@@ -461,7 +461,7 @@ export default function () {
                                 </p>
                             </div>
                         </div>
-                        <label htmlFor="" className="checkMovimento">
+                        {/* <label htmlFor="" className="checkMovimento">
                             <input
                                 type="checkbox"
                                 name="" id=""
@@ -470,7 +470,7 @@ export default function () {
                                     // console.log(e.target.checked);
                                 }} />
                             Permitir movimentos na diagonal
-                        </label>
+                        </label> */}
                     </div>
                     <div className="divControle">
                         <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>

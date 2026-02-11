@@ -81,6 +81,10 @@
     filter: drop-shadow(0 0 10px blueviolet);
 }
 
+.wumpusMorto {
+    width: 70%;
+}
+
 .secaoNoRodape {
     display: flex;
     border-right: 1px solid var(--bordaCor);
