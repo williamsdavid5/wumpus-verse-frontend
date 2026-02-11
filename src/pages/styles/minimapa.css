@@ -329,5 +329,6 @@
 
     .configsExecucao {
         overflow-y: visible;
+        border-left: none;
     }
 }
