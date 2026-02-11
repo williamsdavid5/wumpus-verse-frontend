@@ -109,8 +109,12 @@
     }
 
     .tituloInicio {
-        font-size: 30px;
+        font-size: 20px;
         margin-bottom: 20px;
+    }
+
+    .paragrafoInicio {
+        font-size: 12px;
     }
 
     .mainInicio {
@@ -127,6 +131,10 @@
         position: fixed;
         bottom: 0;
 
+    }
+
+    .logoInicio {
+        width: 100px;
     }
 }
 

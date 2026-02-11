@@ -183,3 +183,35 @@ hr {
         display: none;
     }
 }
+
+@media (max-width: 600px) {
+    .secaoSaibaMaisDireita {
+        display: flex;
+        width: 100%;
+    }
+
+    .divisaoHorizontal {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .secaoSaibaMais {
+        width: 100%;
+    }
+
+    .divisaoSobreNos {
+        width: 100%;
+        padding: 0;
+        padding: 30px;
+    }
+
+    .cardPessoa {
+        width: 80%;
+    }
+
+    .imagem img {
+        width: 100%;
+        height: auto;
+        /* object-fit: contain; */
+    }
+}

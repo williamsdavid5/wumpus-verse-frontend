@@ -142,11 +142,13 @@
         /* height: 50vh; */
         height: 65%;
         width: 100%;
+        border: none;
     }
 
     .mundosVisualizador {
         height: 35%;
         width: 100%;
+        border: none;
         border-top: solid 1px var(--bordaCor);
     }
 
