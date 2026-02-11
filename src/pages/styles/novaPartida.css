@@ -163,3 +163,46 @@
 .botaoInicio.telaNovaPartida {
     padding: 5px;
 }
+
+@media (max-width: 600px) {
+    .mainNovaPartida {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .esquerdaNovaPartida,
+    .centroNovaPartida,
+    .direitaNovaPartida {
+        width: 100%;
+        border: none;
+    }
+
+    .esquerdaNovaPartida {
+        height: 60vh;
+        border-bottom: solid 1px var(--bordaCor);
+    }
+
+    .centroNovaPartida {
+        height: 80vh;
+        /* height: auto; */
+        border-bottom: solid 1px var(--bordaCor);
+    }
+
+    .direitaNovaPartida {
+        height: 40vh;
+        border-bottom: solid 1px var(--bordaCor);
+        overflow: visible;
+    }
+
+    .mainNovaPartida .div-mapa {
+        height: 50vh;
+        /* height: auto; */
+        /* background-color: gray; */
+    }
+
+    .divSelecioneAgente {
+        flex: none;
+        height: 80%;
+    }
+}
