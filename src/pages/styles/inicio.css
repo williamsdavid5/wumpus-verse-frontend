@@ -94,6 +94,21 @@
     width: 100%;
 }
 
+.pAvisoTelaInicio {
+    font-size: 12px;
+    /* margin: 10px 0px; */
+    margin-top: 10px;
+    /* color: red; */
+    color: black;
+    background-color: white;
+    padding: 7px;
+    /* border: solid 1px var(--bordaCor); */
+}
+
+.pAvisoTelaInicio span {
+    font-weight: bold;
+}
+
 @media (max-width: 900px) {
 
     .tituloInicio,

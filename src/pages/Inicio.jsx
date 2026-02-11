@@ -97,6 +97,7 @@ export default function Inicio() {
                         que qualquer pessoa crie mundos e personalize agentes inteligentes para testar
                         as diversas formas de vencer esse jogo. <br /><a href="/saibamais" className='animarTexto'>Saiba mais</a>
                     </p>
+                    <p className='pAvisoTelaInicio'>Atenção: a experiência em dispositivos com tela pequena <span>não é completa!</span> Algumas funções só estão disponíveis em computadores.</p>
                     <div className='divBotoesInicio'>
                         {/* <button onClick={() => navigate('/mundos-salvos')} >Mundos</button> */}
                         {botoes.slice(0, 3).map(b => (
