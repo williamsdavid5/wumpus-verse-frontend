@@ -185,6 +185,9 @@
 
     .centroNovaPartida {
         height: 80vh;
+        width: 95%;
+        border: solid 1px var(--bordaCor);
+        margin: 10px 0px;
         /* height: auto; */
         border-bottom: solid 1px var(--bordaCor);
     }
