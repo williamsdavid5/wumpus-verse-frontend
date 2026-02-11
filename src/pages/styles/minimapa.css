@@ -318,6 +318,11 @@
         display: none;
     }
 
+    .mapaContainerExecucao {
+        display: flex;
+        flex-direction: column;
+    }
+
     .secaoNoRodape {}
 
     .janelaTempoReal {
@@ -325,6 +330,7 @@
         box-sizing: border-box;
         border-top: none;
         border-right: none;
+        position: static;
     }
 
     .configsExecucao {

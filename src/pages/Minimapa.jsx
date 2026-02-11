@@ -753,6 +753,22 @@ export default function Minimapa({
 
     return (
         <div className="minimapaContainerExecucao">
+            {passosExecucao.length > 0 && (
+                <>
+                    <div className='janelaTempoReal'>
+                        <div className='auxiliarTempoReal'>
+                            <h3>Inventário</h3>
+                            <p>Munição disponível: {dadosAgente.flechas}</p>
+                            <p>Barras de ouro coletadas: {dadosAgente.ouros}</p>
+                            <p>Wumpus mortos: {dadosAgente.wumpusMortosQTD}</p>
+                        </div>
+                        <div className='auxiliarTempoReal direita'>
+                            <h3>Pontuação<br />{dadosAgente.pontos}</h3>
+                        </div>
+                    </div>
+                    <p className='paragrafoInformativo pArrastarMapa'>Você pode arrastar o mapa!</p>
+                </>
+            )}
             <div
                 ref={containerRef}
                 className="mapaContainerExecucao"
@@ -765,22 +781,6 @@ export default function Minimapa({
                     </div>
                 ) : (
                     <>
-                        {passosExecucao.length > 0 && (
-                            <>
-                                <div className='janelaTempoReal'>
-                                    <div className='auxiliarTempoReal'>
-                                        <h3>Inventário</h3>
-                                        <p>Munição disponível: {dadosAgente.flechas}</p>
-                                        <p>Barras de ouro coletadas: {dadosAgente.ouros}</p>
-                                        <p>Wumpus mortos: {dadosAgente.wumpusMortosQTD}</p>
-                                    </div>
-                                    <div className='auxiliarTempoReal direita'>
-                                        <h3>Pontuação<br />{dadosAgente.pontos}</h3>
-                                    </div>
-                                </div>
-                                <p className='paragrafoInformativo pArrastarMapa'>Você pode arrastar o mapa!</p>
-                            </>
-                        )}
                         <div
                             className='mapa-blocos-execucao'
                             style={{

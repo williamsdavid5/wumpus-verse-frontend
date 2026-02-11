@@ -28,7 +28,7 @@ export default function () {
     const { getMundosSalvos, getMiniMapa } = useAuth();
     const navigate = useNavigate();
     const [mundos, setMundos] = useState([]);
-    const [carregando, setCarregando] = useState(false);
+    const [carregando, setCarregando] = useState(true);
     const [carregandoMais, setCarregandoMais] = useState(false);
     const { confirm } = useConfirm();
     const [paginaAtual, setPaginaAtual] = useState(1);
@@ -173,49 +173,6 @@ export default function () {
         setDimensoes({ largura, altura });
         setCarregandoMinimapa(false);
     }
-
-    // async function carregarMundosSalvos(pagina = 1, limparLista = true) {
-    //     if (pagina === 1) {
-    //         setCarregando(true);
-    //     } else {
-    //         setCarregandoMais(true);
-    //     }
-    //     try {
-    //         const resposta = await getMundosSalvos(pagina, 6);
-
-    //         if (resposta && resposta.length > 0) {
-    //             // console.log(resposta);
-    //             const itensParaMostrar = resposta.slice(0, 6);
-
-    //             if (limparLista || pagina === 1) {
-    //                 setMundos(itensParaMostrar);
-    //             } else {
-    //                 setMundos(prev => [...prev, ...itensParaMostrar]);
-    //             }
-
-    //             setTemMaisItens(resposta.length === 6);
-    //         } else {
-    //             if (pagina === 1) {
-    //                 setMundos([]);
-    //             }
-    //             setTemMaisItens(false);
-    //         }
-
-    //         setPaginaAtual(pagina);
-
-    //     } catch (error) {
-    //         console.error('Erro ao carregar mundos:', error);
-    //         setTemMaisItens(false);
-    //     } finally {
-    //         if (pagina === 1) {
-    //             setCarregando(false);
-    //         }
-
-    //         if (mundos.length > 0) {
-    //             setCarregandoMais(false);
-    //         }
-    //     }
-    // }
 
     async function carregarMundosSalvos(pagina = 1, limparLista = true) {
         if (pagina === 1) {
