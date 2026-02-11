@@ -298,6 +298,7 @@
         /* background-color: gray; */
         flex-direction: column;
         justify-content: center;
+        border-left: none;
     }
 
     .secaoZoom,
@@ -306,7 +307,15 @@
         width: auto;
         border: none;
         border-bottom: 1px solid var(--bordaCor);
-        height: 10vh;
+        height: 8vh;
+    }
+
+    .botoesExecucao {
+        height: 6vh;
+    }
+
+    .pArrastarMapa {
+        display: none;
     }
 
     .secaoNoRodape {}
@@ -314,6 +323,8 @@
     .janelaTempoReal {
         width: 100%;
         box-sizing: border-box;
+        border-top: none;
+        border-right: none;
     }
 
     .configsExecucao {
