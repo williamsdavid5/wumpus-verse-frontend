@@ -280,7 +280,7 @@
 .pArrastarMapa {
     position: absolute;
     left: 5px;
-    bottom: 0;
+    bottom: 11vh;
     z-index: 2010;
 }
 
