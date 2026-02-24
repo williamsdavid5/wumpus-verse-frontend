@@ -108,6 +108,49 @@ export default function Execucao() {
         setExecutandoAnimacao(false);
     }
 
+    // const baixarJSON = useCallback(() => {
+    //     if (passosExecucao.length === 0) {
+    //         alert('Nenhuma partida para baixar!');
+    //         return;
+    //     }
+
+    //     const dadosPartida = {
+    //         mundoId: mundoSelecionado,
+    //         agenteSelecionado: agenteSelecionado,
+    //         salaInicial: salaSelecionada,
+    //         ativarDiagonal: ativarDiagonal,
+
+    //         passosExecucao: passosExecucao,
+    //         partida: partida,
+
+    //         metadata: {
+    //             totalPassos: passosExecucao.length,
+    //             agenteTipo: `Agente ${agenteSelecionado}`,
+    //             dataGeracao: new Date().toISOString(),
+    //             mundoSelecionado: mundoSelecionado,
+    //             salaSelecionada: salaSelecionada,
+    //             ativarDiagonal: ativarDiagonal
+    //         },
+
+    //         agente: agenteSelecionado,
+    //         movimentoDiagonal: ativarDiagonal,
+    //         dataGeracao: new Date().toISOString()
+    //     };
+
+    //     const jsonString = JSON.stringify(dadosPartida, null, 2);
+    //     const blob = new Blob([jsonString], { type: 'application/json' });
+    //     const url = URL.createObjectURL(blob);
+
+    //     const a = document.createElement('a');
+    //     a.href = url;
+    //     a.download = `partida_mundo_${mundoSelecionado}_${new Date().getTime()}.json`;
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     document.body.removeChild(a);
+    //     URL.revokeObjectURL(url);
+
+    // }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal, partida]);
+
     const baixarJSON = useCallback(() => {
         if (passosExecucao.length === 0) {
             alert('Nenhuma partida para baixar!');
@@ -119,22 +162,12 @@ export default function Execucao() {
             agenteSelecionado: agenteSelecionado,
             salaInicial: salaSelecionada,
             ativarDiagonal: ativarDiagonal,
-
             passosExecucao: passosExecucao,
-            partida: partida,
-
             metadata: {
                 totalPassos: passosExecucao.length,
                 agenteTipo: `Agente ${agenteSelecionado}`,
-                dataGeracao: new Date().toISOString(),
-                mundoSelecionado: mundoSelecionado,
-                salaSelecionada: salaSelecionada,
-                ativarDiagonal: ativarDiagonal
-            },
-
-            agente: agenteSelecionado,
-            movimentoDiagonal: ativarDiagonal,
-            dataGeracao: new Date().toISOString()
+                dataGeracao: new Date().toISOString()
+            }
         };
 
         const jsonString = JSON.stringify(dadosPartida, null, 2);
@@ -149,8 +182,7 @@ export default function Execucao() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-    }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal, partida]);
-
+    }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
 
     const importarJSON = useCallback(() => {
         const input = document.createElement('input');
@@ -166,31 +198,21 @@ export default function Execucao() {
                 const texto = await file.text();
                 const dados = JSON.parse(texto);
 
-                if (!dados.passosExecucao && !dados.passos) {
-                    throw new Error('Formato de arquivo inválido: faltam passos da execução');
-                }
+                const passos = dados.passosExecucao || [];
+                const agente = dados.agenteSelecionado !== undefined ? dados.agenteSelecionado : 0;
+                const mundoId = dados.mundoId !== undefined ? dados.mundoId : mundoSelecionado;
+                const salaInicial = dados.salaInicial || [];
+                const movimentoDiagonal = dados.ativarDiagonal !== undefined ? dados.ativarDiagonal : ativarDiagonal;
 
-                const passos = dados.passosExecucao || dados.passos;
-
-                const agente = dados.agenteSelecionado !== undefined ? dados.agenteSelecionado :
-                    (dados.agente !== undefined ? dados.agente : 0);
-
-                const mundoId = dados.mundoId || dados.mundoSelecionado || mundoSelecionado;
-
-                const salaInicial = dados.salaInicial || dados.salaSelecionada || salaSelecionada;
-
-                const movimentoDiagonal = dados.ativarDiagonal !== undefined ? dados.ativarDiagonal :
-                    (dados.movimentoDiagonal !== undefined ? dados.movimentoDiagonal : ativarDiagonal);
-
-                if (!Array.isArray(passos)) {
-                    throw new Error('Os passos da execução não estão em formato válido');
+                if (!Array.isArray(passos) || passos.length === 0) {
+                    throw new Error('Passos da execução inválidos ou vazios');
                 }
 
                 if (mundoId === -1 || mundoId === undefined) {
                     throw new Error('ID do mundo não encontrado no arquivo');
                 }
 
-                if (!salaInicial || !Array.isArray(salaInicial) || salaInicial.length !== 2) {
+                if (!Array.isArray(salaInicial) || salaInicial.length !== 2) {
                     throw new Error('Sala inicial inválida no arquivo');
                 }
 
@@ -213,7 +235,71 @@ export default function Execucao() {
         };
 
         input.click();
-    }, [mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
+    }, [mundoSelecionado, ativarDiagonal]);
+
+
+    // const importarJSON = useCallback(() => {
+    //     const input = document.createElement('input');
+    //     input.type = 'file';
+    //     input.accept = '.json';
+
+    //     input.onchange = async (e) => {
+    //         const file = e.target.files[0];
+    //         if (!file) return;
+
+    //         try {
+    //             setCarregando(true);
+    //             const texto = await file.text();
+    //             const dados = JSON.parse(texto);
+
+    //             if (!dados.passosExecucao && !dados.passos) {
+    //                 throw new Error('Formato de arquivo inválido: faltam passos da execução');
+    //             }
+
+    //             const passos = dados.passosExecucao || dados.passos;
+
+    //             const agente = dados.agenteSelecionado !== undefined ? dados.agenteSelecionado :
+    //                 (dados.agente !== undefined ? dados.agente : 0);
+
+    //             const mundoId = dados.mundoId || dados.mundoSelecionado || mundoSelecionado;
+
+    //             const salaInicial = dados.salaInicial || dados.salaSelecionada || salaSelecionada;
+
+    //             const movimentoDiagonal = dados.ativarDiagonal !== undefined ? dados.ativarDiagonal :
+    //                 (dados.movimentoDiagonal !== undefined ? dados.movimentoDiagonal : ativarDiagonal);
+
+    //             if (!Array.isArray(passos)) {
+    //                 throw new Error('Os passos da execução não estão em formato válido');
+    //             }
+
+    //             if (mundoId === -1 || mundoId === undefined) {
+    //                 throw new Error('ID do mundo não encontrado no arquivo');
+    //             }
+
+    //             if (!salaInicial || !Array.isArray(salaInicial) || salaInicial.length !== 2) {
+    //                 throw new Error('Sala inicial inválida no arquivo');
+    //             }
+
+    //             setMundoSelecionado(mundoId);
+    //             setAgenteSelecionado(agente);
+    //             setSalaSelecionada(salaInicial);
+    //             setAtivarDiagonal(movimentoDiagonal);
+    //             setPassosExecucao(passos);
+    //             setPartida(passos);
+    //             setSalaInvalida(false);
+    //             setModoEditarSala(false);
+    //             setExecutandoAnimacao(false);
+
+    //         } catch (error) {
+    //             console.error('Erro ao importar JSON:', error);
+    //             alert('Erro ao importar arquivo: ' + error.message);
+    //         } finally {
+    //             setCarregando(false);
+    //         }
+    //     };
+
+    //     input.click();
+    // }, [mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
 
     return (
         <>

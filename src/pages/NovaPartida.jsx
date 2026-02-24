@@ -309,7 +309,7 @@ export default function () {
                             <div className='loadingPequeno'>
                                 <p>Não tem nada aqui!</p>
                                 <button
-                                    className="botaoIniciarPartida"
+                                    className="botaoIniciarPartida botaoCriarNovoMundo"
                                     onClick={() => {
                                         navigate('/mapa')
                                     }}

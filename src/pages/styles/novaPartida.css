@@ -165,6 +165,10 @@
 }
 
 @media (max-width: 600px) {
+    .botaoCriarNovoMundo {
+        display: none;
+    }
+
     .mainNovaPartida {
         display: flex;
         flex-direction: column;
