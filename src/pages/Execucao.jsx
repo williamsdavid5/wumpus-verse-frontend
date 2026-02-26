@@ -1,4 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useExecution } from "../contexts/ExecutionContext";
 import { useAuth } from '../contexts/AuthContext';
 import { useConfirm } from '../contexts/ConfirmContext';
@@ -31,6 +33,40 @@ export default function Execucao() {
         passosExecucao.length === 0;
 
     const { executionConfig } = useExecution();
+
+    //json que mostra ao usuário a estrutura que ele precisa para importar o seu proprio agente
+    const jsonExample = {
+        mundoId: 0,
+        agenteSelecionado: -1,
+        salaInicial: [0, 0],
+        ativarDiagonal: false,
+        passosExecucao: [
+            {
+                agente: -1,
+                posicao_x: 5,
+                posicao_y: 0,
+                acao: '',
+                tiro_position: [
+                    -1, -1
+                ],
+                ouros: 0,
+                flechas: 0,
+                pontos: 0
+            },
+            {
+                agente: -1,
+                posicao_x: 5,
+                posicao_y: 0,
+                acao: '',
+                tiro_position: [
+                    -1, -1
+                ],
+                ouros: 0,
+                flechas: 0,
+                pontos: 0
+            }
+        ]
+    };
 
     useEffect(() => {
         if (!executionConfig) return;
@@ -107,49 +143,6 @@ export default function Execucao() {
     function pararAnimacao() {
         setExecutandoAnimacao(false);
     }
-
-    // const baixarJSON = useCallback(() => {
-    //     if (passosExecucao.length === 0) {
-    //         alert('Nenhuma partida para baixar!');
-    //         return;
-    //     }
-
-    //     const dadosPartida = {
-    //         mundoId: mundoSelecionado,
-    //         agenteSelecionado: agenteSelecionado,
-    //         salaInicial: salaSelecionada,
-    //         ativarDiagonal: ativarDiagonal,
-
-    //         passosExecucao: passosExecucao,
-    //         partida: partida,
-
-    //         metadata: {
-    //             totalPassos: passosExecucao.length,
-    //             agenteTipo: `Agente ${agenteSelecionado}`,
-    //             dataGeracao: new Date().toISOString(),
-    //             mundoSelecionado: mundoSelecionado,
-    //             salaSelecionada: salaSelecionada,
-    //             ativarDiagonal: ativarDiagonal
-    //         },
-
-    //         agente: agenteSelecionado,
-    //         movimentoDiagonal: ativarDiagonal,
-    //         dataGeracao: new Date().toISOString()
-    //     };
-
-    //     const jsonString = JSON.stringify(dadosPartida, null, 2);
-    //     const blob = new Blob([jsonString], { type: 'application/json' });
-    //     const url = URL.createObjectURL(blob);
-
-    //     const a = document.createElement('a');
-    //     a.href = url;
-    //     a.download = `partida_mundo_${mundoSelecionado}_${new Date().getTime()}.json`;
-    //     document.body.appendChild(a);
-    //     a.click();
-    //     document.body.removeChild(a);
-    //     URL.revokeObjectURL(url);
-
-    // }, [passosExecucao, mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal, partida]);
 
     const baixarJSON = useCallback(() => {
         if (passosExecucao.length === 0) {
@@ -389,6 +382,7 @@ export default function Execucao() {
                                     <p><span style={{ fontWeight: 'bold', marginTop: '20px' }}>Funcionamento</span><br />
                                         As partidas são individuais, ao iniciar uma nova, essa partida é baixada para o seu computador onde você poderá exibi-la de diversas maneiras. Caso você deseje outra, esta será baixada individualmente da mesma maneira. Faça um teste, baixe uma partida!
                                     </p>
+                                    <p>Você também pode <b>baixar ou importar um arquivo de partida </b> baixado anteriormente, isto permite que você guarde suas partida favoritas e importe quando quiser!</p>
                                     <button
                                         onClick={importarJSON}
                                         className="botaoImportar"
@@ -397,6 +391,33 @@ export default function Execucao() {
                                     >
                                         Importar JSON
                                     </button>
+                                    <h2>Gostaria de usar o seu próprio agente?</h2>
+                                    <p>Você pode desenvolver o seu próprio agente, na linguagem que preferir, e utilizar este frontend para visualizar a sua execução, desde que siga os seguintes passos:
+                                        <br /><br />
+                                        <b>1. Criar e exportar um mundo utilizando esta plataforma</b><br />
+                                        Não é para forçar você a usar o nosso site, mas um requisito de lógica! O botão <b>'Importar JSON'</b> acima faz a importação apenas dos passos do agente, o mundo da partida, utilizando o ID, é resgatado diretamente do banco de dados,
+                                        isso significa que você deve ter aquele mundo armazenado na sua conta para que tudo possa funcionar. <br /><br />
+                                        Nesse caso, você pode criar o mundo normalmente pelo nosso site e salvar na sua conta, o arquivo daquele mundo pode ser baixado em formato JSON, permitindo que você possa fazer a importação no seu próprio código.
+                                        <br /><br />
+                                        <b>2. Converter os passos da sua partida para o formato correto</b>
+                                        Se o seu código exportar um arquivo JSON dos passos da execução com o mesmo formato que estamos utilizando, e usar um mundo existente na sua conta, você será capaz de visualizar o seu agente no nosso frontend!
+                                        <br /><br />A estrutura é esta:
+                                    </p>
+                                    <SyntaxHighlighter
+                                        language="json"
+                                        style={oneDark}
+                                        showLineNumbers
+                                    >
+                                        {JSON.stringify(jsonExample, null, 2)}
+                                    </SyntaxHighlighter>
+                                    <p>Os dados inúteis para você seriam:
+                                        <br />- <b>Agente selecionado:</b> você não estaria utilizando um dos nossos agentes, então este ID não seria utilizado. Mas é importante que você envie com o valor -1 para que o código possa identificar que este é um agente criado por você!
+                                        <br />- <b>Ativar diagonal:</b> você estaria criando a sua própria execução, então você tem a liberdade de ativar ou não movimentos na diagonal, logo, esta variável não será utilizada. Mas é importante que você envie seu valor de acordo com a sua execução para facilitar a vida de todo mundo!
+                                        <br /><br />
+                                        Dados com os quais você deve ter muita atenção: <br />
+                                        - <b>ID do mundo:</b> é muitíssimo importante que você utilize um mundo que existe, e com exatamente o mesmo layout e elementos! o ID do mundo pode ser resgatado na tela de criação, ao exportar um mundo (que já foi criado e salvo), ou na própria listagem, onde exibimos o ID de cada mundo para facilitar o seu trabalho. <br />
+                                        - <b>Sala inicial e posição do agente:</b> esteja atento à orientação das coordenadas! pode ser que no seu código elas estejam invertidas! Então uma dica: escreva a sua lógica de forma que, ao alterar uma única variável (booleana talvez?), a orientação que você está usando seja invertida.
+                                    </p>
                                 </div>
                             )}
 

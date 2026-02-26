@@ -305,6 +305,138 @@ export default function Mapa() {
         return dx >= 0 && dx < tamanhoPincel && dy >= 0 && dy < tamanhoPincel;
     }
 
+    // const exportarJSON = async () => {
+    //     if (!nomeMundo.trim()) {
+    //         await confirm({
+    //             title: "Calma parceiro",
+    //             message: "Dê um nome ao mundo antes de exportar",
+    //             type: "alert",
+    //             botao1: "Tá bom, chato"
+    //         })
+
+    //         return;
+    //     }
+
+    //     const salasAtivas = grid.flat().filter(celula => celula.ativa).length;
+    //     const totalWumpus = grid.flat().filter(celula => celula.wumpus).length;
+    //     const totalBuracos = grid.flat().filter(celula => celula.buraco).length;
+    //     const totalOuros = grid.flat().filter(celula => celula.ouro).length;
+
+    //     const payload = {
+    //         nome: nomeMundo.trim(),
+    //         largura,
+    //         altura,
+
+    //         estatisticas: {
+    //             totalSalas: largura * altura,
+    //             salasAtivas: salasAtivas,
+    //             salasInativas: (largura * altura) - salasAtivas,
+    //             quantidadeEntidades: {
+    //                 wumpus: totalWumpus,
+    //                 buracos: totalBuracos,
+    //                 ouros: totalOuros
+    //             },
+    //             densidadeEntidades: {
+    //                 wumpus: salasAtivas > 0 ? ((totalWumpus / salasAtivas) * 100).toFixed(2) + '%' : '0%',
+    //                 buracos: salasAtivas > 0 ? ((totalBuracos / salasAtivas) * 100).toFixed(2) + '%' : '0%',
+    //                 ouros: salasAtivas > 0 ? ((totalOuros / salasAtivas) * 100).toFixed(2) + '%' : '0%'
+    //             }
+    //         },
+    //         salas: grid.flatMap((row, y) =>
+    //             row.map((celula, x) => celula.ativa ? {
+    //                 x, y,
+    //                 wumpus: celula.wumpus,
+    //                 buraco: celula.buraco,
+    //                 ouro: celula.ouro
+    //             } : null)
+    //         ).filter(sala => sala !== null)
+    //     }
+
+    //     const jsonString = JSON.stringify(payload, null, 2)
+    //     const blob = new Blob([jsonString], { type: 'application/json' })
+    //     const url = URL.createObjectURL(blob)
+
+    //     const a = document.createElement('a')
+    //     a.href = url
+    //     a.download = `mapa_${nomeMundo.trim().replace(/\s+/g, '_')}.json`
+    //     document.body.appendChild(a)
+    //     a.click()
+    //     document.body.removeChild(a)
+    //     URL.revokeObjectURL(url)
+    // }
+
+    // const importarJSON = async () => {
+    //     const input = document.createElement('input');
+    //     input.type = 'file';
+    //     input.accept = '.json';
+
+    //     input.onchange = (e) => {
+    //         const file = e.target.files[0];
+    //         if (!file) return;
+
+    //         const reader = new FileReader();
+    //         reader.onload = async (event) => {
+    //             try {
+    //                 const data = JSON.parse(event.target.result);
+
+    //                 if (!data.nome || !data.largura || !data.altura || !Array.isArray(data.salas)) {
+    //                     await confirm({
+    //                         title: "Opa!",
+    //                         message: "JSON inválido amigo!",
+    //                         type: "alert",
+    //                         botao1: "Aff"
+    //                     })
+    //                     return;
+    //                 }
+
+    //                 setNomeMundo(data.nome);
+    //                 setLargura(data.largura);
+    //                 setAltura(data.altura);
+
+    //                 const novoGrid = Array.from({ length: data.altura }, (_, y) =>
+    //                     Array.from({ length: data.largura }, (_, x) => {
+    //                         const sala = data.salas.find(s => s.x === x && s.y === y);
+
+    //                         if (sala) {
+    //                             return {
+    //                                 ativa: true,
+    //                                 wumpus: sala.wumpus || false,
+    //                                 buraco: sala.buraco || false,
+    //                                 ouro: sala.ouro || false
+    //                             };
+    //                         } else {
+    //                             return {
+    //                                 ativa: false,
+    //                                 wumpus: false,
+    //                                 buraco: false,
+    //                                 ouro: false
+    //                             };
+    //                         }
+    //                     })
+    //                 );
+
+    //                 setGrid(novoGrid);
+
+    //                 if (data.estatisticas) {
+    //                     console.log('Estatísticas do mundo importado:', data.estatisticas);
+    //                 }
+
+    //             } catch (error) {
+    //                 await confirm({
+    //                     title: "Droga!",
+    //                     message: `Erro ao ler o JSON: ${error.message}`,
+    //                     type: "alert",
+    //                     botao1: "Aff"
+    //                 })
+    //             }
+    //         };
+
+    //         reader.readAsText(file);
+    //     };
+
+    //     input.click();
+    // }
+
     const exportarJSON = async () => {
         if (!nomeMundo.trim()) {
             await confirm({
@@ -323,10 +455,11 @@ export default function Mapa() {
         const totalOuros = grid.flat().filter(celula => celula.ouro).length;
 
         const payload = {
+            id: modoEdicao ? mundoEditando.id : 0,
             nome: nomeMundo.trim(),
             largura,
             altura,
-
+            data_criacao: modoEdicao ? mundoEditando.data_criacao : new Date().toISOString(),
             estatisticas: {
                 totalSalas: largura * altura,
                 salasAtivas: salasAtivas,
@@ -419,6 +552,10 @@ export default function Mapa() {
 
                     if (data.estatisticas) {
                         console.log('Estatísticas do mundo importado:', data.estatisticas);
+                    }
+
+                    if (data.id) {
+                        console.log('ID do mundo importado:', data.id);
                     }
 
                 } catch (error) {
@@ -806,9 +943,10 @@ export default function Mapa() {
                             placeholder='Nome do mundo'
                             className='nomeDoMundo'
                         />
-                        <button title='Baixe o arquivo deste mundo no seu computador' onClick={exportarJSON}>Exportar JSON</button>
+                        <button title='Baixe o arquivo deste mundo no seu computador' onClick={exportarJSON}>Exportar/Baixar JSON</button>
+                        <p className='paragrafoInformativo' style={{ width: '100%', textAlign: 'center', color: 'gold' }}><b>Atenção!</b> Para obter o ID corretamente no JSON, salve o mundo, depois clique em <b>Editar</b> para retorntar a esta tela, só então faça a exportação.</p>
                         <button title='Importe o arquivo de um mundo do seu computador' onClick={importarJSON}>Importar JSON</button>
-                        <button title='Salve este mundo na sua conta' onClick={salvar} className='botaoSalvar'>Salvar</button>
+                        <button title='Salve este mundo na sua conta' onClick={salvar} className='botaoSalvar'>Salvar na minha conta</button>
                     </div>
                 </aside>
                 <section className='janelaCentralizada'>

@@ -343,7 +343,7 @@ export default function MundosSalvos() {
                                         }}
                                     >
                                         <div className='esquerda'>
-                                            <h2>{mundo.nome}</h2>
+                                            <h2>{mundo.nome} <span className='destaqueGold'>ID: {mundo.id}</span></h2>
                                             <p className='paragrafoInformativo'>Data de criação: {formatarData(mundo.data_criacao)}</p>
                                             <p className='paragrafoInformativo'>
                                                 <b>Salas ativas:</b> {mundo.estatisticas.salasAtivas} <br />
