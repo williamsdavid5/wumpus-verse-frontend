@@ -120,6 +120,24 @@
     margin-top: 10px;
 }
 
+.paragrafoTutorial {
+    font-size: 13px;
+}
+
+.paragrafoTutorial b {
+    /* color: gold; */
+}
+
+.auxBlocoCodigo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auxBlocoCodigo pre {
+    width: 80%;
+}
+
 @media (max-width: 600px) {
     .execucaoMain {
         display: flex;
