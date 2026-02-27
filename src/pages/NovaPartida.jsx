@@ -292,7 +292,9 @@ export default function () {
                                             carregarMinimapa(mundo.id);
                                         }}
                                     >
-                                        <h2>{mundo.nome} <span className="destaqueGold">ID: {mundo.id}</span></h2>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <h2>{mundo.nome}</h2><p className="destaqueGold">ID {mundo.id}</p>
+                                        </div>
                                         <p className='paragrafoInformativo'>Data de criação: {formatarData(mundo.data_criacao)}</p>
                                         <p className='paragrafoInformativo'>
                                             <b>Salas ativas:</b> {mundo.estatisticas.salasAtivas} <br />

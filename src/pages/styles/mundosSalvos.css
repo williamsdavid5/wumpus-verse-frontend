@@ -157,4 +157,8 @@
     .botaoNovoMundo {
         display: none;
     }
+
+    .itemListaMundos h2 {
+        font-size: 18px;
+    }
 }

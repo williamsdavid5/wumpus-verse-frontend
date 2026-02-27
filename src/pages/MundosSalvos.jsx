@@ -330,9 +330,6 @@ export default function MundosSalvos() {
                         {mundosFiltrados.length > 0 &&
                             (mundosFiltrados.map((mundo, index) => {
                                 const ativo = mundoSelecionado === mundo.id;
-                                // if (mundoSelecionado === mundo.id) {
-                                //     console.log(mundo);
-                                // }
                                 return (
                                     <div
                                         key={mundo.id}
@@ -343,7 +340,9 @@ export default function MundosSalvos() {
                                         }}
                                     >
                                         <div className='esquerda'>
-                                            <h2>{mundo.nome} <span className='destaqueGold'>ID: {mundo.id}</span></h2>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                <h2>{mundo.nome}</h2><p><span className='destaqueGold'>ID: {mundo.id}</span></p>
+                                            </div>
                                             <p className='paragrafoInformativo'>Data de criação: {formatarData(mundo.data_criacao)}</p>
                                             <p className='paragrafoInformativo'>
                                                 <b>Salas ativas:</b> {mundo.estatisticas.salasAtivas} <br />
@@ -365,18 +364,6 @@ export default function MundosSalvos() {
                                     </div>
                                 )
                             }))}
-
-                        {/* {!carregado && mundosFiltrados.length > 0 && temMaisItens && !pesquisa && (
-                            <div className='carregarMaisContainer'>
-                                <button
-                                    className='botaoCarregarMais'
-                                    onClick={carregarMais}
-                                    disabled={carregandoMais}
-                                >
-                                    {carregandoMais ? 'Carregando...' : 'Carregar mais'}
-                                </button>
-                            </div>
-                        )} */}
 
                         {/* caso tenha mais itens a serem carregados */}
                         {!carregado && mundosFiltrados.length > 0 && !pesquisa && (
