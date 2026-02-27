@@ -35,7 +35,22 @@ export default function () {
     const [temMaisItens, setTemMaisItens] = useState(true);
 
     const [mundoSelecionado, setMundoSelecionado] = useState();
-    const [agenteSelecionado, setAgenteSelecionado] = useState(0);
+    const [agenteSelecionado, setAgenteSelecionado] = useState(-1);
+    const [agenteInformacoes, setAgenteInformacoes] = useState();
+
+    const agentes = [
+        {
+            nome: "Agente 1",
+            id: 0,
+            descricao: "Agente totalmente aleatório, apenas dá passos pelo ambiente sem se importar, ou seja, um agente burro."
+        },
+        {
+            nome: "Agente 3",
+            id: 3,
+            descricao: "Agente evolutivo, utilizando algoritmo genético, gerações de indivíduos são criadas e reproduzidas por uma quantidade específica de vezez até chegar neste agente, o melhor daquela população."
+        }
+    ]
+
     const [salaSelecionada, setSalaSelecionada] = useState([]);
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
     const [offsets, setOffsets] = useState({ offsetX: 0, offsetY: 0 });
@@ -101,7 +116,8 @@ export default function () {
                 mundoSelecionado,
                 ativarDiagonal,
                 agenteSelecionado,
-                salaSelecionada
+                salaSelecionada,
+                agenteInformacoes
             })
 
             navigate('/execucao');
@@ -413,12 +429,36 @@ export default function () {
                     <div className="divSelecioneAgente">
                         <p style={{ margin: '5px' }}>Selecione o agente:</p>
                         <div className="listaAgentes">
-                            <div className="itemAgente">
+
+                            {agentes.map((agente) => {
+
+                                const ativo = agenteSelecionado == agente.id;
+
+                                return (
+                                    <div
+                                        key={agente.id}
+                                        className={`itemAgente ${ativo ? 'agenteAtivo' : ''}`}
+                                        onClick={() => {
+                                            // console.log("Agente selecionado: ", agente.id);
+                                            setAgenteSelecionado(agente.id);
+                                            console.log(agente);
+                                            setAgenteInformacoes(agente);
+                                        }}
+                                    >
+                                        <h3>{agente.nome}</h3>
+                                        <p className="paragrafoInformativo">
+                                            {agente.descricao}
+                                        </p>
+                                    </div>
+                                )
+                            })}
+
+                            {/* <div className="itemAgente">
                                 <h3>Agente 0</h3>
                                 <p className="paragrafoInformativo">
                                     Agente totalmente aleatório, apenas dá passos pelo ambiente sem se importar, ou seja, um agente burro.
                                 </p>
-                            </div>
+                            </div> */}
                         </div>
                         {/* <label htmlFor="" className="checkMovimento">
                             <input
@@ -433,7 +473,7 @@ export default function () {
                     </div>
                     <div className="divControle">
                         <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
-                        <p>✅ Selecionou um agente</p>
+                        <p>{agenteSelecionado > -1 ? '✅' : '❌'} Selecionou um agente</p>
                         <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p>
                         <button
                             className="botaoIniciarPartida"

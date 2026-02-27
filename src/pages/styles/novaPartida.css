@@ -111,6 +111,10 @@
     margin: 0;
 }
 
+.itemAgente.agenteAtivo {
+    background-color: rgb(40, 40, 40);
+}
+
 .checkMovimento {
     font-size: 14px;
     margin: 5px;

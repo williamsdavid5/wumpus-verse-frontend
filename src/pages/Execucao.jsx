@@ -14,6 +14,7 @@ export default function Execucao() {
     const [mundoSelecionado, setMundoSelecionado] = useState(-1);
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
     const [agenteSelecionado, setAgenteSelecionado] = useState(-1);
+    const [agenteInformacoes, setAgenteInformacoes] = useState();
     const [salaSelecionada, setSalaSelecionada] = useState([]);
     const [partida, setPartida] = useState([]);
     const [passosExecucao, setPassosExecucao] = useState([]);
@@ -74,6 +75,7 @@ export default function Execucao() {
         setAtivarDiagonal(executionConfig.ativarDiagonal);
         setMundoSelecionado(executionConfig.mundoSelecionado);
         setSalaSelecionada(executionConfig.salaSelecionada);
+        setAgenteInformacoes(executionConfig.agenteInformacoes);
     }, [executionConfig]);
 
     async function iniciar() {
@@ -333,6 +335,23 @@ export default function Execucao() {
                         <p className="paragrafoInformativo">Você escolherá o ponto de entrada no mapa, este também será o ponto de saída. Seu agente possui a missão de recolher uma barra de ouro e retornar vivo para a saída da caverna. Detectando brisa, ele poderá se desviar de buracos. Detectando fedor, ele poderá deduzir onde está o wumpus e descer o chumbo no desgraçado! <br />
                             Você poderá reconfigurar o básico da execução quando desejar.
                         </p>
+                    </div>
+                    <div className="divControle">
+                        {agenteInformacoes ?
+                            <>
+                                {/* <h3>Agente selecionado</h3> */}
+                                {/* <p>Agente selecionado</p> */}
+                                {/* <p style={{ width: '100%', textAlign: 'center', marginTop: '10px' }} className="destaqueRoxo"><b>{agenteInformacoes.nome}</b><br /></p> */}
+                                <h3 className="destaqueGold">Agente selecionado: {agenteInformacoes.nome}</h3>
+                                <p className="paragrafoInformativo">
+                                    {agenteInformacoes.descricao}
+                                </p>
+                            </>
+                            :
+                            <>
+                                <p>Nenhum agente selecionado</p>
+                            </>
+                        }
                     </div>
                     {passosExecucao.length == 0 && (
                         <div className="divControle reconfigurar">
