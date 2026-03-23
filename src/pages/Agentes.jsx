@@ -6,6 +6,7 @@ import { useState } from 'react'
 export default function Agentes() {
 
     const [tipoAgenteSelecionado, setTipoAgenteSelerionado] = useState('');
+    const [mostrarFuncionamento, setMostrarFuncionamento] = useState(false);
 
     return (
         <>
@@ -190,24 +191,6 @@ export default function Agentes() {
                                             </span>
                                         </p>
                                     </div>
-                                    <div className='auxInterruptores interruptoresVencerAPartida'>
-                                        <p>
-                                            <b>Como vencer a partida?</b><br />
-                                            <span className='paragrafoInformativo'>
-                                                <input type="radio" name='comoVencer' /> O agente vence se pegar um ouro e voltar para a origem. <br />
-                                                <input type="radio" name='comoVencer' /> O agente vence apenas se pegar todo o ouro e voltar para a origem. <br />
-                                            </span>
-                                        </p>
-                                        <hr />
-                                        <p>
-                                            <b>Sobre o Canva</b><br />
-                                            <span className='paragrafoInformativo'>
-                                                <input type="radio" name='comoVencerCanva' /> Não é necessário matar um Canva para vencer o jogo.<br />
-                                                <input type="radio" name='comoVencerCanva' /> O agente precisa matar pelo menos um Canva. <br />
-                                                <input type="radio" name='comoVencerCanva' /> O agente precisa matar todos os Canvas da face da terra! <br />
-                                            </span>
-                                        </p>
-                                    </div>
                                     <div className='divControle controlesSalvarAgente'>
                                         <button>Salvar esse agente</button>
                                         <button>Excluir</button>
@@ -215,6 +198,65 @@ export default function Agentes() {
                                 </> :
                                 <>
                                     <h2>Configurações do agente evolutivo</h2>
+                                    <p>Nome do seu agente</p>
+                                    <input type="text" placeholder='Nome do agente' />
+                                    <button
+                                        onClick={() => setMostrarFuncionamento(!mostrarFuncionamento)}
+                                    >
+                                        {mostrarFuncionamento ?
+                                            'Já sei como funciona :)' : 'Não sei como funciona :('
+                                        }
+                                    </button>
+                                    {mostrarFuncionamento && (
+                                        <>
+                                            <h3>Esse agente funciona da seguinte maneira:</h3>
+                                            <p className='paragrafoExplicacao'>
+                                                Um indivíduo é criado com as suas ações já predefinidas, os caminhos que ele vai tomar, as ações que ele vai executar e etc. Esse conjunto de características são o que chamamos de <span className='destaqueGold'>gene</span>. <br /><br />
+                                                Um número específico de indivíduos é gerado aleatoriamente, esses indivíduos são enviados para o mundo e, de acordo com as ações executadas no mundo, esses agentes ganham cada um a sua pontuação. Esse conjunto de indivíduos é o que chamamos de <span className='destaqueGold'>população</span>.<br /><br />
+                                                Uma parte dos agentes é escolhida, geralmente os melhores, mas com um certo nível de aleatoriedade. Esses agentes são reproduzidos, ou seja, são gerados novos agentes se baseando nas características desses escolhidos e adicionando algumas características aleatórias para manter a individualidade, isso é o que chamamos de <span className='destaqueGold'>mutação</span>, e serve para que os agentes tenham a oportunidade de desenvolver novas estratégias. <br /><br />
+                                                O novo conjunto de agentes criado é chamado de <span className='destaqueGold'>geração</span>, esses agentes são testados e pontuações também são atribuídas, e o processo se repete. <br /><br />
+                                                Um número específico de gerações são criadas e reproduzidas, e o melhor agente resultante é escolhido, tudo isso é feito em segundos (ou menos de um segundo) no servidor, e você recebe o melhor agente desse processo!
+                                            </p>
+                                            <hr />
+                                        </>
+                                    )}
+                                    <p>
+                                        Se você realmente leu e sabe como funciona (eu vou confiar em você), então deve ter percebido o quanto a pontuação é importante! A pontuação define o nível de <span className='destaqueGold'>premiação</span> ou <span className='destaqueRed'>punição</span> para cada ação daquele agente. É muito importante que isso seja bem definido para que o agente evolua corretamente para se comportar da maneira que você quer! Então, <b>esteja atento às pontuações</b> que você vai atribuir.
+                                    </p>
+                                    <br />
+                                    <h2>Configurações</h2>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" />
+                                        <p>População <br />
+                                            <span className='paragrafoInformativo'>
+                                                Define quantos agentes terão em cada ciclo (isso garante variedade genética)
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" />
+                                        <p>Gerações <br />
+                                            <span className='paragrafoInformativo'>
+                                                Define quantas vezes os agentes irão se reproduzir 😏
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>Taxa de mutação (%) <br />
+                                            <span className='paragrafoInformativo'>
+                                                O quanto os agentes irão mudar em cada nascimento?
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>Taxa de mutação (%) <br />
+                                            <span className='paragrafoInformativo'>
+                                                O quanto os agentes irão mudar em cada nascimento?
+                                            </span>
+                                        </p>
+                                    </div>
                                 </>
                         }
 

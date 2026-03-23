@@ -97,6 +97,23 @@
     width: 200px;
 }
 
+.paragrafoExplicacao {
+    font-size: 13px;
+    text-align: justify;
+}
+
+.auxiliarCongifAgentesEvolutivos {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.auxiliarCongifAgentesEvolutivos input {
+    width: 150px;
+}
+
+
 @media (max-width: 900px) {
     .agentesMain {
         flex-direction: column;

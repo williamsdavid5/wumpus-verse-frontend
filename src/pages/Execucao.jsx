@@ -383,6 +383,25 @@ export default function Execucao() {
                                 </button>
                                 <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
                             </div>
+                            <hr />
+                            <div className='auxInterruptores interruptoresVencerAPartida'>
+                                <p>
+                                    <b>Como vencer a partida?</b><br />
+                                    <span className='paragrafoInformativo'>
+                                        <input type="radio" name='comoVencer' /> O agente vence se pegar um ouro e voltar para a origem. <br />
+                                        <input type="radio" name='comoVencer' /> O agente vence apenas se pegar todo o ouro e voltar para a origem. <br />
+                                    </span>
+                                </p>
+                                <hr />
+                                <p>
+                                    <b>Sobre o Canva</b><br />
+                                    <span className='paragrafoInformativo'>
+                                        <input type="radio" name='comoVencerCanva' /> Não é necessário matar um Canva para vencer o jogo.<br />
+                                        <input type="radio" name='comoVencerCanva' /> O agente precisa matar pelo menos um Canva. <br />
+                                        <input type="radio" name='comoVencerCanva' /> O agente precisa matar todos os Canvas da face da terra! <br />
+                                    </span>
+                                </p>
+                            </div>
                         </div>
                     )}
 

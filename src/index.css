@@ -28,6 +28,11 @@ h3 {
   color: rgb(255, 255, 255);
 }
 
+input {
+  background-color: black;
+  color: white;
+}
+
 :root {
   --bordaCor: #5d5d5d;
   --bordaCorExecucao: #2b2b2b;
