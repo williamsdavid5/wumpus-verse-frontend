@@ -18,12 +18,84 @@ export default function Agentes() {
                     <div className='divListaMundos'>
                         <div className='itemListaMundos'>
                             <div className='esquerda'>
-                                <h2>Lino maluco</h2>
-                                <p style={{ color: 'gold' }}>Agente evolutivo</p>
-                                <p className='paragrafoInformativo'>Algumas configurações listadas aqui</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <h2>Lino maluco</h2><p><span className='destaqueGold'>ID: 23</span></p>
+                                </div>
+                                <p className='destaqueGold'>Agente evolutivo</p>
+                                <p className='paragrafoInformativo'>Configurações de evolutivo</p>
                             </div>
                         </div>
-
+                        <div className='itemListaMundos'>
+                            <div className='esquerda'>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <h2>R2DLino</h2><p><span className='destaqueGold'>ID: 25</span></p>
+                                </div>
+                                <p className='destaqueRed'>Agente lógico</p>
+                                <p className='paragrafoInformativo'>
+                                    - Estado interno <br />
+                                    - Coragem <br />
+                                    - Um ouro <br />
+                                    - Todos os canvas
+                                </p>
+                            </div>
+                        </div>
+                        <div className='itemListaMundos'>
+                            <div className='esquerda'>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <h2>O Exterminador de Canvas</h2>
+                                    <p><span className='destaqueGold'>ID: 27</span></p>
+                                </div>
+                                <p className='destaqueRed'>Agente lógico</p>
+                                <p className='paragrafoInformativo'>
+                                    - Estado interno <br />
+                                    - Ódio ao Canva <br />
+                                    - Um ouro <br />
+                                    - Todos os canvas
+                                </p>
+                            </div>
+                        </div>
+                        <div className='itemListaMundos'>
+                            <div className='esquerda'>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <h2>Uga Uga</h2>
+                                    <p><span className='destaqueGold'>ID: 23</span></p>
+                                </div>
+                                <p className='destaqueGold'>Agente evolutivo</p>
+                                <p className='paragrafoInformativo'>
+                                    Configurações de agente evolutivo
+                                </p>
+                            </div>
+                        </div>
+                        <div className='itemListaMundos'>
+                            <div className='esquerda'>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <h2>O Exterminador de Canvas 2</h2>
+                                    <p><span className='destaqueGold'>ID: 27</span></p>
+                                </div>
+                                <p className='destaqueRed'>Agente lógico</p>
+                                <p className='paragrafoInformativo'>
+                                    - Estado interno <br />
+                                    - Ódio ao Canva <br />
+                                    - Um ouro <br />
+                                    - Todos os canvas
+                                </p>
+                            </div>
+                        </div>
+                        <div className='itemListaMundos'>
+                            <div className='esquerda'>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <h2>Lino, apenas</h2>
+                                    <p><span className='destaqueGold'>ID: 27</span></p>
+                                </div>
+                                <p className='destaqueRed'>Agente lógico</p>
+                                <p className='paragrafoInformativo'>
+                                    - Estado interno <br />
+                                    - Ódio ao Canva <br />
+                                    - Um ouro <br />
+                                    - Todos os canvas
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </aside>
                 <section className="direitaAgentes">
@@ -40,7 +112,7 @@ export default function Agentes() {
                                 <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
                                 <h3>Lógico</h3>
                                 <p className='paragrafoInformativo'>
-                                    Esse agente não sem sentimentos, apenas segue um conjunto de regras definidos em sua programação
+                                    Esse agente não sem sentimentos, apenas segue um conjunto de regras definidas em sua programação
                                 </p>
                             </div>
                             <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`} onClick={() => setTipoAgenteSelerionado('evolutivo')}>
@@ -63,10 +135,12 @@ export default function Agentes() {
                                     <p>Nome do seu agente</p>
                                     <input type="text" placeholder='Nome do agente' />
                                     <div className='auxInterruptores'>
-                                        <label class="switch switchAgente">
-                                            <input type="checkbox" />
-                                            <span class="slider"></span>
-                                        </label>
+                                        <div className='switchAgente'>
+                                            <label class="switch">
+                                                <input type="checkbox" />
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
                                         <p>
                                             <b>Estado interno</b><br />
                                             <span className='paragrafoInformativo'>

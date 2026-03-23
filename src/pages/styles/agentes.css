@@ -2,7 +2,6 @@
     height: 100%;
     width: 40%;
     border-right: solid 1px var(--bordaCor);
-    ;
 }
 
 .direitaAgentes {
@@ -96,4 +95,31 @@
 .controlesSalvarAgente button {
     padding: 10px;
     width: 200px;
+}
+
+@media (max-width: 900px) {
+    .agentesMain {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+        box-sizing: border-box;
+        min-height: 0;
+        min-width: 0;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+    }
+
+    .esquerdaAgentes,
+    .direitaAgentes {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 0;
+        min-width: 0;
+    }
+
+    .esquerdaAgentes {
+        height: 80dvh;
+        overflow-y: auto;
+    }
 }
