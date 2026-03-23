@@ -9,6 +9,7 @@ import { AvisoLayout } from "./pages/AvisoLayout";
 import ProtecaoDeRotas from "./pages/ProtecaoDeRotas";
 import NovaPartida from "./pages/NovaPartida";
 import Execucao from "./pages/Execucao";
+import Agentes from "./pages/Agentes";
 
 export default function App() {
   return (
@@ -45,6 +46,13 @@ export default function App() {
             element={
               <ProtecaoDeRotas>
                 <Execucao />
+              </ProtecaoDeRotas>
+            }
+          />
+          <Route path="/agentes"
+            element={
+              <ProtecaoDeRotas>
+                <Agentes />
               </ProtecaoDeRotas>
             }
           />

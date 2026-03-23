@@ -291,14 +291,13 @@ export default function MundosSalvos() {
         <>
             <main className='mundosMain'>
                 <aside className='mundosLista'>
-
                     <div className='topoMundosSalvos'>
-                        <div className='topoMundosAuxiliar'>
+                        <div className='a'>
                             <h1>
                                 Mundos salvos
                             </h1>
                             <p className='paragrafoInformativo'>
-                                Todos os mundos que você criou e salvou
+                                Todos os mundos que você criou
                             </p>
                             {/* <input
                                 type="text"
