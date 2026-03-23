@@ -7,6 +7,7 @@ export default function Agentes() {
 
     const [tipoAgenteSelecionado, setTipoAgenteSelerionado] = useState('');
     const [mostrarFuncionamento, setMostrarFuncionamento] = useState(false);
+    const [tipoConfigPontos, setTipoConfigPontos] = useState('simples');
 
     return (
         <>
@@ -197,6 +198,7 @@ export default function Agentes() {
                                         <button>Excluir</button>
                                     </div>
                                 </> :
+                                // -----------------------------------------------------------------------
                                 <>
                                     <h2>Configurações do agente evolutivo</h2>
                                     <p>Nome do seu agente</p>
@@ -250,49 +252,90 @@ export default function Agentes() {
                                             </span>
                                         </p>
                                     </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} placeholder='0 a 100' />
+                                        <p>Taxa de cruzamento (%) <br />
+                                            <span className='paragrafoInformativo'>
+                                                Define quantos indivíduos irão cruzar 😏 (Note: a prioridade é dada aos indivíduos com pontuações maiores)
+                                            </span>
+                                        </p>
+                                    </div>
                                     <hr />
                                     <h2>Pontuações</h2>
                                     <p>Podem ser <span className='destaqueGold'>positivas para premiação</span> ou <span className='destaqueRed'>negativas para punição</span>, os valores definem a intensidade.</p>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            A cada passo válido<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            A cada passo inválido<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            A cada tiro válido<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            A cada tiro inválido<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            Entrou em sala com buraco<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            Entrou em sala com wumpus<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            Entrou em sala com ouro<br /></p>
-                                    </div>
-                                    <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
-                                        <p>
-                                            Entrou em sala com voltou para a origem<br /></p>
-                                    </div>
+                                    <span>
+                                        Tipo:
+                                        <select name="tipoDeConfigAgenteEvolutivo" id=""
+                                            className='selectTipoConfiAgenteEvolutivo'
+                                            onChange={(e) => setTipoConfigPontos(e.target.value)}
+                                        >
+                                            <option value="simples">
+                                                Configuração simples
+                                            </option>
+                                            <option value="equacao">
+                                                Equação fitness (avançado)
+                                            </option>
+                                        </select>
+                                    </span>
+                                    {tipoConfigPontos === 'simples' ?
+                                        <>
+                                            <div className='auxPontuacoesAgenteEvolutivo'>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        A cada passo válido<br /></p>
+                                                </div>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        A cada passo inválido<br /></p>
+                                                </div>
+                                            </div>
+                                            <div className='auxPontuacoesAgenteEvolutivo'>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        A cada tiro válido<br /></p>
+                                                </div>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        A cada tiro inválido<br /></p>
+                                                </div>
+                                            </div>
+                                            <div className='auxPontuacoesAgenteEvolutivo'>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        Entrou em sala com buraco<br /></p>
+                                                </div>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        Entrou em sala com wumpus<br /></p>
+                                                </div>
+                                            </div>
+                                            <div className='auxPontuacoesAgenteEvolutivo'>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        Pegou um ouro<br /></p>
+                                                </div>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input type="number" min={0} max={100} />
+                                                    <p>
+                                                        Entrou em sala com voltou para a origem<br /></p>
+                                                </div>
+                                            </div>
+                                        </>
+                                        :
+                                        <>
+                                            <hr />
+                                            <h3>Equação fitness</h3>
+                                            <p>Se você está aqui, imagino que saiba o que está fazendo, então escreva a sua equação abaixo</p>
+                                            <input type="text" placeholder='((PV * -1) +  (PI * -100) + (TI * -100) (TV * 100) + (SW * -100) + (SP * -100) (SO * 100) + (V * 1000)) / ' />
+                                        </>
+                                    }
                                     <div className='divControle controlesSalvarAgente'>
                                         <button>Salvar esse agente</button>
                                         <button>Excluir</button>
