@@ -191,10 +191,6 @@ export default function Agentes() {
                                             </span>
                                         </p>
                                     </div>
-                                    <div className='divControle controlesSalvarAgente'>
-                                        <button>Salvar esse agente</button>
-                                        <button>Excluir</button>
-                                    </div>
                                 </> :
                                 <>
                                     <h2>Configurações do agente evolutivo</h2>
@@ -242,24 +238,62 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} />
+                                        <input type="number" min={0} max={100} placeholder='0 a 100' />
                                         <p>Taxa de mutação (%) <br />
                                             <span className='paragrafoInformativo'>
                                                 O quanto os agentes irão mudar em cada nascimento?
                                             </span>
                                         </p>
+                                    </div>
+                                    <hr />
+                                    <h2>Pontuações</h2>
+                                    <p>Podem ser <span className='destaqueGold'>positivas para premiação</span> ou <span className='destaqueRed'>negativas para punição</span>, os valores definem a intensidade.</p>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            A cada passo válido<br /></p>
                                     </div>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
                                         <input type="number" min={0} max={100} />
-                                        <p>Taxa de mutação (%) <br />
-                                            <span className='paragrafoInformativo'>
-                                                O quanto os agentes irão mudar em cada nascimento?
-                                            </span>
-                                        </p>
+                                        <p>
+                                            A cada passo inválido<br /></p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            A cada tiro válido<br /></p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            A cada tiro inválido<br /></p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            Entrou em sala com buraco<br /></p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            Entrou em sala com wumpus<br /></p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            Entrou em sala com ouro<br /></p>
+                                    </div>
+                                    <div className='auxiliarCongifAgentesEvolutivos'>
+                                        <input type="number" min={0} max={100} />
+                                        <p>
+                                            Entrou em sala com voltou para a origem<br /></p>
                                     </div>
                                 </>
                         }
-
+                        <div className='divControle controlesSalvarAgente'>
+                            <button>Salvar esse agente</button>
+                            <button>Excluir</button>
+                        </div>
                     </div>
                 </section>
             </main>

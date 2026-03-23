@@ -113,6 +113,12 @@
     width: 150px;
 }
 
+.auxiliarCongifAgentesEvolutivos p {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 
 @media (max-width: 900px) {
     .agentesMain {
