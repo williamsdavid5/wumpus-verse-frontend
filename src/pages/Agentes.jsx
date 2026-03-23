@@ -129,6 +129,7 @@ export default function Agentes() {
                         {tipoAgenteSelecionado == '' ?
                             <>
                                 <h2>Selecione um agente</h2>
+                                <p>Escolha um dos seus agentes para editar</p>
                             </> :
                             tipoAgenteSelecionado == 'logico' ?
                                 <>
@@ -190,6 +191,10 @@ export default function Agentes() {
                                                 Quando ativado, o agente irá tentar matar o Canva sempre que detectar o cheiro, quando desativado, o agente irá atrás do Canva em último caso.
                                             </span>
                                         </p>
+                                    </div>
+                                    <div className='divControle controlesSalvarAgente'>
+                                        <button>Salvar esse agente</button>
+                                        <button>Excluir</button>
                                     </div>
                                 </> :
                                 <>
@@ -288,12 +293,12 @@ export default function Agentes() {
                                         <p>
                                             Entrou em sala com voltou para a origem<br /></p>
                                     </div>
+                                    <div className='divControle controlesSalvarAgente'>
+                                        <button>Salvar esse agente</button>
+                                        <button>Excluir</button>
+                                    </div>
                                 </>
                         }
-                        <div className='divControle controlesSalvarAgente'>
-                            <button>Salvar esse agente</button>
-                            <button>Excluir</button>
-                        </div>
                     </div>
                 </section>
             </main>
