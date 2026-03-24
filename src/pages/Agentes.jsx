@@ -114,7 +114,7 @@ export default function Agentes() {
                                 <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
                                 <h3>Lógico</h3>
                                 <p className='paragrafoInformativo'>
-                                    Esse agente não sem sentimentos, apenas segue um conjunto de regras definidas em sua programação
+                                    Esse agente não tem sentimentos, apenas segue um conjunto de regras definidas em sua programação
                                 </p>
                             </div>
                             <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`} onClick={() => setTipoAgenteSelerionado('evolutivo')}>
