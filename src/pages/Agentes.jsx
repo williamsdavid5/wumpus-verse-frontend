@@ -324,7 +324,7 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input type="number" min={0} max={100} />
                                                     <p>
-                                                        Entrou em sala com voltou para a origem<br /></p>
+                                                        Entrou em sala com ouro voltou para a origem<br /></p>
                                                 </div>
                                             </div>
                                         </>

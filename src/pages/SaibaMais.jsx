@@ -14,6 +14,10 @@ import loopInfinito from '../assets/loopInfinito.png'
 import julgamento from '../assets/julgamentoAgente.png'
 import logo from '../assets/wumpus_verse_logo_white.svg'
 
+import Lino1 from '../assets/gifLino/1.png'
+import Lino2 from '../assets/gifLino/2.png'
+import Lino3 from '../assets/gifLino/3.png'
+
 export default function SaibaMais() {
     return (
         <main className="mainSaibaMais">
@@ -239,9 +243,11 @@ export default function SaibaMais() {
                         </a>
                     </div>
                 </div>
-                <div className='cardPessoa'>
-                    <div className='imagem'>
-                        <img src={lino} alt="" />
+                <div className='cardPessoa cardLino'>
+                    <div className='imagem gif-simulado'>
+                        <img src={Lino1} alt="" />
+                        <img src={Lino2} alt="" />
+                        <img src={Lino3} alt="" />
                     </div>
                     <p className='textBold'>Lino Duarte</p>
                     <p className='paragrafoInformativo'>Exterminador de wumpus, Mascote</p>
