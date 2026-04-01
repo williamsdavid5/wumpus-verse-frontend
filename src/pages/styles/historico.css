@@ -90,3 +90,33 @@
 .execucaoHistorico {
     flex: 1;
 }
+
+.mapaExecucao {
+    display: flex;
+    margin: 20px 0px;
+}
+
+.topoMapaExecucao {
+    padding: 20px;
+    box-sizing: border-box;
+    /* border-bottom: solid 1px var(--bordaCor); */
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    /* background-color: gray; */
+    width: 30%;
+}
+
+.visualizadorMapaExecucao {
+    width: 70%;
+    box-sizing: border-box;
+}
+
+.mapaHistorico {
+    height: auto;
+}
+
+.visualizadorMapaExecucao {
+    height: auto;
+}
