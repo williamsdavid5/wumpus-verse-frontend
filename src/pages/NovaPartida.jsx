@@ -104,6 +104,16 @@ export default function () {
             return;
         }
 
+        if (agenteSelecionado === -1) {
+            await confirm({
+                title: "Por favor né amigo",
+                message: "Selecione um agente para a iniciar a partida.",
+                type: "alert",
+                botao1: "Taaaaaaa"
+            })
+            return;
+        }
+
         try {
             const sala = miniGrid[salaSelecionada[1]]?.[salaSelecionada[0]];
 

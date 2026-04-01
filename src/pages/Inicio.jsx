@@ -16,7 +16,7 @@ export default function Inicio() {
     const botoes = [
         { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mundos-salvos') : navigate('/login') },
         { id: 2, texto: 'Agentes', acao: () => logado ? navigate('/agentes') : navigate('/login') },
-        { id: 3, texto: 'Histórico', acao: () => logado ? navigate('/historico') : navigate('/login') },
+        { id: 3, texto: 'Execuções', acao: () => logado ? navigate('/historico') : navigate('/login') },
         { id: 4, texto: 'Nova partida', acao: () => logado ? navigate('/nova-partida') : navigate('/login') },
     ];
 

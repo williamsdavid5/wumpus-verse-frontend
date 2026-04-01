@@ -14,10 +14,13 @@
 
 
 body,
-html {
+html,
+#root {
   margin: 0;
   padding: 0;
   font-family: 'OpenSans', 'Roboto', Arial;
+  min-width: 0;
+  min-height: 0;
 }
 
 p,
@@ -39,7 +42,11 @@ input {
   --roxoDestaque: #8800B5;
 }
 
-
+.spanMesmaLinha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 * {
   --sb-track-color: #000000;

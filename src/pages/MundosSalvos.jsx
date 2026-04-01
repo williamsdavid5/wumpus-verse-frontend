@@ -73,55 +73,6 @@ export default function MundosSalvos() {
         return () => clearTimeout(timer);
     }, [carregado]);
 
-    // async function carregarMundosSalvos(pagina = 1, limparLista = true) {
-    //     if (pagina === 1) {
-    //         setCarregado(true);
-    //     } else {
-    //         setCarregandoMais(true);
-    //     }
-    //     try {
-    //         const resposta = await getMundosSalvos(pagina, 6);
-
-    //         if (resposta && resposta.length > 0) {
-
-    //             const itensParaMostrar = resposta.slice(0, 6);
-    //             // console.log(itensParaMostrar);
-    //             // const itensParaMostrar = resposta;
-
-    //             if (limparLista || pagina === 1) {
-    //                 setMundos(itensParaMostrar);
-    //             } else {
-    //                 setMundos(prev => [...prev, ...itensParaMostrar]);
-    //             }
-
-    //             const mais = !resposta[resposta.length - 1]
-    //             setTemMaisItens(mais);
-    //             console.log("Tem mais itens?", mais);
-    //             // setTemMaisItens(resposta.length === 6);
-    //         } else {
-    //             if (pagina === 1) {
-    //                 setMundos([]);
-    //             }
-    //             setTemMaisItens(false);
-    //         }
-
-    //         setPaginaAtual(pagina);
-
-    //     } catch (error) {
-    //         console.error('Erro ao carregar mundos:', error);
-    //         await confirm({})
-    //         setTemMaisItens(false);
-    //     } finally {
-    //         if (pagina === 1) {
-    //             setCarregado(false);
-    //         }
-
-    //         if (mundos.length > 0) {
-    //             setCarregandoMais(false);
-    //         }
-    //     }
-    // }
-
     async function carregarMundosSalvos(pagina = 1, limparLista = true) {
         if (pagina === 1) {
             setCarregado(true);
@@ -299,15 +250,6 @@ export default function MundosSalvos() {
                             <p className='paragrafoInformativo'>
                                 Todos os mundos que você criou
                             </p>
-                            {/* <input
-                                type="text"
-                                name="barraPesquisaMundosSalvos"
-                                id=""
-                                className='barraPesquisaMundosSalvos'
-                                placeholder='Pesquise qualquer coisa'
-                                value={pesquisa}
-                                onChange={(e) => setPesquisa(e.target.value)}
-                            /> */}
                         </div>
                         <div className='topoMundosAuxiliar'>
                             <button className='botaoNovoMundo' onClick={() => navigate('/mapa')}>Novo</button>

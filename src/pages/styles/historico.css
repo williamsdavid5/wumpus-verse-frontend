@@ -1,0 +1,92 @@
+.execucoesLista {
+    width: 25%;
+}
+
+.direitaHistorico {
+    width: 75%;
+    box-sizing: border-box;
+    min-height: 0;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.itemListaExecoes .esquerda {
+    width: 100%;
+}
+
+.itemListaExecoes .direita {
+    width: auto;
+}
+
+.divAgenteHistorico {
+    /* background-color: gray; */
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    min-width: 0;
+    height: 100%;
+}
+
+.divAgenteHistorico .direitaAgente {
+    flex: 1;
+    /* background-color: gray; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.divAgenteHistorico .esquerdaAgente {
+    height: 100%;
+    display: flex;
+}
+
+.paragrafoInforAgente {
+    text-align: left;
+}
+
+.auxImagemAgente {
+    width: 100px;
+    /* margin: 10px; */
+    /* background-color: gainsboro; */
+    display: flex;
+}
+
+.auxImagemAgente img {
+    object-fit: contain;
+    width: 100%;
+}
+
+.divDuplaHistorico {
+    padding: 15px;
+    box-sizing: border-box;
+    border-bottom: solid 1px var(--bordaCor);
+}
+
+.divRolagem {
+    /* background-color: gray; */
+    flex: 1;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* .botaoExcluir {
+    width: 75px;
+} */
+
+.auxMesmaLinha {
+    display: flex;
+}
+
+.execucaoHistorico {
+    border-left: solid 1px var(--bordaCor);
+}
+
+
+.agenteHistorico,
+.execucaoHistorico {
+    flex: 1;
+}

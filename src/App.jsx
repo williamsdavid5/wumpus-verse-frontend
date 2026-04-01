@@ -10,6 +10,7 @@ import ProtecaoDeRotas from "./pages/ProtecaoDeRotas";
 import NovaPartida from "./pages/NovaPartida";
 import Execucao from "./pages/Execucao";
 import Agentes from "./pages/Agentes";
+import Historico from "./pages/Historico";
 
 export default function App() {
   return (
@@ -53,6 +54,13 @@ export default function App() {
             element={
               <ProtecaoDeRotas>
                 <Agentes />
+              </ProtecaoDeRotas>
+            }
+          />
+          <Route path="/historico"
+            element={
+              <ProtecaoDeRotas>
+                <Historico></Historico>
               </ProtecaoDeRotas>
             }
           />
