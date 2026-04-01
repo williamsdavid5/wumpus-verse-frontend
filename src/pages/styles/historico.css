@@ -111,12 +111,31 @@
 .visualizadorMapaExecucao {
     width: 70%;
     box-sizing: border-box;
+    height: auto;
 }
 
 .mapaHistorico {
     height: auto;
 }
 
-.visualizadorMapaExecucao {
-    height: auto;
+
+@media (max-width: 1300px) {
+    .itemListaExecoes {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 1100px) {
+    .auxMesmaLinha {
+        flex-direction: column;
+    }
+
+    .mapaExecucao {
+        flex-direction: column;
+    }
+
+    .topoMapaExecucao,
+    .visualizadorMapaExecucao {
+        width: 100%;
+    }
 }

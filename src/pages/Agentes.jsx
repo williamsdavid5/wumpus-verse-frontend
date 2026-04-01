@@ -9,95 +9,150 @@ export default function Agentes() {
     const [mostrarFuncionamento, setMostrarFuncionamento] = useState(false);
     const [tipoConfigPontos, setTipoConfigPontos] = useState('simples');
 
+    const agentes = [
+        {
+            id: 23,
+            nome: "Lino maluco",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "02/03/2026"
+        },
+        {
+            id: 25,
+            nome: "R2DLino",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "07/03/2026"
+        },
+        {
+            id: 31,
+            nome: "Lino Caçador",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "15/03/2026"
+        },
+        {
+            id: 42,
+            nome: "Lino das Sombras",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "21/03/2026"
+        },
+        {
+            id: 18,
+            nome: "Lino Veloz",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "28/03/2026"
+        },
+        {
+            id: 37,
+            nome: "Lino Estrategista",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "05/04/2026"
+        },
+        {
+            id: 52,
+            nome: "Lino Explosivo",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "12/04/2026"
+        },
+        {
+            id: 44,
+            nome: "Lino Silencioso",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "18/04/2026"
+        },
+        {
+            id: 61,
+            nome: "Lino Mestre",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "25/04/2026"
+        },
+        {
+            id: 29,
+            nome: "Lino Caótico",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "30/04/2026"
+        },
+        {
+            id: 73,
+            nome: "Lino Implacável",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "07/05/2026"
+        },
+        {
+            id: 56,
+            nome: "Lino Analítico",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "14/05/2026"
+        },
+        {
+            id: 84,
+            nome: "Lino Supremo",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "21/05/2026"
+        },
+        {
+            id: 68,
+            nome: "Lino Metódico",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "28/05/2026"
+        },
+        {
+            id: 92,
+            nome: "Lino Destemido",
+            tipo: "evolutivo",
+            tipoClass: "destaqueGold",
+            dataCriacao: "03/06/2026"
+        },
+        {
+            id: 47,
+            nome: "Lino Preciso",
+            tipo: "lógico",
+            tipoClass: "destaqueRed",
+            dataCriacao: "10/06/2026"
+        }
+    ];
+
     return (
         <>
             <main className="mundosMain agentesMain">
                 <aside className="mundosLista esquerdaAgentes">
                     <div className='topoAgentes'>
                         <h1>Agentes</h1>
-                        <p className='paragrafoInformativo'>Todos os agentes que você criou</p>
+                        <p className='paragrafoInformativo'>Todos os agentes que você criou e salvou. Clique em um para editar as configurações.</p>
                     </div>
                     <div className='divListaMundos'>
-                        <div className='itemListaMundos'>
-                            <div className='esquerda'>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <h2>Lino maluco</h2><p><span className='destaqueGold'>ID: 23</span></p>
+
+                        {agentes.map((agente) => (
+                            <div key={agente.id} className='itemListaMundos itemListaAgentesCustomizados'>
+                                <div className='esquerda'>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <h2>{agente.nome}</h2>
+                                        <p><span className='destaqueGold'>ID: {agente.id}</span></p>
+                                    </div>
+                                    <p className={agente.tipoClass}>Agente {agente.tipo}</p>
+                                    <p className='paragrafoInformativo'><b>Criado em: </b> {agente.dataCriacao}</p>
                                 </div>
-                                <p className='destaqueGold'>Agente evolutivo</p>
-                                <p className='paragrafoInformativo'>Configurações de evolutivo</p>
-                            </div>
-                        </div>
-                        <div className='itemListaMundos'>
-                            <div className='esquerda'>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <h2>R2DLino</h2><p><span className='destaqueGold'>ID: 25</span></p>
+                                <div className='direita'>
+                                    <button className='botaoExcluir'>
+                                        Excluir
+                                    </button>
                                 </div>
-                                <p className='destaqueRed'>Agente lógico</p>
-                                <p className='paragrafoInformativo'>
-                                    - Estado interno <br />
-                                    - Coragem <br />
-                                    - Um ouro <br />
-                                    - Todos os canvas
-                                </p>
                             </div>
-                        </div>
-                        <div className='itemListaMundos'>
-                            <div className='esquerda'>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <h2>O Exterminador de Canvas</h2>
-                                    <p><span className='destaqueGold'>ID: 27</span></p>
-                                </div>
-                                <p className='destaqueRed'>Agente lógico</p>
-                                <p className='paragrafoInformativo'>
-                                    - Estado interno <br />
-                                    - Ódio ao Canva <br />
-                                    - Um ouro <br />
-                                    - Todos os canvas
-                                </p>
-                            </div>
-                        </div>
-                        <div className='itemListaMundos'>
-                            <div className='esquerda'>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <h2>Uga Uga</h2>
-                                    <p><span className='destaqueGold'>ID: 23</span></p>
-                                </div>
-                                <p className='destaqueGold'>Agente evolutivo</p>
-                                <p className='paragrafoInformativo'>
-                                    Configurações de agente evolutivo
-                                </p>
-                            </div>
-                        </div>
-                        <div className='itemListaMundos'>
-                            <div className='esquerda'>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <h2>O Exterminador de Canvas 2</h2>
-                                    <p><span className='destaqueGold'>ID: 27</span></p>
-                                </div>
-                                <p className='destaqueRed'>Agente lógico</p>
-                                <p className='paragrafoInformativo'>
-                                    - Estado interno <br />
-                                    - Ódio ao Canva <br />
-                                    - Um ouro <br />
-                                    - Todos os canvas
-                                </p>
-                            </div>
-                        </div>
-                        <div className='itemListaMundos'>
-                            <div className='esquerda'>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <h2>Lino, apenas</h2>
-                                    <p><span className='destaqueGold'>ID: 27</span></p>
-                                </div>
-                                <p className='destaqueRed'>Agente lógico</p>
-                                <p className='paragrafoInformativo'>
-                                    - Estado interno <br />
-                                    - Ódio ao Canva <br />
-                                    - Um ouro <br />
-                                    - Todos os canvas
-                                </p>
-                            </div>
-                        </div>
+                        ))}
+
+
                     </div>
                 </aside>
                 <section className="direitaAgentes">
@@ -223,11 +278,11 @@ export default function Agentes() {
                                             <hr />
                                         </>
                                     )}
-                                    <p>
+                                    <p className='paragrafoInformativo'>
                                         Se você realmente leu e sabe como funciona (eu vou confiar em você), então deve ter percebido o quanto a pontuação é importante! A pontuação define o nível de <span className='destaqueGold'>premiação</span> ou <span className='destaqueRed'>punição</span> para cada ação daquele agente. É muito importante que isso seja bem definido para que o agente evolua corretamente para se comportar da maneira que você quer! Então, <b>esteja atento às pontuações</b> que você vai atribuir.
                                     </p>
                                     <br />
-                                    <h2>Configurações</h2>
+                                    <h2>Geração</h2>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
                                         <input type="number" />
                                         <p>População <br />
@@ -261,7 +316,7 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <hr />
-                                    <h2>Pontuações</h2>
+                                    <h2>Pontuação</h2>
                                     <p>Podem ser <span className='destaqueGold'>positivas para premiação</span> ou <span className='destaqueRed'>negativas para punição</span>, os valores definem a intensidade.</p>
                                     <span>
                                         Tipo:

@@ -1,12 +1,12 @@
 .esquerdaAgentes {
     height: 100%;
-    width: 40%;
+    width: 30%;
     border-right: solid 1px var(--bordaCor);
 }
 
 .direitaAgentes {
     height: 100%;
-    width: 60%;
+    width: 70%;
     box-sizing: border-box;
     overflow-y: auto;
     box-sizing: border-box;
@@ -139,6 +139,25 @@
     margin: 10px 0px;
     margin-left: 10px;
     width: 50%;
+}
+
+@media (max-width: 1300px) {
+    .itemListaAgentesCustomizados {
+        flex-direction: column;
+    }
+
+    .itemListaAgentesCustomizados .direita {
+        width: 100%;
+        /* background-color: gray; */
+        display: flex;
+        align-items: center;
+        box-sizing: content-box;
+    }
+
+    .itemListaAgentesCustomizados .botaoExcluir {
+        width: 80%;
+        box-sizing: border-box;
+    }
 }
 
 @media (max-width: 900px) {
