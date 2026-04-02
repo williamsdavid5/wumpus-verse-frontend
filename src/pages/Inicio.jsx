@@ -17,6 +17,7 @@ export default function Inicio() {
         { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mundos-salvos') : navigate('/login') },
         { id: 2, texto: 'Agentes', acao: () => logado ? navigate('/agentes') : navigate('/login') },
         { id: 3, texto: 'Execuções', acao: () => logado ? navigate('/historico') : navigate('/login') },
+        { id: 3, texto: 'Ranking', acao: () => logado ? navigate('/ranking') : navigate('/login') },
         { id: 4, texto: 'Nova partida', acao: () => logado ? navigate('/nova-partida') : navigate('/login') },
     ];
 
@@ -100,7 +101,7 @@ export default function Inicio() {
                     <p className='pAvisoTelaInicio'>Atenção: a experiência em dispositivos com tela pequena <span>não é completa!</span> Algumas funções só estão disponíveis em computadores.</p>
                     <div className='divBotoesInicio'>
                         {/* <button onClick={() => navigate('/mundos-salvos')} >Mundos</button> */}
-                        {botoes.slice(0, 3).map(b => (
+                        {botoes.slice(0, 4).map(b => (
                             <button
                                 key={b.id}
                                 onClick={b.acao}
@@ -137,16 +138,16 @@ export default function Inicio() {
 
                     <button
                         className={`botaoNovaPartida ${logado ? '' : 'botaoInicioSemLogin'}`}
-                        onClick={botoes[3].acao}
+                        onClick={botoes[4].acao}
                         onMouseEnter={() => setBotaoHover(4)}
                         onMouseLeave={() => setBotaoHover(null)}
                         title={`${logado ? 'Escolha um agente e um mundo e inicie uma partida' : ''}`}
                     >
                         {logado
-                            ? botoes[3].texto
-                            : botaoHover === 4
+                            ? botoes[4].texto
+                            : botaoHover === 5
                                 ? 'faça login'
-                                : botoes[3].texto}
+                                : botoes[4].texto}
                     </button>
                 </footer>
                 <img src={logo} alt="" className='logoInicio' />

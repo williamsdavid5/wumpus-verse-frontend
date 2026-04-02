@@ -11,6 +11,7 @@ import NovaPartida from "./pages/NovaPartida";
 import Execucao from "./pages/Execucao";
 import Agentes from "./pages/Agentes";
 import Historico from "./pages/Historico";
+import Ranking from "./pages/Ranking";
 
 export default function App() {
   return (
@@ -61,6 +62,13 @@ export default function App() {
             element={
               <ProtecaoDeRotas>
                 <Historico></Historico>
+              </ProtecaoDeRotas>
+            }
+          />
+          <Route path="/ranking"
+            element={
+              <ProtecaoDeRotas>
+                <Ranking />
               </ProtecaoDeRotas>
             }
           />
