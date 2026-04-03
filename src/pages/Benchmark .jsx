@@ -186,6 +186,73 @@ export default function Benchmark() {
         { id: 30, partida: 30, passos: 1830 }
     ];
 
+    const ouroPorPartida = [
+        { id: 1, partida: 1, ouro: 3 },
+        { id: 2, partida: 2, ouro: 4 },
+        { id: 3, partida: 3, ouro: 1 },
+        { id: 4, partida: 4, ouro: 5 },
+        { id: 5, partida: 5, ouro: 2 },
+        { id: 6, partida: 6, ouro: 4 },
+        { id: 7, partida: 7, ouro: 0 },
+        { id: 8, partida: 8, ouro: 3 },
+        { id: 9, partida: 9, ouro: 5 },
+        { id: 10, partida: 10, ouro: 2 },
+        { id: 11, partida: 11, ouro: 4 },
+        { id: 12, partida: 12, ouro: 1 },
+        { id: 13, partida: 13, ouro: 3 },
+        { id: 14, partida: 14, ouro: 0 },
+        { id: 15, partida: 15, ouro: 4 },
+        { id: 16, partida: 16, ouro: 5 },
+        { id: 17, partida: 17, ouro: 2 },
+        { id: 18, partida: 18, ouro: 3 },
+        { id: 19, partida: 19, ouro: 1 },
+        { id: 20, partida: 20, ouro: 4 },
+        { id: 21, partida: 21, ouro: 5 },
+        { id: 22, partida: 22, ouro: 2 },
+        { id: 23, partida: 23, ouro: 3 },
+        { id: 24, partida: 24, ouro: 0 },
+        { id: 25, partida: 25, ouro: 4 },
+        { id: 26, partida: 26, ouro: 5 },
+        { id: 27, partida: 27, ouro: 1 },
+        { id: 28, partida: 28, ouro: 3 },
+        { id: 29, partida: 29, ouro: 2 },
+        { id: 30, partida: 30, ouro: 4 }
+    ];
+
+    const wumpusMortosPorPartida = [
+        { id: 1, partida: 1, wumpusMortos: 1 },
+        { id: 2, partida: 2, wumpusMortos: 2 },
+        { id: 3, partida: 3, wumpusMortos: 0 },
+        { id: 4, partida: 4, wumpusMortos: 1 },
+        { id: 5, partida: 5, wumpusMortos: 2 },
+        { id: 6, partida: 6, wumpusMortos: 1 },
+        { id: 7, partida: 7, wumpusMortos: 0 },
+        { id: 8, partida: 8, wumpusMortos: 2 },
+        { id: 9, partida: 9, wumpusMortos: 1 },
+        { id: 10, partida: 10, wumpusMortos: 0 },
+        { id: 11, partida: 11, wumpusMortos: 1 },
+        { id: 12, partida: 12, wumpusMortos: 2 },
+        { id: 13, partida: 13, wumpusMortos: 0 },
+        { id: 14, partida: 14, wumpusMortos: 1 },
+        { id: 15, partida: 15, wumpusMortos: 2 },
+        { id: 16, partida: 16, wumpusMortos: 1 },
+        { id: 17, partida: 17, wumpusMortos: 0 },
+        { id: 18, partida: 18, wumpusMortos: 1 },
+        { id: 19, partida: 19, wumpusMortos: 2 },
+        { id: 20, partida: 20, wumpusMortos: 1 },
+        { id: 21, partida: 21, wumpusMortos: 0 },
+        { id: 22, partida: 22, wumpusMortos: 1 },
+        { id: 23, partida: 23, wumpusMortos: 2 },
+        { id: 24, partida: 24, wumpusMortos: 0 },
+        { id: 25, partida: 25, wumpusMortos: 1 },
+        { id: 26, partida: 26, wumpusMortos: 2 },
+        { id: 27, partida: 27, wumpusMortos: 1 },
+        { id: 28, partida: 28, wumpusMortos: 0 },
+        { id: 29, partida: 29, wumpusMortos: 1 },
+        { id: 30, partida: 30, wumpusMortos: 2 }
+    ];
+
+
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -2116,8 +2183,13 @@ export default function Benchmark() {
                 <section className="direitaHistorico">
                     <div className='direitaRolagem'>
                         <div className='divTopoRelatorio'>
-                            <h1>Teste 56</h1>
-                            <p className='destaqueGold'>02/04/2026</p>
+                            <div>
+                                <h1>Teste 56</h1>
+                                <p className='destaqueGold'>02/04/2026</p>
+                            </div>
+                            <div>
+                                <button className='botaoPDF'>Exportar PDF</button>
+                            </div>
                         </div>
                         <section className='agenteEMundo'>
                             <div className='agenteUsado'>
@@ -2182,7 +2254,7 @@ export default function Benchmark() {
                                 <p><b>Média de passos</b>: 3240</p>
                                 <p><b>Passos na vitória mais eficiente:</b> 89</p>
                                 <hr />
-                                <h3>Essse agente venceu 70,3% das partidas</h3>
+                                <h3 className='destaqueGold' >Essse agente venceu 70,3% das partidas</h3>
                             </div>
                             <div className='direita'>
                                 <p><b>Pontuação por partida</b></p>
@@ -2309,13 +2381,129 @@ export default function Benchmark() {
                             <div className='linha'>
                                 <div className='esquerda'>
                                     <p><b>Ouro coletado por partida</b></p>
+                                    <ResponsiveContainer width="100%" height="95%">
+                                        <LineChart data={ouroPorPartida} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                                            <CartesianGrid
+                                                strokeDasharray="5 5"
+                                                stroke="#374151"
+                                                vertical={true}
+                                                horizontal={true}
+                                            />
+                                            <XAxis
+                                                dataKey="partida"
+                                                label={{
+                                                    value: 'Partidas',
+                                                    position: 'insideBottom',
+                                                    offset: -5,
+                                                    fill: '#6b7280',
+                                                    fontSize: 12,
+                                                    fontWeight: 'bold'
+                                                }}
+                                                tick={{ fill: '#9ca3af' }}
+                                                axisLine={{ stroke: '#4b5563' }}
+                                                tickLine={{ stroke: '#4b5563' }}
+                                            />
+                                            <YAxis
+                                                label={{
+                                                    value: 'Quantidade de Ouro',
+                                                    angle: -90,
+                                                    position: 'insideLeft',
+                                                    fill: '#6b7280',
+                                                    fontSize: 12,
+                                                    fontWeight: 'bold'
+                                                }}
+                                                tick={{ fill: '#9ca3af' }}
+                                                axisLine={{ stroke: '#4b5563' }}
+                                                tickLine={{ stroke: '#4b5563' }}
+                                                domain={[0, 6]}  // Força o eixo Y a mostrar de 0 a 5
+                                                ticks={[0, 1, 2, 3, 4, 5, 6]}  // Mostra todos os valores inteiros
+                                            />
+                                            <Tooltip
+                                                contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
+                                                itemStyle={{ color: '#f3f4f6' }}
+                                                formatter={(value) => [`${value} ouro(s)`, 'Quantidade']}
+                                                labelFormatter={(label) => `Partida ${label}`}
+                                            />
+                                            <Legend
+                                                wrapperStyle={{ fill: '#f3f4f6' }}
+                                                iconType="circle"
+                                            />
+
+                                            <Line
+                                                type="linear"
+                                                dataKey="ouro"
+                                                stroke="gold"
+                                                name="Ouro por partida"
+                                                strokeWidth={1}
+                                                dot={false}
+                                                activeDot={false}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
                                 </div>
                                 <div className='direita'>
-                                    <p>dir</p>
+                                    <p><b>Wumpus mortos por partida</b></p>
+                                    <ResponsiveContainer width="100%" height="95%">
+                                        <LineChart data={wumpusMortosPorPartida} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                                            <CartesianGrid
+                                                strokeDasharray="5 5"
+                                                stroke="#374151"
+                                                vertical={true}
+                                                horizontal={true}
+                                            />
+                                            <XAxis
+                                                dataKey="partida"
+                                                label={{
+                                                    value: 'Partidas',
+                                                    position: 'insideBottom',
+                                                    offset: -5,
+                                                    fill: '#6b7280',
+                                                    fontSize: 12,
+                                                    fontWeight: 'bold'
+                                                }}
+                                                tick={{ fill: '#9ca3af' }}
+                                                axisLine={{ stroke: '#4b5563' }}
+                                                tickLine={{ stroke: '#4b5563' }}
+                                            />
+                                            <YAxis
+                                                label={{
+                                                    value: 'Quantidade de Ouro',
+                                                    angle: -90,
+                                                    position: 'insideLeft',
+                                                    fill: '#6b7280',
+                                                    fontSize: 12,
+                                                    fontWeight: 'bold'
+                                                }}
+                                                tick={{ fill: '#9ca3af' }}
+                                                axisLine={{ stroke: '#4b5563' }}
+                                                tickLine={{ stroke: '#4b5563' }}
+                                                domain={[0, 3]}  // Força o eixo Y a mostrar de 0 a 5
+                                                ticks={[0, 1, 2, 3]}  // Mostra todos os valores inteiros
+                                            />
+                                            <Tooltip
+                                                contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
+                                                itemStyle={{ color: '#f3f4f6' }}
+                                                formatter={(value) => [`${value} ouro(s)`, 'Quantidade']}
+                                                labelFormatter={(label) => `Partida ${label}`}
+                                            />
+                                            <Legend
+                                                wrapperStyle={{ fill: '#f3f4f6' }}
+                                                iconType="circle"
+                                            />
+
+                                            <Line
+                                                type="linear"
+                                                dataKey="wumpusMortos"
+                                                stroke="red"
+                                                name="Ouro por partida"
+                                                strokeWidth={1}
+                                                dot={false}
+                                                activeDot={false}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
                                 </div>
                             </div>
-
-
                         </section>
                     </div>
                 </section>

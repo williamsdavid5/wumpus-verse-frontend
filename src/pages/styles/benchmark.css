@@ -10,6 +10,21 @@
     padding: 10px;
     box-sizing: border-box;
     border-bottom: solid 1px var(--bordaCor);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.divTopoRelatorio div {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.botaoPDF {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 20px;
 }
 
 .agenteEMundo {
