@@ -11,7 +11,7 @@ import NovaPartida from "./pages/NovaPartida";
 import Execucao from "./pages/Execucao";
 import Agentes from "./pages/Agentes";
 import Historico from "./pages/Historico";
-import Ranking from "./pages/Ranking";
+import Benchmark from "./pages/Benchmark ";
 
 export default function App() {
   return (
@@ -65,10 +65,10 @@ export default function App() {
               </ProtecaoDeRotas>
             }
           />
-          <Route path="/ranking"
+          <Route path="/benchmark"
             element={
               <ProtecaoDeRotas>
-                <Ranking />
+                <Benchmark />
               </ProtecaoDeRotas>
             }
           />

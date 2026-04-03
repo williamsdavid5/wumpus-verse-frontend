@@ -17,8 +17,8 @@ export default function Inicio() {
         { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mundos-salvos') : navigate('/login') },
         { id: 2, texto: 'Agentes', acao: () => logado ? navigate('/agentes') : navigate('/login') },
         { id: 3, texto: 'Execuções', acao: () => logado ? navigate('/historico') : navigate('/login') },
-        { id: 3, texto: 'Ranking', acao: () => logado ? navigate('/ranking') : navigate('/login') },
-        { id: 4, texto: 'Nova partida', acao: () => logado ? navigate('/nova-partida') : navigate('/login') },
+        { id: 4, texto: 'Benchmark', acao: () => logado ? navigate('/benchmark') : navigate('/login') },
+        { id: 5, texto: 'Nova partida', acao: () => logado ? navigate('/nova-partida') : navigate('/login') },
     ];
 
     async function sair() {
@@ -139,7 +139,7 @@ export default function Inicio() {
                     <button
                         className={`botaoNovaPartida ${logado ? '' : 'botaoInicioSemLogin'}`}
                         onClick={botoes[4].acao}
-                        onMouseEnter={() => setBotaoHover(4)}
+                        onMouseEnter={() => setBotaoHover(5)}
                         onMouseLeave={() => setBotaoHover(null)}
                         title={`${logado ? 'Escolha um agente e um mundo e inicie uma partida' : ''}`}
                     >
