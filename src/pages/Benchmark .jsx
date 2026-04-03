@@ -3,8 +3,11 @@ import './styles/benchmark.css'
 import Lino from '../assets/skins/lino_Armado.png'
 import LinoRobo from '../assets/skins/linoRobo_armado.png'
 import LinoEvolutivo from '../assets/skins/linoEvolutivo_Armado.png'
+import Logo from '../assets/wumpus_verse_logo_white.svg'
 
 import { useEffect, useState, useRef, useTransition } from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 import {
     LineChart,
@@ -119,6 +122,8 @@ export default function Benchmark() {
     const [miniGrid, setMiniGrid] = useState([]);
     const [dimensoes, setDimensoes] = useState({ largura: 0, altura: 0 });
     const [cellSize, setCellSize] = useState(15);
+
+    const [botaoPDF, setBoataoPDF] = useState(true);
 
     const desempenhoAgente1 = [
         { id: 1, execucao: 1, pontuacao: 1250 },
@@ -2142,6 +2147,65 @@ export default function Benchmark() {
         return { grid, largura, altura };
     }
 
+    const exportarPDF = async () => {
+
+        setBoataoPDF(false);
+
+        const elemento = document.getElementById('relatorioBenchmark');
+
+        const originalOverflow = elemento.style.overflow;
+        const originalHeight = elemento.style.height;
+        const originalMaxHeight = elemento.style.maxHeight;
+        const originalTransform = elemento.style.transform;
+        const originalTransformOrigin = elemento.style.transformOrigin;
+
+        const escala = 0.7;
+
+        elemento.style.transform = `scale(${escala})`;
+        elemento.style.transformOrigin = 'top left';
+        elemento.style.overflow = 'visible';
+        elemento.style.height = 'auto';
+        elemento.style.maxHeight = 'none';
+
+        // Ajusta a largura para compensar o scale
+        const originalWidth = elemento.style.width;
+        elemento.style.width = `${100 / escala}%`;
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const canvas = await html2canvas(elemento, {
+            scale: 2,
+            backgroundColor: 'black',
+            useCORS: true,
+            windowWidth: elemento.scrollWidth,
+            windowHeight: elemento.scrollHeight
+        });
+
+        elemento.style.transform = originalTransform;
+        elemento.style.transformOrigin = originalTransformOrigin;
+        elemento.style.width = originalWidth;
+        elemento.style.overflow = originalOverflow;
+        elemento.style.height = originalHeight;
+        elemento.style.maxHeight = originalMaxHeight;
+
+        const larguraPX = canvas.width;
+        const alturaPX = canvas.height;
+        const larguraMM = larguraPX * 0.264583;
+        const alturaMM = alturaPX * 0.264583;
+
+        const pdf = new jsPDF({
+            unit: 'mm',
+            format: [larguraMM, alturaMM],
+            orientation: larguraMM > alturaMM ? 'landscape' : 'portrait'
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        pdf.addImage(imgData, 'PNG', 0, 0, larguraMM, alturaMM);
+        pdf.save('relatorio.pdf');
+
+        setBoataoPDF(true);
+    };
+
     return (
         <>
             <main className="historicoMain benchmarkMain">
@@ -2180,15 +2244,21 @@ export default function Benchmark() {
                         ))}
                     </div>
                 </aside>
-                <section className="direitaHistorico">
-                    <div className='direitaRolagem'>
+                <section className="direitaHistorico" >
+                    <div className='direitaRolagem' id='relatorioBenchmark'>
                         <div className='divTopoRelatorio'>
                             <div>
                                 <h1>Teste 56</h1>
                                 <p className='destaqueGold'>02/04/2026</p>
                             </div>
                             <div>
-                                <button className='botaoPDF'>Exportar PDF</button>
+                                {botaoPDF === true ?
+                                    <>
+                                        <button className='botaoPDF' onClick={exportarPDF}>Exportar PDF</button>
+                                    </>
+                                    :
+                                    <>
+                                        <img src={Logo} alt="" className='logoRelatorio' /></>}
                             </div>
                         </div>
                         <section className='agenteEMundo'>
@@ -2306,10 +2376,11 @@ export default function Benchmark() {
                                             type="linear"
                                             dataKey="pontuacao"
                                             stroke="red"
-                                            name="Lógico"
+                                            name="Pontuação por partida"
                                             strokeWidth={2}
                                             dot={false}
                                             activeDot={false}
+                                            animationDuration={200}
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
@@ -2373,6 +2444,7 @@ export default function Benchmark() {
                                                 strokeWidth={2}
                                                 dot={false}
                                                 activeDot={false}
+                                                animationDuration={200}
                                             />
                                         </LineChart>
                                     </ResponsiveContainer>
@@ -2437,6 +2509,7 @@ export default function Benchmark() {
                                                 strokeWidth={1}
                                                 dot={false}
                                                 activeDot={false}
+                                                animationDuration={200}
                                             />
                                         </LineChart>
                                     </ResponsiveContainer>
@@ -2495,10 +2568,11 @@ export default function Benchmark() {
                                                 type="linear"
                                                 dataKey="wumpusMortos"
                                                 stroke="red"
-                                                name="Ouro por partida"
+                                                name="Wumpus mortos"
                                                 strokeWidth={1}
                                                 dot={false}
                                                 activeDot={false}
+                                                animationDuration={200}
                                             />
                                         </LineChart>
                                     </ResponsiveContainer>

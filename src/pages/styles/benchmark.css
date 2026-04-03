@@ -145,3 +145,8 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.logoRelatorio {
+    object-fit: contain;
+    height: 50px;
+}
