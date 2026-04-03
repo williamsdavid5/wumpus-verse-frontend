@@ -6,6 +6,17 @@ import LinoEvolutivo from '../assets/skins/linoEvolutivo_Armado.png'
 
 import { useEffect, useState, useRef, useTransition } from 'react';
 
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer
+} from 'recharts';
+
 function Bloco({ selecionado, wumpus, buraco, ouro }) {
     return (
         <div
@@ -20,13 +31,12 @@ function Bloco({ selecionado, wumpus, buraco, ouro }) {
 
 export default function Benchmark() {
 
-    const execucoes = [
+    const testes = [
         {
             id: 1,
             numero: 56,
             data: "04/05/2026",
-            agente: "Lino malucão",
-            agenteId: 25,
+            agente: "Lógico",
             mundo: "espiral",
             mundoId: 17
         },
@@ -34,8 +44,7 @@ export default function Benchmark() {
             id: 2,
             numero: 72,
             data: "12/03/2026",
-            agente: "Dra. Silva",
-            agenteId: 42,
+            agente: "Evolutivo",
             mundo: "labirinto",
             mundoId: 8
         },
@@ -43,8 +52,7 @@ export default function Benchmark() {
             id: 3,
             numero: 31,
             data: "28/02/2026",
-            agente: "Caçador Noturno",
-            agenteId: 7,
+            agente: "Aleatório",
             mundo: "deserto",
             mundoId: 23
         },
@@ -52,8 +60,7 @@ export default function Benchmark() {
             id: 4,
             numero: 89,
             data: "19/01/2026",
-            agente: "Velho Lobo",
-            agenteId: 53,
+            agente: "Lógico",
             mundo: "floresta negra",
             mundoId: 11
         },
@@ -61,8 +68,7 @@ export default function Benchmark() {
             id: 5,
             numero: 44,
             data: "05/04/2026",
-            agente: "Águia de Fogo",
-            agenteId: 38,
+            agente: "Evolutivo",
             mundo: "montanha sagrada",
             mundoId: 5
         },
@@ -70,8 +76,7 @@ export default function Benchmark() {
             id: 6,
             numero: 67,
             data: "22/03/2026",
-            agente: "Mestre Zen",
-            agenteId: 61,
+            agente: "Aleatório",
             mundo: "templo antigo",
             mundoId: 14
         },
@@ -79,8 +84,7 @@ export default function Benchmark() {
             id: 7,
             numero: 93,
             data: "11/02/2026",
-            agente: "Tempestade Silenciosa",
-            agenteId: 19,
+            agente: "Lógico",
             mundo: "oceano profundo",
             mundoId: 31
         },
@@ -88,8 +92,7 @@ export default function Benchmark() {
             id: 8,
             numero: 12,
             data: "30/01/2026",
-            agente: "Caminhante das Estrelas",
-            agenteId: 73,
+            agente: "Evolutivo",
             mundo: "céu infinito",
             mundoId: 26
         },
@@ -97,8 +100,7 @@ export default function Benchmark() {
             id: 9,
             numero: 55,
             data: "18/04/2026",
-            agente: "Guardião do Abismo",
-            agenteId: 84,
+            agente: "Aleatório",
             mundo: "vulcão adormecido",
             mundoId: 42
         },
@@ -106,8 +108,7 @@ export default function Benchmark() {
             id: 10,
             numero: 78,
             data: "07/05/2026",
-            agente: "Sombra Veloz",
-            agenteId: 13,
+            agente: "Lógico",
             mundo: "cidade perdida",
             mundoId: 9
         }
@@ -118,6 +119,72 @@ export default function Benchmark() {
     const [miniGrid, setMiniGrid] = useState([]);
     const [dimensoes, setDimensoes] = useState({ largura: 0, altura: 0 });
     const [cellSize, setCellSize] = useState(15);
+
+    const desempenhoAgente1 = [
+        { id: 1, execucao: 1, pontuacao: 1250 },
+        { id: 2, execucao: 2, pontuacao: 1890 },
+        { id: 3, execucao: 3, pontuacao: 940 },
+        { id: 4, execucao: 4, pontuacao: 2150 },
+        { id: 5, execucao: 5, pontuacao: 1680 },
+        { id: 6, execucao: 6, pontuacao: 2450 },
+        { id: 7, execucao: 7, pontuacao: 1100 },
+        { id: 8, execucao: 8, pontuacao: 1980 },
+        { id: 9, execucao: 9, pontuacao: 2620 },
+        { id: 10, execucao: 10, pontuacao: 1450 },
+        { id: 11, execucao: 11, pontuacao: 2210 },
+        { id: 12, execucao: 12, pontuacao: 980 },
+        { id: 13, execucao: 13, pontuacao: 1870 },
+        { id: 14, execucao: 14, pontuacao: 2530 },
+        { id: 15, execucao: 15, pontuacao: 1340 },
+        { id: 16, execucao: 16, pontuacao: 2090 },
+        { id: 17, execucao: 17, pontuacao: 1760 },
+        { id: 18, execucao: 18, pontuacao: 2380 },
+        { id: 19, execucao: 19, pontuacao: 1050 },
+        { id: 20, execucao: 20, pontuacao: 1940 },
+        { id: 21, execucao: 21, pontuacao: 2670 },
+        { id: 22, execucao: 22, pontuacao: 1410 },
+        { id: 23, execucao: 23, pontuacao: 2280 },
+        { id: 24, execucao: 24, pontuacao: 2700 },
+        { id: 25, execucao: 25, pontuacao: 1190 },
+        { id: 26, execucao: 26, pontuacao: 2020 },
+        { id: 27, execucao: 27, pontuacao: 1580 },
+        { id: 28, execucao: 28, pontuacao: 920 },
+        { id: 29, execucao: 29, pontuacao: 2310 },
+        { id: 30, execucao: 30, pontuacao: 1830 }
+    ];
+
+    const passosPorPartida = [
+        { id: 1, partida: 1, passos: 1250 },
+        { id: 2, partida: 2, passos: 1890 },
+        { id: 3, partida: 3, passos: 940 },
+        { id: 4, partida: 4, passos: 2034 },
+        { id: 5, partida: 5, passos: 1680 },
+        { id: 6, partida: 6, passos: 1870 },
+        { id: 7, partida: 7, passos: 1100 },
+        { id: 8, partida: 8, passos: 1980 },
+        { id: 9, partida: 9, passos: 1520 },
+        { id: 10, partida: 10, passos: 1450 },
+        { id: 11, partida: 11, passos: 1720 },
+        { id: 12, partida: 12, passos: 980 },
+        { id: 13, partida: 13, passos: 1850 },
+        { id: 14, partida: 14, passos: 1340 },
+        { id: 15, partida: 15, passos: 1930 },
+        { id: 16, partida: 16, passos: 2090 },
+        { id: 17, partida: 17, passos: 1760 },
+        { id: 18, partida: 18, passos: 1190 },
+        { id: 19, partida: 19, passos: 1050 },
+        { id: 20, partida: 20, passos: 1940 },
+        { id: 21, partida: 21, passos: 1670 },
+        { id: 22, partida: 22, passos: 1410 },
+        { id: 23, partida: 23, passos: 1820 },
+        { id: 24, partida: 24, passos: 257 },
+        { id: 25, partida: 25, passos: 1190 },
+        { id: 26, partida: 26, passos: 2020 },
+        { id: 27, partida: 27, passos: 1580 },
+        { id: 28, partida: 28, passos: 920 },
+        { id: 29, partida: 29, passos: 1780 },
+        { id: 30, partida: 30, passos: 1830 }
+    ];
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -2010,7 +2077,7 @@ export default function Benchmark() {
 
     return (
         <>
-            <main className="historicoMain">
+            <main className="historicoMain benchmarkMain">
                 <aside className="mundosLista">
                     <div className='topoMundosSalvos'>
                         <div className='a'>
@@ -2025,18 +2092,18 @@ export default function Benchmark() {
                         </div>
                     </div>
                     <div className="divListaMundos">
-                        {execucoes.map((execucao) => (
+                        {testes.map((execucao) => (
                             <div
                                 key={execucao.id}
                                 className={`itemListaMundos itemListaExecoes`}
                             >
                                 <div className='esquerda'>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <h2>Execução {execucao.numero}</h2>
+                                        <h2>Teste {execucao.numero}</h2>
                                         <p><span className='destaqueGold'>{execucao.data}</span></p>
                                     </div>
 
-                                    <p className='paragrafoInformativo'><b>Agente:</b> {execucao.agente} (ID {execucao.agenteId})</p>
+                                    <p className='paragrafoInformativo'><b>Agente:</b> {execucao.agente}</p>
                                     <p className='paragrafoInformativo'><b>Mundo:</b> {execucao.mundo} (ID {execucao.mundoId})</p>
                                 </div>
                                 <div className='direita'>
@@ -2047,55 +2114,210 @@ export default function Benchmark() {
                     </div>
                 </aside>
                 <section className="direitaHistorico">
-                    <div className='divTopoRelatorio'>
-                        <h1>Execução 56</h1>
-                        <p className='destaqueGold'>02/04/2026</p>
-                    </div>
-                    <section className='agenteEMundo'>
-                        <div className='agenteUsado'>
-                            <h2>Agente usado</h2>
-                            <div className='auxiliarAgenteUsado'>
-                                <img src={LinoRobo} alt="" />
-                                <div className='direita'>
-                                    <hr />
-                                    <p><b>Agente Lógico</b></p>
-                                    <p className='paragrafoInformativo paragrafoInforAgente'>
-                                        Segue um conjunto de regras gravadas em sua programação. Seu objetivo é pegar o ouro gastando o mínimo possível de sua energia e munição (e eliminar todos os Wumpus do caminho).
-                                    </p>
-                                </div>
-                            </div>
+                    <div className='direitaRolagem'>
+                        <div className='divTopoRelatorio'>
+                            <h1>Teste 56</h1>
+                            <p className='destaqueGold'>02/04/2026</p>
                         </div>
-                        <div className='mundoUsado'>
-                            <h2>Mapa usado</h2>
-                            <div className='div-mapa'>
-                                <div ref={containerRef} className='div-mapa mapaHistorico'>
-                                    <div
-                                        className='mapa-blocos'
-                                        style={{
-                                            display: "grid",
-                                            gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
-                                            gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
-                                            width: `${dimensoes.largura * cellSize}px`,
-                                            height: `${dimensoes.altura * cellSize}px`,
-                                        }}
-                                    >
-                                        {miniGrid.map((linha, y) =>
-                                            linha.map((sala, x) => (
-                                                <Bloco
-                                                    key={`${x}-${y}`}
-                                                    selecionado={sala.ativa}
-                                                    wumpus={sala.wumpus}
-                                                    buraco={sala.buraco}
-                                                    ouro={sala.ouro}
-                                                />
-                                            ))
-                                        )}
+                        <section className='agenteEMundo'>
+                            <div className='agenteUsado'>
+                                <h2>Agente usado</h2>
+                                <div className='auxiliarAgenteUsado'>
+                                    <img src={LinoRobo} alt="" />
+                                    <div className='direita'>
+                                        <hr />
+                                        <p><b>Agente Lógico</b></p>
+                                        <p className='paragrafoInformativo paragrafoInforAgente'>
+                                            Segue um conjunto de regras gravadas em sua programação. Seu objetivo é pegar o ouro gastando o mínimo possível de sua energia e munição (e eliminar todos os Wumpus do caminho).
+                                        </p>
                                     </div>
                                 </div>
-
                             </div>
-                        </div>
-                    </section>
+                            <div className='mundoUsado'>
+                                <h2>Mapa usado</h2>
+                                <p><b>Vórtice</b></p>
+                                <div className='div-mapa'>
+                                    <div ref={containerRef} className='div-mapa mapaHistorico'>
+                                        <div
+                                            className='mapa-blocos'
+                                            style={{
+                                                display: "grid",
+                                                gridTemplateColumns: `repeat(${dimensoes.largura}, ${cellSize}px)`,
+                                                gridTemplateRows: `repeat(${dimensoes.altura}, ${cellSize}px)`,
+                                                width: `${dimensoes.largura * cellSize}px`,
+                                                height: `${dimensoes.altura * cellSize}px`,
+                                            }}
+                                        >
+                                            {miniGrid.map((linha, y) =>
+                                                linha.map((sala, x) => (
+                                                    <Bloco
+                                                        key={`${x}-${y}`}
+                                                        selecionado={sala.ativa}
+                                                        wumpus={sala.wumpus}
+                                                        buraco={sala.buraco}
+                                                        ouro={sala.ouro}
+                                                    />
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section className='divInformacoesExecucao'>
+                            <div className='esquerda'>
+                                <h2>Sobre a execução</h2>
+                                <p>Foram realizadas 30 partidas.</p>
+                                <p><b>Vitórias:</b> 23</p>
+                                <p><b>Derrotas:</b> 7</p>
+                                <p><b>Média de pontuação:</b> 1360</p>
+                                <hr />
+                                <p><b>Média de wumpus mortos:</b> 1.2</p>
+                                <p><b>Taxa de mortes de wumpus</b> 26%</p>
+                                <p><b>Taxa de acerto de tiro:</b> 87%</p>
+                                <hr />
+                                <p><b>Média de ouro coletado:</b> 1.4</p>
+                                <p><b>Taxa de coleta de ouro:</b> 98%</p>
+                                <hr />
+                                <p><b>Média de passos</b>: 3240</p>
+                                <p><b>Passos na vitória mais eficiente:</b> 89</p>
+                                <hr />
+                                <h3>Essse agente venceu 70,3% das partidas</h3>
+                            </div>
+                            <div className='direita'>
+                                <p><b>Pontuação por partida</b></p>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={desempenhoAgente1} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                        <CartesianGrid
+                                            strokeDasharray="5 5"
+                                            stroke="#374151"
+                                            vertical={true}
+                                            horizontal={true}
+                                        />
+                                        <XAxis
+                                            dataKey="execucao"
+                                            label={{
+                                                value: 'Partidas',
+                                                position: 'insideBottom',
+                                                offset: -5,
+                                                fill: '#6b7280',
+                                                fontSize: 12,
+                                                fontWeight: 'bold'
+                                            }}
+                                            tick={{ fill: '#9ca3af' }}
+                                            axisLine={{ stroke: '#4b5563' }}
+                                            tickLine={{ stroke: '#4b5563' }}
+                                        />
+                                        <YAxis
+                                            label={{
+                                                value: 'Pontuação',
+                                                angle: -90,
+                                                position: 'insideLeft',
+                                                fill: '#6b7280',
+                                                fontSize: 12,
+                                                fontWeight: 'bold'
+                                            }}
+                                            tick={{ fill: '#9ca3af' }}
+                                            axisLine={{ stroke: '#4b5563' }}
+                                            tickLine={{ stroke: '#4b5563' }}
+                                        />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
+                                            itemStyle={{ color: '#f3f4f6' }}
+                                        />
+                                        <Legend
+                                            wrapperStyle={{ fill: '#f3f4f6' }}
+                                            iconType="circle"
+                                        />
+
+                                        <Line
+                                            type="linear"
+                                            dataKey="pontuacao"
+                                            stroke="red"
+                                            name="Lógico"
+                                            strokeWidth={2}
+                                            dot={false}
+                                            activeDot={false}
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </section>
+                        <section className='graficosPartida'>
+                            <div className='linha'>
+                                <div className='graficoTotal'>
+                                    <p><b>Passos por partida</b></p>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={passosPorPartida} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                            <CartesianGrid
+                                                strokeDasharray="5 5"
+                                                stroke="#374151"
+                                                vertical={true}
+                                                horizontal={true}
+                                            />
+                                            <XAxis
+                                                dataKey="partida"
+                                                label={{
+                                                    value: 'Partidas',
+                                                    position: 'insideBottom',
+                                                    offset: -5,
+                                                    fill: '#6b7280',
+                                                    fontSize: 12,
+                                                    fontWeight: 'bold'
+                                                }}
+                                                tick={{ fill: '#9ca3af' }}
+                                                axisLine={{ stroke: '#4b5563' }}
+                                                tickLine={{ stroke: '#4b5563' }}
+                                            />
+                                            <YAxis
+                                                label={{
+                                                    value: 'Passos',
+                                                    angle: -90,
+                                                    position: 'insideLeft',
+                                                    fill: '#6b7280',
+                                                    fontSize: 12,
+                                                    fontWeight: 'bold'
+                                                }}
+                                                tick={{ fill: '#9ca3af' }}
+                                                axisLine={{ stroke: '#4b5563' }}
+                                                tickLine={{ stroke: '#4b5563' }}
+                                            />
+                                            <Tooltip
+                                                contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
+                                                itemStyle={{ color: '#f3f4f6' }}
+                                                formatter={(value) => [`${value} passos`, 'Quantidade']}
+                                                labelFormatter={(label) => `Partida ${label}`}
+                                            />
+                                            <Legend
+                                                wrapperStyle={{ fill: '#f3f4f6' }}
+                                                iconType="circle"
+                                            />
+
+                                            <Line
+                                                type="linear"
+                                                dataKey="passos"
+                                                stroke="var(--roxoDestaque)"
+                                                name="Passos por partida"
+                                                strokeWidth={2}
+                                                dot={false}
+                                                activeDot={false}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            <div className='linha'>
+                                <div className='esquerda'>
+                                    <p><b>Ouro coletado por partida</b></p>
+                                </div>
+                                <div className='direita'>
+                                    <p>dir</p>
+                                </div>
+                            </div>
+
+
+                        </section>
+                    </div>
                 </section>
             </main>
         </>
