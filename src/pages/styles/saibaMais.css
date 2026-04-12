@@ -202,6 +202,25 @@ hr {
     width: 200px;
 }
 
+.hateBotao {
+    width: 100px;
+    background-color: black;
+    color: black;
+    border: none;
+    cursor: default !important;
+}
+
+.hateBotao:hover {
+    background-color: black;
+    color: black;
+    border: none;
+}
+
+.hateImg {
+    height: 80%;
+    object-fit: contain;
+}
+
 @media (max-width: 1200px) {
     .secaoSaibaMais {
         width: 70%;

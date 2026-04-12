@@ -18,7 +18,23 @@ import Lino1 from '../assets/gifLino/1.png'
 import Lino2 from '../assets/gifLino/2.png'
 import Lino3 from '../assets/gifLino/3.png'
 
+import hateImg from '../assets/wumpus_odio.png'
+import { useState } from 'react'
+
+function Hate({ setOdio }) {
+    return (
+        <>
+            <div className='modalBackgrund'>
+                <img src={hateImg} className='hateImg' alt="" onClick={() => setOdio(false)} />
+            </div>
+        </>
+    )
+}
+
 export default function SaibaMais() {
+
+    const [odio, setOdio] = useState(false);
+
     return (
         <main className="mainSaibaMais">
             <section className='divisaoHorizontal'>
@@ -251,17 +267,24 @@ export default function SaibaMais() {
                     </div>
                     <p className='textBold'>Lino Duarte</p>
                     <p className='paragrafoInformativo'>Exterminador de wumpus, Mascote</p>
-                    {/* <div className='auxiliarLinkedin'>
-                        <a className='botaoLinkedin' href='https://www.linkedin.com/in/onoura/'>
-                            <img src={LinkedinLogo} alt="" className='logoLinkedin' />
-                        </a>
-                    </div> */}
+                    <div className='auxiliarLinkedin'>
+                        <button
+                            className='hateBotao'
+                            onClick={() => setOdio(true)}
+                        >hate</button>
+                    </div>
                 </div>
             </section>
             <hr className='hrCompleta' />
             <section className='divisaoHorizontal divisaoCards'>
                 <img src={logo} alt="" className='logo' />
             </section>
+
+            {odio && <>
+                <Hate
+                    setOdio={setOdio}
+                ></Hate>
+            </>}
         </main>
     )
 }

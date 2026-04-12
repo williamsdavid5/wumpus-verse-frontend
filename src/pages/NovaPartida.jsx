@@ -40,14 +40,19 @@ export default function () {
 
     const agentes = [
         {
-            nome: "Agente 1",
-            id: 0,
-            descricao: "Agente totalmente aleatório, apenas dá passos pelo ambiente sem se importar, ou seja, um agente burro."
+            nome: "Agente Aleatório",
+            id: 1,
+            descricao: "Simplesmente faz tudo o que quer, quando quer, sem se preocupar com as consequências, praticamente um adolescente, mas fortemente armado."
         },
         {
-            nome: "Agente 3",
+            nome: "Agente Lógico",
+            id: 2,
+            descricao: "Segue um conjunto de regras gravadas em sua programação. Seu objetivo é pegar o ouro gastando o mínimo possível de sua energia e munição (e eliminar todos os Wumpus do caminho)."
+        },
+        {
+            nome: "Agente Evolutivo",
             id: 3,
-            descricao: "Agente evolutivo, utilizando algoritmo genético, gerações de indivíduos são criadas e reproduzidas por uma quantidade específica de vezez até chegar neste agente, o melhor daquela população."
+            descricao: " Descendente de uma geração de caçadores, este agente recebeu as melhores características dos ancestrais de sua tribo. Ele nasceu com seus objetivos gravados em seu DNA."
         }
     ]
 
