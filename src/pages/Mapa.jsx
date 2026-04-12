@@ -837,7 +837,7 @@ export default function Mapa() {
                         <h1>EDITOR DE MUNDOS</h1>
                         <p className='paragrafoInformativo'>Preencha os blocos para definir o formato do seu mundo.</p>
                         <button
-                            className='botaoInicio telaEditor'
+                            className='botaoIrParaInicio'
                             onClick={() => {
                                 navigate('/', { replace: true });
                             }}

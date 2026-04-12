@@ -7,6 +7,10 @@ import ouroSkin from '../assets/skins/ouro.png';
 import buracoSkin from '../assets/skins/buraco.png';
 import wumpusVivo from '../assets/skins/wumpus_vivo.png';
 import agenteSkin from '../assets/skins/lino_Armado.png';
+import agenteLogico from '../assets/skins/linoRobo_armado.png'
+import agenteLogicoSemMunicao from '../assets/skins/linoRobo_semBalas.png'
+import agenteLinoEvolutivo from '../assets/skins/linoEvolutivo_Armado.png'
+import agenteEvolutivoSemMunicao from '../assets/skins/linoEvolutivo_semBalas.png'
 import agenteSemMunicao from '../assets/skins/lino_semBalas.png'
 import wumpusMortoSkin from '../assets/skins/wumpus_morto.png'
 
@@ -653,8 +657,8 @@ export default function Minimapa({
         const maxX = Math.max(...xs);
         const maxY = Math.max(...ys);
 
-        const largura = maxX + 2;
-        const altura = maxY + 2;
+        const largura = maxX + 1;
+        const altura = maxY + 1;
 
         const grid = Array.from({ length: altura }, () =>
             Array.from({ length: largura }, () => ({

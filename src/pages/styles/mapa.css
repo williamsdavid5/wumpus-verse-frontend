@@ -298,3 +298,13 @@ button:hover {
     color: black;
     background-color: white;
 }
+
+.botaoIrParaInicio {
+    background-color: white;
+    color: black;
+}
+
+.botaoIrParaInicio:hover {
+    background-color: black;
+    color: white;
+}
