@@ -128,6 +128,28 @@ export default function Minimapa({
     const [salasComOuro, setSalasComOuro] = useState([]);
     const [tiroPosicao, setTiroPosicao] = useState([]);
     const [wumpusMortos, setWumpusMortos] = useState([]);
+    const [logAcoes, setLogAcoes] = useState([]);
+
+    const reconstruirLog = useCallback((ateOPasso) => {
+        const novoLog = [];
+        for (let i = 0; i <= ateOPasso; i++) {
+            const p = passosExecucao[i];
+            const prefixo = `- Passo ${i + 1}:`;
+
+            if (p.acao === 'x') {
+                novoLog.unshift(`${prefixo} Coletou ouro na sala (${p.posicao_x}, ${p.posicao_y});`);
+            }
+            const tiroValido = p.tiro_position &&
+                p.tiro_position[0] !== -1 &&
+                p.tiro_position[1] !== -1 &&
+                !(p.tiro_position[0] === 0 && p.tiro_position[1] === 0);
+
+            if (tiroValido) {
+                novoLog.unshift(`${prefixo} Atirou na sala (${p.tiro_position[0]}, ${p.tiro_position[1]});`);
+            }
+        }
+        setLogAcoes(novoLog.slice(0, 50));
+    }, [passosExecucao]);
 
     const [dadosAgente, setDadosAgente] = useState({
         ouros: 0,
@@ -334,6 +356,8 @@ export default function Minimapa({
                         wumpusMortosQTD: wumpusMortosAteAgora.length
                     });
 
+                    reconstruirLog(proximoPasso);
+
                     return proximoPasso;
                 });
             }, 500);
@@ -394,6 +418,8 @@ export default function Minimapa({
                     pontos: primeiroPasso.pontos || 0,
                     wumpusMortosQTD: wumpusMortosIniciais.length
                 });
+
+                reconstruirLog(0);
             }
         } else {
             setAgentePosicao(null);
@@ -577,6 +603,9 @@ export default function Minimapa({
             setExecutando(false);
             setModoManual(true);
         }
+
+        reconstruirLog(passoLimitado);
+
     }, [passosExecucao, executando, miniGrid, inverterCoordenadas]);
 
     const passoAnterior = useCallback(() => {
@@ -599,6 +628,7 @@ export default function Minimapa({
         setPassoAtual(0);
         setModoManual(false);
         setWumpusMortos([]);
+        setLogAcoes([]);
 
         const salasIniciaisComOuro = [];
         miniGrid.forEach((linha, y) => {
@@ -789,6 +819,16 @@ export default function Minimapa({
                         </div>
                         <div className='auxiliarTempoReal direita'>
                             <h3>Pontuação<br />{dadosAgente.pontos}</h3>
+                        </div>
+                        <div className='logDeAcoes'>
+                            <p>Log de ações</p>
+                            <textarea
+                                readOnly
+                                value={logAcoes.join('\n')}
+                                rows={10}
+                                className='areaLogDeAcoes'
+                            />
+                            <p className='paragrafoInformativo'>Você pode redimencionar o log</p>
                         </div>
                     </div>
                     <p className='paragrafoInformativo pArrastarMapa'>Você pode arrastar o mapa!</p>

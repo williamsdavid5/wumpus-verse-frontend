@@ -282,6 +282,25 @@
     margin: 0;
 }
 
+.logDeAcoes {
+    padding: 5px;
+    border-left: solid 1px var(--bordaCor);
+}
+
+.logDeAcoes .paragrafoInformativo {
+    margin: 0;
+}
+
+.areaLogDeAcoes {
+    background-color: black;
+    color: red;
+    margin-top: 5px;
+    overflow-y: auto;
+    height: 60px;
+    font-size: 12px;
+    width: 200px;
+}
+
 .pArrastarMapa {
     position: absolute;
     left: 5px;
@@ -341,5 +360,9 @@
     .configsExecucao {
         overflow-y: visible;
         border-left: none;
+    }
+
+    .areaLogDeAcoes {
+        display: none;
     }
 }
