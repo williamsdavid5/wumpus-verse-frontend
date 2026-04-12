@@ -30,7 +30,8 @@ function Bloco({
     noRight,
     noBottom,
     flechas,
-    wumpusMorto
+    wumpusMorto,
+    passosExecucao
 }) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
     const temOuro = ouro && !ouroColetado;
@@ -55,7 +56,7 @@ function Bloco({
                 <img src={wumpusMortoSkin} className='skin wumpusMorto' alt="Wumpus Morto" />
             )}
 
-            {temAgenteAqui && !buraco && (
+            {/* {temAgenteAqui && !buraco && (
                 <>
                     {flechas > 0 &&
                         <img src={agenteSkin} className='skin skinAgenteArmado' alt="" />
@@ -66,7 +67,27 @@ function Bloco({
                     }
                 </>
             )
-            }
+            } */}
+
+            {temAgenteAqui && !buraco && (
+                <>
+                    {(() => {
+                        // Pega o tipo do agente do primeiro passo da execução
+                        const tipoAgente = passosExecucao[0]?.agente || 1;
+
+                        if (flechas > 0) {
+                            if (tipoAgente === 2) return <img src={agenteLogico} className='skin skinAgenteLogicoArmado' alt="" />;
+                            if (tipoAgente === 3) return <img src={agenteLinoEvolutivo} className='skin skinAgenteDesarmado' alt="" />;
+                            return <img src={agenteSkin} className='skin skinAgenteArmado' alt="" />;
+                        } else {
+                            if (tipoAgente === 2) return <img src={agenteLogicoSemMunicao} className='skin skinAgenteDesarmado' alt="" />;
+                            if (tipoAgente === 3) return <img src={agenteEvolutivoSemMunicao} className='skin skinAgenteDesarmado' alt="" />;
+                            return <img src={agenteSemMunicao} className='skin skinAgenteDesarmado' alt="" />;
+                        }
+                    })()}
+                </>
+            )}
+
             {buraco &&
                 // <div className='elemento buraco'></div>
                 <img src={buracoSkin} className='skin skiBuraco' alt="" />
@@ -833,6 +854,7 @@ export default function Minimapa({
                                             noBottom={adjacencias.noBottom}
                                             flechas={dadosAgente.flechas}
                                             wumpusMorto={wumpusMortoo}
+                                            passosExecucao={passosExecucao}
                                         />
                                     );
                                 })

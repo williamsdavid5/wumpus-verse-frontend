@@ -76,6 +76,11 @@
     filter: drop-shadow(0 0 10px white);
 }
 
+.skinAgenteLogicoArmado {
+    width: 80%;
+    filter: drop-shadow(0 0 10px white);
+}
+
 .wumpusVivo {
     width: 105%;
     filter: drop-shadow(0 0 10px blueviolet);

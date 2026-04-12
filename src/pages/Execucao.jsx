@@ -107,7 +107,7 @@ export default function Execucao() {
                 mundoSelecionado,
                 ativarDiagonal,
                 {
-                    id: 0,
+                    id: agenteSelecionado,
                     type: agenteSelecionado,
                     position_x: salaSelecionada[0],
                     position_y: salaSelecionada[1]
