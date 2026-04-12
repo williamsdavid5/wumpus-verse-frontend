@@ -384,7 +384,7 @@ export default function Execucao() {
                                 <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
                             </div>
                             <hr />
-                            <div className='auxInterruptores interruptoresVencerAPartida'>
+                            {/* <div className='auxInterruptores interruptoresVencerAPartida'>
                                 <p>
                                     <b>Como vencer a partida?</b><br />
                                     <span className='paragrafoInformativo'>
@@ -401,7 +401,7 @@ export default function Execucao() {
                                         <input type="radio" name='comoVencerCanva' /> O agente precisa matar todos os Canvas da face da terra! <br />
                                     </span>
                                 </p>
-                            </div>
+                            </div> */}
                         </div>
                     )}
 
