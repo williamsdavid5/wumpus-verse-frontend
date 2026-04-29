@@ -11,7 +11,7 @@ import LoadingGif from '../assets/loadingGif.gif'
 
 export default function Agentes() {
 
-    const { criarAgente, getAgentes, excluirAgente } = useAuth();
+    const { criarAgente, getAgentes, excluirAgente, getAgenteById, atualizarAgente } = useAuth();
     const { confirm } = useConfirm();
 
     const [carregando, setCarregando] = useState(false);
@@ -56,9 +56,121 @@ export default function Agentes() {
     const [carregandoMais, setCarregandoMais] = useState(false);
 
     //para a função de edição
-    const [idSelecaoLista, setIdSelecaoLista] = useState(0);
+    // const [idSelecaoLista, setIdSelecaoLista] = useState(0);
+    const [agenteEdicao, setAgenteEdicao] = useState({ id: 0 });
+    const [carregandoAgenteIndividual, setCarregandoAgenteIndividual] = useState(false);
 
     //para salvar agentes
+    // async function handleSalvarAgente() {
+    //     let agentData = {};
+    //     let nomeParaSalvar = '';
+    //     let tipoAgente = 0;
+
+    //     // Validação baseada no tipo de agente
+    //     if (tipoAgenteSelecionado === 'logico') {
+    //         if (!nomeAgente.trim()) {
+    //             await confirm({
+    //                 title: "Não tá esquecendo de nada?",
+    //                 message: "Cadê o nome do agente?",
+    //                 type: "alert",
+    //                 botao1: "Realmente",
+    //             });
+    //             return;
+    //         }
+    //         nomeParaSalvar = nomeAgente;
+    //         tipoAgente = 2;
+
+    //         agentData = {
+    //             second_agent_schemas: {
+    //                 corajoso: coragem,
+    //                 explorador: explorador,
+    //                 cacador: odio,
+    //                 garimpeiro: garimpeiro,
+    //                 forma_de_busca: formaDeBusca
+    //             }
+    //         };
+
+    //     } else if (tipoAgenteSelecionado === 'evolutivo') {
+    //         if (!nomeAgenteEvolutivo.trim()) {
+    //             await confirm({
+    //                 title: "Não tá esquecendo de nada?",
+    //                 message: "Cadê o nome do agente?",
+    //                 type: "alert",
+    //                 botao1: "Realmente",
+    //             });
+    //             return;
+    //         }
+    //         nomeParaSalvar = nomeAgenteEvolutivo;
+    //         tipoAgente = 3;
+
+    //         if (tipoConfigPontos === 'simples') {
+    //             const fitnessEquation = `((PV * ${passoValido}) + (PI * ${passoInvalido}) + (TI * ${tiroInvalido}) + (TV * ${tiroValido}) + (SW * ${entradaWumpus}) + (SP * ${entradaBuraco}) + (SO * ${pegouOuro}) + (V * ${ouroVoltouOrigem}))`;
+
+    //             agentData = {
+    //                 third_agent_schemas: {
+    //                     populacao: populacao,
+    //                     geracoes: geracoes,
+    //                     taxa_de_cruzamento: taxaCruzamento,
+    //                     taxa_de_mutacao: taxaMutacao,
+    //                     fitness: fitnessEquation
+    //                 }
+    //             };
+    //         } else {
+    //             agentData = {
+    //                 third_agent_schemas: {
+    //                     populacao: populacao,
+    //                     geracoes: geracoes,
+    //                     taxa_de_cruzamento: taxaCruzamento,
+    //                     taxa_de_mutacao: taxaMutacao,
+    //                     fitness: fitness
+    //                 }
+    //             };
+    //         }
+    //     } else {
+    //         return; // Nenhum tipo selecionado
+    //     }
+
+    //     const respostaConfirmacao = await confirm({
+    //         title: "Quer mesmo salvar esse agente?",
+    //         message: "Ele ficará muito feliz por viver!",
+    //         type: "confirm",
+    //         botao1: "Sim",
+    //         botao2: "Me enganei"
+    //     });
+
+    //     if (respostaConfirmacao === 'yes') {
+    //         setCarregando(true);
+
+    //         try {
+    //             const resultado = await criarAgente(tipoAgente, nomeParaSalvar, agentData);
+    //             await carregarAgentes(true);
+
+    //             // Limpar formulário
+    //             setNomeAgente('');
+    //             setNomeAgenteEvolutivo('');
+    //             setTipoAgenteSelerionado('');
+
+    //             await confirm({
+    //                 title: "Sucesso!",
+    //                 message: `Agente ${tipoAgente === 2 ? 'Lógico' : 'Evolutivo'} criado com sucesso!`,
+    //                 type: "alert",
+    //                 botao1: "Legal!",
+    //             });
+
+    //             console.log('Resultado:', resultado);
+    //         } catch (error) {
+    //             await confirm({
+    //                 title: "Ah não",
+    //                 message: "Alguma coisa deu errado ao salvar o seu agente",
+    //                 type: "alert",
+    //                 botao1: "Vou tentar de novo",
+    //             });
+    //         }
+
+    //         setCarregando(false);
+    //     }
+    // }
+
     async function handleSalvarAgente() {
         let agentData = {};
         let nomeParaSalvar = '';
@@ -125,12 +237,16 @@ export default function Agentes() {
                 };
             }
         } else {
-            return; // Nenhum tipo selecionado
+            return;
         }
 
+        const modoEdicao = agenteEdicao.id !== 0;
+        const tituloConfirmacao = modoEdicao ? "Quer mesmo atualizar esse agente?" : "Quer mesmo salvar esse agente?";
+        const mensagemConfirmacao = modoEdicao ? "As alterações serão salvas permanentemente!" : "Ele ficará muito feliz por viver!";
+
         const respostaConfirmacao = await confirm({
-            title: "Quer mesmo salvar esse agente?",
-            message: "Ele ficará muito feliz por viver!",
+            title: tituloConfirmacao,
+            message: mensagemConfirmacao,
             type: "confirm",
             botao1: "Sim",
             botao2: "Me enganei"
@@ -140,26 +256,39 @@ export default function Agentes() {
             setCarregando(true);
 
             try {
-                const resultado = await criarAgente(tipoAgente, nomeParaSalvar, agentData);
+                let resultado;
+                if (modoEdicao) {
+                    resultado = await atualizarAgente(agenteEdicao.id, nomeParaSalvar, agentData);
+                    await confirm({
+                        title: "Sucesso!",
+                        message: `Agente ${tipoAgente === 2 ? 'Lógico' : 'Evolutivo'} atualizado com sucesso!`,
+                        type: "alert",
+                        botao1: "Legal!",
+                    });
+                } else {
+                    // Criar novo agente
+                    resultado = await criarAgente(tipoAgente, nomeParaSalvar, agentData);
+                    await confirm({
+                        title: "Sucesso!",
+                        message: `Agente ${tipoAgente === 2 ? 'Lógico' : 'Evolutivo'} criado com sucesso!`,
+                        type: "alert",
+                        botao1: "Legal!",
+                    });
+                }
+
                 await carregarAgentes(true);
 
-                // Limpar formulário
+                // Limpar formulário e sair do modo edição
                 setNomeAgente('');
                 setNomeAgenteEvolutivo('');
                 setTipoAgenteSelerionado('');
-
-                await confirm({
-                    title: "Sucesso!",
-                    message: `Agente ${tipoAgente === 2 ? 'Lógico' : 'Evolutivo'} criado com sucesso!`,
-                    type: "alert",
-                    botao1: "Legal!",
-                });
+                setAgenteEdicao({ id: 0 });
 
                 console.log('Resultado:', resultado);
             } catch (error) {
                 await confirm({
                     title: "Ah não",
-                    message: "Alguma coisa deu errado ao salvar o seu agente",
+                    message: "Alguma coisa deu errado ao " + (modoEdicao ? "atualizar" : "salvar") + " o seu agente",
                     type: "alert",
                     botao1: "Vou tentar de novo",
                 });
@@ -252,6 +381,88 @@ export default function Agentes() {
         return () => clearTimeout(timer);
     }, [carregandoLista]);
 
+    async function carregarAgenteParaEdicao(agente) {
+        setAgenteEdicao(agente);
+        setCarregandoAgenteIndividual(true);
+
+        try {
+            const dados = await getAgenteById(agente.id);
+            if (!dados) {
+                await confirm({
+                    title: "Erro",
+                    message: "Não foi possível carregar os dados do agente",
+                    type: "alert",
+                    botao1: "OK"
+                });
+                setAgenteEdicao({ id: 0 });
+                return;
+            }
+
+            setAgenteEdicao(dados);
+
+            if (dados.tipo === 2) {
+                // Agente Lógico
+                setTipoAgenteSelerionado('logico');
+                setTipoIntAgenteSelecionado(2);
+                setNomeAgente(dados.nome || dados.name || ''); // CORRIGIDO: usar 'nome'
+
+                if (dados.properties) {
+                    setCoragem(dados.properties.corajoso || false);
+                    setExplorador(dados.properties.explorador || false);
+                    setGarimpeiro(dados.properties.garimpeiro || false);
+                    setOdio(dados.properties.cacador || false);
+                    setFormaDeBusca(dados.properties.forma_de_busca || 1);
+                }
+            } else if (dados.tipo === 3) {
+                // Agente Evolutivo
+                setTipoAgenteSelerionado('evolutivo');
+                setTipoIntAgenteSelecionado(3);
+                setNomeAgenteEvolutivo(dados.nome || dados.name || '');
+
+                if (dados.properties) {
+                    setPopulacao(dados.properties.populacao || 1);
+                    setGeracoes(dados.properties.geracao || 1);
+                    setTaxaCruzamento(dados.properties.taxa_de_cruzamento || 1);
+                    setTaxaMutacao(dados.properties.taxa_de_mutacao || 1);
+
+                    const fitnessStr = dados.properties.fitness || '';
+                    setFitness(fitnessStr);
+
+                    // Tentar extrair valores da equação fitness
+                    if (fitnessStr && fitnessStr.includes('PV *')) {
+                        const pvMatch = fitnessStr.match(/PV\s*\*\s*([-\d]+)/);
+                        const piMatch = fitnessStr.match(/PI\s*\*\s*([-\d]+)/);
+                        const tvMatch = fitnessStr.match(/TV\s*\*\s*([-\d]+)/);
+                        const tiMatch = fitnessStr.match(/TI\s*\*\s*([-\d]+)/);
+                        const swMatch = fitnessStr.match(/SW\s*\*\s*([-\d]+)/);
+                        const spMatch = fitnessStr.match(/SP\s*\*\s*([-\d]+)/);
+                        const soMatch = fitnessStr.match(/SO\s*\*\s*([-\d]+)/);
+                        const vMatch = fitnessStr.match(/V\s*\*\s*([-\d]+)/);
+
+                        setPassoValido(pvMatch ? parseInt(pvMatch[1]) : 0);
+                        setPassoInvalido(piMatch ? parseInt(piMatch[1]) : 0);
+                        setTiroValido(tvMatch ? parseInt(tvMatch[1]) : 0);
+                        setTiroInvalido(tiMatch ? parseInt(tiMatch[1]) : 0);
+                        setEntradaWumpus(swMatch ? parseInt(swMatch[1]) : 0);
+                        setEntradaBuraco(spMatch ? parseInt(spMatch[1]) : 0);
+                        setPegouOuro(soMatch ? parseInt(soMatch[1]) : 0);
+                        setOuroVoltouOrigem(vMatch ? parseInt(vMatch[1]) : 0);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao carregar agente:', error);
+            await confirm({
+                title: "Erro",
+                message: "Erro ao carregar dados do agente",
+                type: "alert",
+                botao1: "OK"
+            });
+        } finally {
+            setCarregandoAgenteIndividual(false);
+        }
+    }
+
     return (
         <>
             <main className="mundosMain agentesMain">
@@ -273,11 +484,8 @@ export default function Agentes() {
                                         key={agente.id}
                                         className={`itemListaMundos
                                                     itemListaAgentesCustomizados
-                                                    ${idSelecaoLista == agente.id ? 'ativo' : ''}
+                                                    ${agenteEdicao.id == agente.id ? 'ativo' : ''}
                                                 `}
-                                        onClick={() => {
-                                            setIdSelecaoLista(agente.id);
-                                        }}
                                     >
                                         <div className='esquerda'>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -292,6 +500,13 @@ export default function Agentes() {
                                             </p>
                                         </div>
                                         <div className='direita'>
+                                            <button
+                                                onClick={async () => {
+                                                    await carregarAgenteParaEdicao(agente);
+                                                }}
+                                            >
+                                                Editar
+                                            </button>
                                             <button
                                                 className='botaoExcluir'
                                                 onClick={() => handleExcluirAgente(agente.id)}
@@ -338,10 +553,14 @@ export default function Agentes() {
                 </aside>
                 <section className="direitaAgentes">
                     <div className='divControle'>
-                        <h2>Customização</h2>
-                        <p className='paragrafoInformativo' style={{ textAlign: 'left' }}>
-                            Customize e salve um agente personalizado para testar nos ambientes que você criou!
-                        </p>
+                        <span style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span>
+                                <h2>Customização</h2>
+                                <p className='paragrafoInformativo' style={{ textAlign: 'left' }}>
+                                    Customize e salve um agente personalizado para testar nos ambientes que você criou!
+                                </p>
+                            </span>
+                        </span>
                     </div>
                     <div className='divControle'>
                         <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
@@ -370,6 +589,46 @@ export default function Agentes() {
                             </div>
                         </div>
                     </div>
+                    {agenteEdicao.id != 0 && (
+                        <div className='divControle divModoEdicao'>
+
+                            {carregandoAgenteIndividual ?
+                                <>
+                                    <div className='loadingPequeno'>
+                                        <img src={LoadingGif} alt="" />
+                                    </div>
+                                </>
+                                :
+                                <>
+                                    <p><b>Você ativou o modo de edição de agente</b></p>
+                                    <p className='paragrafoExplicacao'>Qualquer modificação feita e salva enquanto esse modo estiver ativado, será salva permanentemente no agente selecionado, então preste atenção!</p>
+                                    <p className='indicadorAgenteEditado'>
+                                        Você está editando o agente: <br />
+                                        Nome: {agenteEdicao.nome} <br />
+                                        ID: {agenteEdicao.id}
+                                    </p>
+                                    <button
+                                        className='botaoCancelarEdicao'
+                                        onClick={async () => {
+                                            const respostaConfirmacao = await confirm({
+                                                title: "Cancelar edição?",
+                                                message: "Esse aviso é para evitar que você perca uma edição complexa tão facilmente",
+                                                type: "confirm",
+                                                botao1: "Sim",
+                                                botao2: "Me enganei"
+                                            });
+
+                                            if (respostaConfirmacao === 'yes') {
+                                                setAgenteEdicao({ id: 0 });
+                                            }
+                                        }}
+                                    >
+                                        Cancelar edição
+                                    </button>
+                                </>
+                            }
+                        </div>
+                    )}
                     <div className='divControle divConfigsAgente'>
                         {tipoAgenteSelecionado == '' ?
                             <>
@@ -389,7 +648,9 @@ export default function Agentes() {
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
                                             <label className="switch">
-                                                <input type="checkbox"
+                                                <input
+                                                    type="checkbox"
+                                                    checked={explorador}  // <-- ADICIONE ESTA LINHA
                                                     onChange={e => setExplorador(e.target.checked)}
                                                 />
                                                 <span className="slider"></span>
@@ -402,10 +663,13 @@ export default function Agentes() {
                                             </span>
                                         </p>
                                     </div>
+
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
                                             <label className="switch">
-                                                <input type="checkbox"
+                                                <input
+                                                    type="checkbox"
+                                                    checked={coragem}  // <-- ADICIONE ESTA LINHA
                                                     onChange={e => setCoragem(e.target.checked)}
                                                 />
                                                 <span className="slider"></span>
@@ -419,11 +683,12 @@ export default function Agentes() {
                                         </p>
                                     </div>
 
-
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
                                             <label className="switch">
-                                                <input type="checkbox"
+                                                <input
+                                                    type="checkbox"
+                                                    checked={garimpeiro}  // <-- ADICIONE ESTA LINHA
                                                     onChange={e => setGarimpeiro(e.target.checked)}
                                                 />
                                                 <span className="slider"></span>
@@ -440,10 +705,10 @@ export default function Agentes() {
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
                                             <label className="switch">
-                                                <input type="checkbox"
-                                                    onChange={(e) => {
-                                                        setOdio(e.target.checked);
-                                                    }}
+                                                <input
+                                                    type="checkbox"
+                                                    checked={odio}  // <-- ADICIONE ESTA LINHA
+                                                    onChange={(e) => { setOdio(e.target.checked); }}
                                                 />
                                                 <span className="slider"></span>
                                             </label>
@@ -665,7 +930,13 @@ export default function Agentes() {
                                             <hr />
                                             <h3>Equação fitness</h3>
                                             <p>Se você está aqui, imagino que saiba o que está fazendo, então escreva a sua equação abaixo</p>
-                                            <input type="text" placeholder='((PV * -1) +  (PI * -100) + (TI * -100) (TV * 100) + (SW * -100) + (SP * -100) (SO * 100) + (V * 1000)) / ' />
+                                            <input
+                                                type="text"
+                                                placeholder='((PV * -1) +  (PI * -100) + (TI * -100) (TV * 100) + (SW * -100) + (SP * -100) (SO * 100) + (V * 1000)) / '
+                                                onChange={(e) => {
+                                                    setFitness(e.target.value);
+                                                }}
+                                            />
                                         </>
                                     }
                                     <div className='divControle controlesSalvarAgente'>

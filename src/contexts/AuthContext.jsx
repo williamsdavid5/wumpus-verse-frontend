@@ -347,6 +347,51 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function getAgenteById(agent_id) {
+        try {
+            const response = await api.get("/agents/user", {
+                params: {
+                    agent_id: agent_id
+                }
+            });
+            console.log('Agente obtido:', response.data);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao buscar agente:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return null;
+        }
+    }
+
+    async function atualizarAgente(agent_id, name, agentData) {
+        try {
+            const response = await api.put("/agents/user", agentData, {
+                params: {
+                    agent_id: agent_id,
+                    name: name
+                }
+            });
+            console.log('Agente atualizado com sucesso:', response.data);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao atualizar agente:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            throw error;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -363,7 +408,9 @@ export function AuthProvider({ children }) {
             iniciarPartida,
             criarAgente,
             getAgentes,
-            excluirAgente
+            excluirAgente,
+            getAgenteById,
+            atualizarAgente
         }}>
             {children}
         </AuthContext.Provider>

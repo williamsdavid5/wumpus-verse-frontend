@@ -141,6 +141,30 @@
     width: 50%;
 }
 
+.divModoEdicao {
+    background-color: red;
+}
+
+.indicadorAgenteEditado {
+    /* background-color: white; */
+    /* color: black; */
+    border: solid 2px white;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.botaoCancelarEdicao {
+    background-color: white;
+    color: black;
+    border: none;
+    margin: 10px 0px;
+}
+
+.botaoCancelarEdicao:hover {
+    background-color: black;
+    color: white;
+}
+
 @media (max-width: 1300px) {
     .itemListaAgentesCustomizados {
         flex-direction: column;
