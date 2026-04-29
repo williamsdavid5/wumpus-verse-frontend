@@ -261,6 +261,92 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function criarAgente(agent_type, name, agentData) {
+        try {
+            const response = await api.post("/agents/user", agentData, {
+                params: {
+                    agent_type: agent_type,
+                    name: name
+                }
+            });
+            console.log('Agente criado com sucesso:', response.data);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao criar agente:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            throw error;
+        }
+    }
+
+    async function getAgentes(pagina = 1, limite = 5) {
+        try {
+            const response = await api.get("/agents/agents", {
+                params: {
+                    page: pagina,
+                    limit: limite
+                }
+            });
+
+            const data = response.data;
+
+            let parsedData = data;
+            if (typeof data === 'string') {
+                parsedData = JSON.parse(data);
+            }
+
+            const hasMore = !parsedData[parsedData.length - 1];
+            console.log("Booleana: ", hasMore);
+            const agentes = parsedData.slice(0, -1);
+
+            return {
+                agentes: agentes,
+                hasMore: hasMore
+            };
+
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao buscar agentes:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return {
+                agentes: [],
+                hasMore: false
+            };
+        }
+    }
+
+    async function excluirAgente(agent_id) {
+        try {
+            const response = await api.delete("/agents/user", {
+                params: {
+                    agent_id: agent_id
+                }
+            });
+            console.log('Agente excluído com sucesso:', response.data);
+            return true;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao excluir agente:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return false;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -274,7 +360,10 @@ export function AuthProvider({ children }) {
             atualizarMundo,
             getMundoById,
             isTokenExpirado,
-            iniciarPartida
+            iniciarPartida,
+            criarAgente,
+            getAgentes,
+            excluirAgente
         }}>
             {children}
         </AuthContext.Provider>

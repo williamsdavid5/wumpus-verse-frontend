@@ -1,128 +1,220 @@
 import './styles/agentes.css'
 import LinoLogico from '../assets/linoLogico.png'
 import LinoEvolutivo from '../assets/linoEvolutivo.png'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuth } from '../contexts/AuthContext';
+import { useConfirm } from '../contexts/ConfirmContext';
+
+import LoadingPage from './LoadingPage';
+import LinoDormindo from '../assets/linoDormindo.png'
+import LoadingGif from '../assets/loadingGif.gif'
 
 export default function Agentes() {
 
+    const { criarAgente, getAgentes, excluirAgente } = useAuth();
+    const { confirm } = useConfirm();
+
+    const [carregando, setCarregando] = useState(false);
+    const [carregandoLista, setCarregandoLista] = useState(false);
+    const [mostrarLinoDormindo, setMostrarLinoDormindo] = useState(false);
+
     const [tipoAgenteSelecionado, setTipoAgenteSelerionado] = useState('');
+    const [tipoIntAgenteSelecionado, setTipoIntAgenteSelecionado] = useState(0);
     const [mostrarFuncionamento, setMostrarFuncionamento] = useState(false);
     const [tipoConfigPontos, setTipoConfigPontos] = useState('simples');
+    const [nomeAgente, setNomeAgente] = useState('');
 
-    const agentes = [
-        {
-            id: 23,
-            nome: "Lino maluco",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "02/03/2026"
-        },
-        {
-            id: 25,
-            nome: "R2DLino",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "07/03/2026"
-        },
-        {
-            id: 31,
-            nome: "Lino Caçador",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "15/03/2026"
-        },
-        {
-            id: 42,
-            nome: "Lino das Sombras",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "21/03/2026"
-        },
-        {
-            id: 18,
-            nome: "Lino Veloz",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "28/03/2026"
-        },
-        {
-            id: 37,
-            nome: "Lino Estrategista",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "05/04/2026"
-        },
-        {
-            id: 52,
-            nome: "Lino Explosivo",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "12/04/2026"
-        },
-        {
-            id: 44,
-            nome: "Lino Silencioso",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "18/04/2026"
-        },
-        {
-            id: 61,
-            nome: "Lino Mestre",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "25/04/2026"
-        },
-        {
-            id: 29,
-            nome: "Lino Caótico",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "30/04/2026"
-        },
-        {
-            id: 73,
-            nome: "Lino Implacável",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "07/05/2026"
-        },
-        {
-            id: 56,
-            nome: "Lino Analítico",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "14/05/2026"
-        },
-        {
-            id: 84,
-            nome: "Lino Supremo",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "21/05/2026"
-        },
-        {
-            id: 68,
-            nome: "Lino Metódico",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "28/05/2026"
-        },
-        {
-            id: 92,
-            nome: "Lino Destemido",
-            tipo: "evolutivo",
-            tipoClass: "destaqueGold",
-            dataCriacao: "03/06/2026"
-        },
-        {
-            id: 47,
-            nome: "Lino Preciso",
-            tipo: "lógico",
-            tipoClass: "destaqueRed",
-            dataCriacao: "10/06/2026"
+    // agente logico
+    const [garimpeiro, setGarimpeiro] = useState(false);
+    const [explorador, setExplorador] = useState(false);
+    const [coragem, setCoragem] = useState(false);
+    const [odio, setOdio] = useState(false);
+    const [formaDeBusca, setFormaDeBusca] = useState(1);
+
+    //agente evloutivo
+    const [populacao, setPopulacao] = useState(1);
+    const [geracoes, setGeracoes] = useState(1);
+    const [taxaCruzamento, setTaxaCruzamento] = useState(1);
+    const [taxaMutacao, setTaxaMutacao] = useState(1);
+    const [fitness, setFitness] = useState('');
+
+    //evolutivo pontuacao
+    const [passoValido, setPassoValido] = useState(0);
+    const [passoInvalido, setPassoInvalido] = useState(0);
+    const [tiroValido, setTiroValido] = useState(0);
+    const [tiroInvalido, setTiroInvalido] = useState(0);
+    const [entradaBuraco, setEntradaBuraco] = useState(0);
+    const [entradaWumpus, setEntradaWumpus] = useState(0);
+    const [pegouOuro, setPegouOuro] = useState(0);
+    const [ouroVoltouOrigem, setOuroVoltouOrigem] = useState(0);
+
+    //lista de agentes
+    const [agentes, setAgentes] = useState([]);
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [carregandoMais, setCarregandoMais] = useState(false);
+
+    //para salvar agentes
+    async function handleSalvarAgente() {
+
+        if (!nomeAgente.trim()) {
+            const resposta = await confirm({
+                title: "Não tá esquecendo de nada?",
+                message: "Cadê o nome do agente?",
+                type: "alert",
+                botao1: "Realmente",
+            })
+            return;
         }
-    ];
+
+        const resposta2 = await confirm({
+            title: "Quer mesmo salvar esse agente?",
+            message: "Ele ficará muito feliz por viver!",
+            type: "confirm",
+            botao1: "Sim",
+            botao2: "Me enganei"
+        })
+
+        if (resposta2 === 'yes') {
+            setCarregando(true);
+
+            let agentData = {};
+
+            if (tipoAgenteSelecionado === 'logico') {
+                agentData = {
+                    second_agent_schemas: {
+                        corajoso: coragem,
+                        explorador: explorador,
+                        cacador: odio,
+                        garimpeiro: garimpeiro,
+                        forma_de_busca: formaDeBusca
+                    }
+                };
+            } else if (tipoAgenteSelecionado === 'evolutivo') {
+                if (tipoConfigPontos === 'simples') {
+                    const fitnessEquation = `((PV * ${passoValido}) + (PI * ${passoInvalido}) + (TI * ${tiroInvalido}) + (TV * ${tiroValido}) + (SW * ${entradaWumpus}) + (SP * ${entradaBuraco}) + (SO * ${pegouOuro}) + (V * ${ouroVoltouOrigem}))`;
+
+                    agentData = {
+                        third_agent_schemas: {
+                            populacao: populacao,
+                            geracoes: geracoes,
+                            taxa_de_cruzamento: taxaCruzamento,
+                            taxa_de_mutacao: taxaMutacao,
+                            fitness: fitnessEquation
+                        }
+                    };
+                } else {
+                    agentData = {
+                        third_agent_schemas: {
+                            populacao: populacao,
+                            geracoes: geracoes,
+                            taxa_de_cruzamento: taxaCruzamento,
+                            taxa_de_mutacao: taxaMutacao,
+                            fitness: fitness
+                        }
+                    };
+                }
+            }
+
+            try {
+                const resultado = await criarAgente(tipoIntAgenteSelecionado, nomeAgente, agentData);
+                await carregarAgentes();
+                console.log('Resultado:', resultado);
+            } catch (error) {
+                const resposta2 = await confirm({
+                    title: "Ah não",
+                    message: "Alguma coisa deu errado ao salvar o seu agente",
+                    type: "alert",
+                    botao1: "Vou tentar de novo",
+                })
+            }
+
+            setCarregando(false);
+        }
+    }
+
+    useEffect(() => {
+        carregarAgentes();
+    }, []);
+
+    async function carregarAgentes(reset = true) {
+        if (reset) {
+            setCarregandoLista(true);
+            setPaginaAtual(1);
+        } else {
+            setCarregandoMais(true);
+        }
+
+        const data = await getAgentes(reset ? 1 : paginaAtual + 1, 5);
+
+        if (reset) {
+            setAgentes(data.agentes);
+            setPaginaAtual(1);
+        } else {
+            setAgentes(prev => [...prev, ...data.agentes]);
+            setPaginaAtual(prev => prev + 1);
+        }
+
+        setHasMore(data.hasMore);
+
+        if (reset) {
+            setCarregandoLista(false);
+        } else {
+            setCarregandoMais(false);
+        }
+    }
+
+    async function handleCarregarMais() {
+        if (!hasMore || carregandoMais) return;
+        await carregarAgentes(false);
+    }
+
+    async function handleExcluirAgente(agentId, agentName) {
+
+        const resposta = await confirm({
+            title: "Quer mesmo excluir esse agente?",
+            message: "Ele só quer viver 😭😭",
+            type: "confirm",
+            botao1: "Sim, eu sou mal",
+            botao2: "Tadinho 🥺"
+        })
+
+        if (resposta === "no") {
+            return;
+        }
+
+        if (resposta === "yes") {
+            setCarregandoLista(true);
+
+            const sucesso = await excluirAgente(agentId);
+
+            if (sucesso) {
+                await carregarAgentes();
+            } else {
+                const resposta2 = await confirm({
+                    title: "Putz",
+                    message: "Infelizmente o seu agente não pôde ser excluído...",
+                    type: "alert",
+                    botao1: "Maldito programador backend",
+                })
+            }
+
+            setCarregandoLista(false);
+        }
+    }
+
+    useEffect(() => {
+        if (!carregandoLista) {
+            setMostrarLinoDormindo(false);
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setMostrarLinoDormindo(true);
+        }, 7000);
+
+        return () => clearTimeout(timer);
+    }, [carregandoLista]);
 
     return (
         <>
@@ -133,26 +225,67 @@ export default function Agentes() {
                         <p className='paragrafoInformativo'>Todos os agentes que você criou e salvou. Clique em um para editar as configurações.</p>
                     </div>
                     <div className='divListaMundos'>
-
-                        {agentes.map((agente) => (
-                            <div key={agente.id} className='itemListaMundos itemListaAgentesCustomizados'>
-                                <div className='esquerda'>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <h2>{agente.nome}</h2>
-                                        <p><span className='destaqueGold'>ID: {agente.id}</span></p>
+                        {agentes.length === 0 && !carregandoLista ? (
+                            <p className='paragrafoInformativo' style={{ textAlign: 'center', padding: '20px' }}>
+                                Nenhum agente salvo ainda. Crie seu primeiro agente!
+                            </p>
+                        ) : (
+                            agentes.map((agente) => (
+                                <div key={agente.id} className='itemListaMundos itemListaAgentesCustomizados'>
+                                    <div className='esquerda'>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <h2>{agente.nome}</h2>
+                                            <p><span className='destaqueGold'>ID: {agente.id}</span></p>
+                                        </div>
+                                        <p className={agente.tipo === 2 ? 'destaqueRed' : 'destaqueGold'}>
+                                            Agente {agente.tipo === 2 ? 'Lógico' : 'Evolutivo'}
+                                        </p>
+                                        <p className='paragrafoInformativo'>
+                                            <b>Criado em: </b> {new Date(agente.data).toLocaleDateString()}
+                                        </p>
                                     </div>
-                                    <p className={agente.tipoClass}>Agente {agente.tipo}</p>
-                                    <p className='paragrafoInformativo'><b>Criado em: </b> {agente.dataCriacao}</p>
+                                    <div className='direita'>
+                                        <button
+                                            className='botaoExcluir'
+                                            onClick={() => handleExcluirAgente(agente.id)}
+                                        >
+                                            Excluir
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className='direita'>
-                                    <button className='botaoExcluir'>
-                                        Excluir
-                                    </button>
-                                </div>
+                            ))
+                        )}
+
+                        {carregandoLista &&
+                            <div className='loadingPequeno'>
+                                <img src={LoadingGif} alt="" />
+                                <p className='paragrafoInformativo'>Se demorar, provavelmente a API está dormindo...</p>
+
+                                {mostrarLinoDormindo && (
+                                    <img src={LinoDormindo} alt="" className='fade-in linoDormindoImg' />
+                                )}
                             </div>
-                        ))}
+                        }
 
-
+                        {hasMore && !carregandoLista && (
+                            <div className='loadingPequeno'>
+                                {carregandoMais ?
+                                    <>
+                                        <img src={LoadingGif}></img>
+                                    </>
+                                    :
+                                    <>
+                                        <button
+                                            style={{ padding: '10px' }}
+                                            onClick={handleCarregarMais}
+                                            disabled={carregandoMais}
+                                        >
+                                            Carregando
+                                        </button>
+                                    </>
+                                }
+                            </div>
+                        )}
                     </div>
                 </aside>
                 <section className="direitaAgentes">
@@ -165,14 +298,22 @@ export default function Agentes() {
                     <div className='divControle'>
                         <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
                         <div className={`auxiliarSelecaoTipoAgente`}>
-                            <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'logico' ? 'blocoTipoSelecionado' : ''}`} onClick={() => setTipoAgenteSelerionado('logico')}>
+                            <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'logico' ? 'blocoTipoSelecionado' : ''}`}
+                                onClick={() => {
+                                    setTipoAgenteSelerionado('logico');
+                                    setTipoIntAgenteSelecionado(2);
+                                }}>
                                 <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
                                 <h3>Lógico</h3>
                                 <p className='paragrafoInformativo'>
                                     Esse agente não tem sentimentos, apenas segue um conjunto de regras definidas em sua programação
                                 </p>
                             </div>
-                            <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`} onClick={() => setTipoAgenteSelerionado('evolutivo')}>
+                            <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`}
+                                onClick={() => {
+                                    setTipoAgenteSelerionado('evolutivo');
+                                    setTipoIntAgenteSelecionado(3);
+                                }}>
                                 <img src={LinoEvolutivo} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
                                 <h3>Evolutivo</h3>
                                 <p className='paragrafoInformativo'>
@@ -191,40 +332,35 @@ export default function Agentes() {
                                 <>
                                     <h2>Configurações do agente lógico</h2>
                                     <p>Nome do seu agente</p>
-                                    <input type="text" placeholder='Nome do agente' />
+                                    <input
+                                        type="text"
+                                        placeholder='Nome do agente'
+                                        value={nomeAgente}
+                                        onChange={(e) => setNomeAgente(e.target.value)}
+                                    />
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
-                                            <label class="switch">
-                                                <input type="checkbox" />
-                                                <span class="slider"></span>
+                                            <label className="switch">
+                                                <input type="checkbox"
+                                                    onChange={e => setExplorador(e.target.checked)}
+                                                />
+                                                <span className="slider"></span>
                                             </label>
                                         </div>
                                         <p>
-                                            <b>Estado interno</b><br />
+                                            <b>Explorador</b><br />
                                             <span className='paragrafoInformativo'>
-                                                Se ativado, o agente irá armazenar um modelo do mundo na sua memória, que é constabtemente atualizado conforme o agente explora o ambiente.
+                                                O agente irá explorar ao máximo aquele ambiente em vez de simplesmente encerrar a sua busca ao coletar um ouro.
                                             </span>
                                         </p>
                                     </div>
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
-                                            <label class="switch">
-                                                <input type="checkbox" />
-                                                <span class="slider"></span>
-                                            </label>
-                                        </div>
-                                        <p>
-                                            <b>Reencarnação</b><br />
-                                            <span className='paragrafoInformativo'>
-                                                O agente irá renascer após a morte, com as mesmas memórias, para continuar a partida. Observação: ele irá renascer apenas 10 vezes.
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div className='auxInterruptores'>
-                                        <div className='switchAgente'>
-                                            <label class="switch">
-                                                <input type="checkbox" />
-                                                <span class="slider"></span>
+                                            <label className="switch">
+                                                <input type="checkbox"
+                                                    onChange={e => setCoragem(e.target.checked)}
+                                                />
+                                                <span className="slider"></span>
                                             </label>
                                         </div>
                                         <p>
@@ -234,11 +370,34 @@ export default function Agentes() {
                                             </span>
                                         </p>
                                     </div>
+
+
                                     <div className='auxInterruptores'>
                                         <div className='switchAgente'>
-                                            <label class="switch">
-                                                <input type="checkbox" />
-                                                <span class="slider"></span>
+                                            <label className="switch">
+                                                <input type="checkbox"
+                                                    onChange={e => setGarimpeiro(e.target.checked)}
+                                                />
+                                                <span className="slider"></span>
+                                            </label>
+                                        </div>
+                                        <p>
+                                            <b>Garimpeiro</b><br />
+                                            <span className='paragrafoInformativo'>
+                                                Se ativado, o agente dá prioridade a captura do ouro. Se desativado, ele ainda fará a coleta de ouro, mas apenas se esbarrar nele por aí.
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                    <div className='auxInterruptores'>
+                                        <div className='switchAgente'>
+                                            <label className="switch">
+                                                <input type="checkbox"
+                                                    onChange={(e) => {
+                                                        setOdio(e.target.checked);
+                                                    }}
+                                                />
+                                                <span className="slider"></span>
                                             </label>
                                         </div>
                                         <p>
@@ -249,7 +408,7 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <div className='divControle controlesSalvarAgente'>
-                                        <button>Salvar esse agente</button>
+                                        <button onClick={handleSalvarAgente}>Salvar esse agente</button>
                                         <button>Excluir</button>
                                     </div>
                                 </> :
@@ -400,6 +559,11 @@ export default function Agentes() {
                     </div>
                 </section>
             </main>
+            {carregando &&
+                <>
+                    <LoadingPage></LoadingPage>
+                </>
+            }
         </>
     )
 }
