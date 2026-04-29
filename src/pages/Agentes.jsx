@@ -32,10 +32,11 @@ export default function Agentes() {
     const [formaDeBusca, setFormaDeBusca] = useState(1);
 
     //agente evloutivo
+    const [nomeAgenteEvolutivo, setNomeAgenteEvolutivo] = useState('');
     const [populacao, setPopulacao] = useState(1);
     const [geracoes, setGeracoes] = useState(1);
-    const [taxaCruzamento, setTaxaCruzamento] = useState(1);
     const [taxaMutacao, setTaxaMutacao] = useState(1);
+    const [taxaCruzamento, setTaxaCruzamento] = useState(1);
     const [fitness, setFitness] = useState('');
 
     //evolutivo pontuacao
@@ -54,79 +55,114 @@ export default function Agentes() {
     const [hasMore, setHasMore] = useState(true);
     const [carregandoMais, setCarregandoMais] = useState(false);
 
+    //para a função de edição
+    const [idSelecaoLista, setIdSelecaoLista] = useState(0);
+
     //para salvar agentes
     async function handleSalvarAgente() {
+        let agentData = {};
+        let nomeParaSalvar = '';
+        let tipoAgente = 0;
 
-        if (!nomeAgente.trim()) {
-            const resposta = await confirm({
-                title: "Não tá esquecendo de nada?",
-                message: "Cadê o nome do agente?",
-                type: "alert",
-                botao1: "Realmente",
-            })
-            return;
+        // Validação baseada no tipo de agente
+        if (tipoAgenteSelecionado === 'logico') {
+            if (!nomeAgente.trim()) {
+                await confirm({
+                    title: "Não tá esquecendo de nada?",
+                    message: "Cadê o nome do agente?",
+                    type: "alert",
+                    botao1: "Realmente",
+                });
+                return;
+            }
+            nomeParaSalvar = nomeAgente;
+            tipoAgente = 2;
+
+            agentData = {
+                second_agent_schemas: {
+                    corajoso: coragem,
+                    explorador: explorador,
+                    cacador: odio,
+                    garimpeiro: garimpeiro,
+                    forma_de_busca: formaDeBusca
+                }
+            };
+
+        } else if (tipoAgenteSelecionado === 'evolutivo') {
+            if (!nomeAgenteEvolutivo.trim()) {
+                await confirm({
+                    title: "Não tá esquecendo de nada?",
+                    message: "Cadê o nome do agente?",
+                    type: "alert",
+                    botao1: "Realmente",
+                });
+                return;
+            }
+            nomeParaSalvar = nomeAgenteEvolutivo;
+            tipoAgente = 3;
+
+            if (tipoConfigPontos === 'simples') {
+                const fitnessEquation = `((PV * ${passoValido}) + (PI * ${passoInvalido}) + (TI * ${tiroInvalido}) + (TV * ${tiroValido}) + (SW * ${entradaWumpus}) + (SP * ${entradaBuraco}) + (SO * ${pegouOuro}) + (V * ${ouroVoltouOrigem}))`;
+
+                agentData = {
+                    third_agent_schemas: {
+                        populacao: populacao,
+                        geracoes: geracoes,
+                        taxa_de_cruzamento: taxaCruzamento,
+                        taxa_de_mutacao: taxaMutacao,
+                        fitness: fitnessEquation
+                    }
+                };
+            } else {
+                agentData = {
+                    third_agent_schemas: {
+                        populacao: populacao,
+                        geracoes: geracoes,
+                        taxa_de_cruzamento: taxaCruzamento,
+                        taxa_de_mutacao: taxaMutacao,
+                        fitness: fitness
+                    }
+                };
+            }
+        } else {
+            return; // Nenhum tipo selecionado
         }
 
-        const resposta2 = await confirm({
+        const respostaConfirmacao = await confirm({
             title: "Quer mesmo salvar esse agente?",
             message: "Ele ficará muito feliz por viver!",
             type: "confirm",
             botao1: "Sim",
             botao2: "Me enganei"
-        })
+        });
 
-        if (resposta2 === 'yes') {
+        if (respostaConfirmacao === 'yes') {
             setCarregando(true);
 
-            let agentData = {};
-
-            if (tipoAgenteSelecionado === 'logico') {
-                agentData = {
-                    second_agent_schemas: {
-                        corajoso: coragem,
-                        explorador: explorador,
-                        cacador: odio,
-                        garimpeiro: garimpeiro,
-                        forma_de_busca: formaDeBusca
-                    }
-                };
-            } else if (tipoAgenteSelecionado === 'evolutivo') {
-                if (tipoConfigPontos === 'simples') {
-                    const fitnessEquation = `((PV * ${passoValido}) + (PI * ${passoInvalido}) + (TI * ${tiroInvalido}) + (TV * ${tiroValido}) + (SW * ${entradaWumpus}) + (SP * ${entradaBuraco}) + (SO * ${pegouOuro}) + (V * ${ouroVoltouOrigem}))`;
-
-                    agentData = {
-                        third_agent_schemas: {
-                            populacao: populacao,
-                            geracoes: geracoes,
-                            taxa_de_cruzamento: taxaCruzamento,
-                            taxa_de_mutacao: taxaMutacao,
-                            fitness: fitnessEquation
-                        }
-                    };
-                } else {
-                    agentData = {
-                        third_agent_schemas: {
-                            populacao: populacao,
-                            geracoes: geracoes,
-                            taxa_de_cruzamento: taxaCruzamento,
-                            taxa_de_mutacao: taxaMutacao,
-                            fitness: fitness
-                        }
-                    };
-                }
-            }
-
             try {
-                const resultado = await criarAgente(tipoIntAgenteSelecionado, nomeAgente, agentData);
-                await carregarAgentes();
+                const resultado = await criarAgente(tipoAgente, nomeParaSalvar, agentData);
+                await carregarAgentes(true);
+
+                // Limpar formulário
+                setNomeAgente('');
+                setNomeAgenteEvolutivo('');
+                setTipoAgenteSelerionado('');
+
+                await confirm({
+                    title: "Sucesso!",
+                    message: `Agente ${tipoAgente === 2 ? 'Lógico' : 'Evolutivo'} criado com sucesso!`,
+                    type: "alert",
+                    botao1: "Legal!",
+                });
+
                 console.log('Resultado:', resultado);
             } catch (error) {
-                const resposta2 = await confirm({
+                await confirm({
                     title: "Ah não",
                     message: "Alguma coisa deu errado ao salvar o seu agente",
                     type: "alert",
                     botao1: "Vou tentar de novo",
-                })
+                });
             }
 
             setCarregando(false);
@@ -230,30 +266,42 @@ export default function Agentes() {
                                 Nenhum agente salvo ainda. Crie seu primeiro agente!
                             </p>
                         ) : (
-                            agentes.map((agente) => (
-                                <div key={agente.id} className='itemListaMundos itemListaAgentesCustomizados'>
-                                    <div className='esquerda'>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <h2>{agente.nome}</h2>
-                                            <p><span className='destaqueGold'>ID: {agente.id}</span></p>
+                            agentes.map((agente) => {
+
+                                return (
+                                    <div
+                                        key={agente.id}
+                                        className={`itemListaMundos
+                                                    itemListaAgentesCustomizados
+                                                    ${idSelecaoLista == agente.id ? 'ativo' : ''}
+                                                `}
+                                        onClick={() => {
+                                            setIdSelecaoLista(agente.id);
+                                        }}
+                                    >
+                                        <div className='esquerda'>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                <h2>{agente.nome}</h2>
+                                                <p><span className='destaqueGold'>ID: {agente.id}</span></p>
+                                            </div>
+                                            <p className={agente.tipo === 2 ? 'destaqueRed' : 'destaqueGold'}>
+                                                Agente {agente.tipo === 2 ? 'Lógico' : 'Evolutivo'}
+                                            </p>
+                                            <p className='paragrafoInformativo'>
+                                                <b>Criado em: </b> {new Date(agente.data).toLocaleDateString()}
+                                            </p>
                                         </div>
-                                        <p className={agente.tipo === 2 ? 'destaqueRed' : 'destaqueGold'}>
-                                            Agente {agente.tipo === 2 ? 'Lógico' : 'Evolutivo'}
-                                        </p>
-                                        <p className='paragrafoInformativo'>
-                                            <b>Criado em: </b> {new Date(agente.data).toLocaleDateString()}
-                                        </p>
+                                        <div className='direita'>
+                                            <button
+                                                className='botaoExcluir'
+                                                onClick={() => handleExcluirAgente(agente.id)}
+                                            >
+                                                Excluir
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className='direita'>
-                                        <button
-                                            className='botaoExcluir'
-                                            onClick={() => handleExcluirAgente(agente.id)}
-                                        >
-                                            Excluir
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
+                                )
+                            })
                         )}
 
                         {carregandoLista &&
@@ -334,7 +382,7 @@ export default function Agentes() {
                                     <p>Nome do seu agente</p>
                                     <input
                                         type="text"
-                                        placeholder='Nome do agente'
+                                        placeholder='Nome do agente lógico'
                                         value={nomeAgente}
                                         onChange={(e) => setNomeAgente(e.target.value)}
                                     />
@@ -416,7 +464,12 @@ export default function Agentes() {
                                 <>
                                     <h2>Configurações do agente evolutivo</h2>
                                     <p>Nome do seu agente</p>
-                                    <input type="text" placeholder='Nome do agente' />
+                                    <input
+                                        type="text"
+                                        placeholder='Nome do agente evolutivo'
+                                        value={nomeAgenteEvolutivo}
+                                        onChange={(e) => setNomeAgenteEvolutivo(e.target.value)}
+                                    />
                                     <button
                                         onClick={() => setMostrarFuncionamento(!mostrarFuncionamento)}
                                     >
@@ -443,7 +496,11 @@ export default function Agentes() {
                                     <br />
                                     <h2>Geração</h2>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" />
+                                        <input
+                                            type="number"
+                                            value={populacao}
+                                            onChange={(e) => setPopulacao(Number(e.target.value))}
+                                        />
                                         <p>População <br />
                                             <span className='paragrafoInformativo'>
                                                 Define quantos agentes terão em cada ciclo (isso garante variedade genética)
@@ -451,7 +508,11 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" />
+                                        <input
+                                            type="number"
+                                            value={geracoes}
+                                            onChange={(e) => setGeracoes(Number(e.target.value))}
+                                        />
                                         <p>Gerações <br />
                                             <span className='paragrafoInformativo'>
                                                 Define quantas vezes os agentes irão se reproduzir 😏
@@ -459,7 +520,14 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} placeholder='0 a 100' />
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            placeholder='0 a 100'
+                                            value={taxaMutacao}
+                                            onChange={(e) => setTaxaMutacao(Number(e.target.value))}
+                                        />
                                         <p>Taxa de mutação (%) <br />
                                             <span className='paragrafoInformativo'>
                                                 O quanto os agentes irão mudar em cada nascimento?
@@ -467,7 +535,14 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <div className='auxiliarCongifAgentesEvolutivos'>
-                                        <input type="number" min={0} max={100} placeholder='0 a 100' />
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            placeholder='0 a 100'
+                                            value={taxaCruzamento}
+                                            onChange={(e) => setTaxaCruzamento(Number(e.target.value))}
+                                        />
                                         <p>Taxa de cruzamento (%) <br />
                                             <span className='paragrafoInformativo'>
                                                 Define quantos indivíduos irão cruzar 😏 (Note: a prioridade é dada aos indivíduos com pontuações maiores)
@@ -495,50 +570,93 @@ export default function Agentes() {
                                         <>
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        A cada passo válido<br /></p>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={passoValido}
+                                                        onChange={e => setPassoValido(Number(e.target.value))}
+                                                    />
+                                                    <p>A cada passo válido<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        A cada passo inválido<br /></p>
-                                                </div>
-                                            </div>
-                                            <div className='auxPontuacoesAgenteEvolutivo'>
-                                                <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        A cada tiro válido<br /></p>
-                                                </div>
-                                                <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        A cada tiro inválido<br /></p>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={passoInvalido}
+                                                        onChange={e => setPassoInvalido(Number(e.target.value))}
+                                                    />
+                                                    <p>A cada passo inválido<br /></p>
                                                 </div>
                                             </div>
+
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        Entrou em sala com buraco<br /></p>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={tiroValido}
+                                                        onChange={e => setTiroValido(Number(e.target.value))}
+                                                    />
+                                                    <p>A cada tiro válido<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        Entrou em sala com wumpus<br /></p>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={tiroInvalido}
+                                                        onChange={e => setTiroInvalido(Number(e.target.value))}
+                                                    />
+                                                    <p>A cada tiro inválido<br /></p>
                                                 </div>
                                             </div>
+
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        Pegou um ouro<br /></p>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={entradaBuraco}
+                                                        onChange={e => setEntradaBuraco(Number(e.target.value))}
+                                                    />
+                                                    <p>Entrou em sala com buraco<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
-                                                    <input type="number" min={0} max={100} />
-                                                    <p>
-                                                        Entrou em sala com ouro voltou para a origem<br /></p>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={entradaWumpus}
+                                                        onChange={e => setEntradaWumpus(Number(e.target.value))}
+                                                    />
+                                                    <p>Entrou em sala com wumpus<br /></p>
+                                                </div>
+                                            </div>
+
+                                            <div className='auxPontuacoesAgenteEvolutivo'>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={pegouOuro}
+                                                        onChange={e => setPegouOuro(Number(e.target.value))}
+                                                    />
+                                                    <p>Pegou um ouro<br /></p>
+                                                </div>
+                                                <div className='auxiliarCongifAgentesEvolutivos'>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        max={100}
+                                                        value={ouroVoltouOrigem}
+                                                        onChange={e => setOuroVoltouOrigem(Number(e.target.value))}
+                                                    />
+                                                    <p>Entrou em sala com ouro voltou para a origem<br /></p>
                                                 </div>
                                             </div>
                                         </>
@@ -551,7 +669,7 @@ export default function Agentes() {
                                         </>
                                     }
                                     <div className='divControle controlesSalvarAgente'>
-                                        <button>Salvar esse agente</button>
+                                        <button onClick={handleSalvarAgente}>Salvar esse agente</button>
                                         <button>Excluir</button>
                                     </div>
                                 </>
