@@ -477,7 +477,7 @@ export default function Agentes() {
                                             onClick={handleCarregarMais}
                                             disabled={carregandoMais}
                                         >
-                                            Carregando
+                                            Carregar mais
                                         </button>
                                     </>
                                 }
@@ -568,8 +568,8 @@ export default function Agentes() {
                     <div className='divControle divConfigsAgente'>
                         {tipoAgenteSelecionado == '' ?
                             <>
-                                <h2>Selecione um agente</h2>
-                                <p>Escolha um dos seus agentes para editar</p>
+                                <h2>Crie um <span className='destaqueRoxo'>novo agente</span>, selecione um tipo!</h2>
+                                <p>Ou escolha um dos seus agentes para editar</p>
                             </> :
                             tipoAgenteSelecionado == 'logico' ?
                                 <>

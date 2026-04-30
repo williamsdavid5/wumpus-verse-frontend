@@ -58,6 +58,9 @@ export default function () {
 
     const [carregandoAgentes, setCarregandoAgentes] = useState(false);
     const [agentesDoDB, setAgentesDoDB] = useState([]);
+    const [paginaAgentesAtual, setPaginaAgentesAtual] = useState(1);
+    const [temMaisAgentes, setTemMaisAgentes] = useState(true);
+    const [carregandoMaisAgentes, setCarregandoMaisAgentes] = useState(false);
 
     const [salaSelecionada, setSalaSelecionada] = useState([]);
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
@@ -280,15 +283,40 @@ export default function () {
 
     useEffect(() => {
         carregarMundosSalvos(1, true);
-        carregarAgentesDoDB();
+        carregarAgentesDoDB(1, true);
     }, [])
 
-    async function carregarAgentesDoDB() {
-        setCarregandoAgentes(true);
+    function carregarMaisAgentes() {
+        if (!carregandoMaisAgentes && temMaisAgentes) {
+            carregarAgentesDoDB(paginaAgentesAtual + 1, false);
+        }
+    }
+
+    async function carregarAgentesDoDB(pagina = 1, limparLista = true) {
+        if (pagina === 1) {
+            setCarregandoAgentes(true);
+        } else {
+            setCarregandoMaisAgentes(true);
+        }
+
         try {
-            const data = await getAgentes(1, 5);
-            console.log(data.agentes);
-            setAgentesDoDB(data.agentes || []);
+            const data = await getAgentes(pagina, 5);
+            const agentesRecebidos = data.agentes || [];
+            const temMais = data.hasMore || (agentesRecebidos.length === 5); // Ajuste conforme sua API retorna
+
+            if (agentesRecebidos.length > 0) {
+                if (limparLista || pagina === 1) {
+                    setAgentesDoDB(agentesRecebidos);
+                } else {
+                    setAgentesDoDB(prev => [...prev, ...agentesRecebidos]);
+                }
+            } else if (pagina === 1) {
+                setAgentesDoDB([]);
+            }
+
+            setTemMaisAgentes(temMais);
+            setPaginaAgentesAtual(pagina);
+
         } catch (error) {
             console.error('Erro ao carregar agentes:', error);
             await confirm({
@@ -298,7 +326,10 @@ export default function () {
                 botao1: "OK"
             });
         } finally {
-            setCarregandoAgentes(false);
+            if (pagina === 1) {
+                setCarregandoAgentes(false);
+            }
+            setCarregandoMaisAgentes(false);
         }
     }
 
@@ -487,7 +518,7 @@ export default function () {
                                         }}
                                     >
                                         <h3>{agente.nome}</h3>
-                                        <p className="paragrafoInformativo"><b>☛ Agente padrão ☚</b></p>
+                                        <p className="paragrafoInformativo destaqueRoxo"><b>☛ Agente padrão ☚</b></p>
                                         <p className="paragrafoInformativo">
                                             {agente.descricao}
                                         </p>
@@ -506,11 +537,13 @@ export default function () {
                                     <div className="itemAgente itemSeparador">
                                         <p className="paragrafoInformativo"><b>Agentes que você criou</b></p>
                                     </div>
+
                                     {agentesDoDB.map((agente) => {
                                         const ativo = agenteSelecionado == agente.id;
 
                                         return (
                                             <div
+                                                key={agente.id}
                                                 className={`itemAgente ${ativo ? 'agenteAtivo' : ''}`}
                                                 onClick={() => {
                                                     setAgenteSelecionado(agente.id);
@@ -522,23 +555,6 @@ export default function () {
                                                 {agente.tipo == 2 ?
                                                     <>
                                                         <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
-
-                                                        {/* {agente.properties.corajoso && (<><p>✅  Corajoso</p></>)}
-                                                        {agente.properties.explorador && (<><p>✅  Explorador</p></>)}
-                                                        {agente.properties.garimpeiro && (<><p>✅  Garimpeiro</p></>)}
-                                                        {agente.properties.cacador && (<><p>✅  Caçador</p></>)} */}
-
-                                                        {/* <p className="paragrafoInformativo">
-                                                            {[
-                                                                agente.properties.corajoso && "Corajoso",
-                                                                agente.properties.explorador && "Explorador",
-                                                                agente.properties.garimpeiro && "Garimpeiro",
-                                                                agente.properties.cacador && "Caçador"
-                                                            ]
-                                                                .filter(Boolean)
-                                                                .join(" • ")}
-                                                        </p> */}
-
                                                         <p className="paragrafoInformativo">
                                                             {[
                                                                 agente.properties.corajoso && "🛡 Corajoso",
@@ -554,8 +570,8 @@ export default function () {
                                                                     </span>
                                                                 ))}
                                                         </p>
-
-                                                    </> : <>
+                                                    </> :
+                                                    <>
                                                         <p className="destaqueGold paragrafoInformativo">✎ Agente evolutivo personalizado</p>
                                                         <p className="paragrafoInformativo">
                                                             ⟳ Gerações: {agente.properties.geracoes} <br />
@@ -568,8 +584,31 @@ export default function () {
                                             </div>
                                         )
                                     })}
+
+                                    {temMaisAgentes && !carregandoAgentes && (
+                                        <div className='loadingPequeno'>
+                                            {carregandoMaisAgentes ? (
+                                                <img src={LoadingGif} alt="Carregando..." />
+                                            ) : (
+                                                <button
+                                                    style={{ padding: '10px', marginTop: '10px' }}
+                                                    onClick={carregarMaisAgentes}
+                                                    disabled={carregandoMaisAgentes}
+                                                >
+                                                    Carregar mais agentes
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
                                 </>
                             )}
+
+                            {/* {carregandoAgentes && agentesDoDB.length === 0 && (
+                                <div className="loadingPequeno">
+                                    <img src={LoadingGif} alt="Carregando agentes..." />
+                                </div>
+                            )} */}
+
                         </div>
                     </div>
                     <div className="divControle">
