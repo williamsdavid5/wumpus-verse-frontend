@@ -108,7 +108,7 @@ export default function Execucao() {
                 ativarDiagonal,
                 {
                     id: agenteSelecionado,
-                    type: agenteSelecionado,
+                    type: agenteInformacoes?.tipo ?? agenteSelecionado,
                     position_x: salaSelecionada[0],
                     position_y: salaSelecionada[1]
                 }

@@ -25,7 +25,7 @@ function Bloco({ selecionado, wumpus, buraco, ouro, onMouseEnter, onMouseDown, o
 }
 
 export default function () {
-    const { getMundosSalvos, getMiniMapa } = useAuth();
+    const { getMundosSalvos, getMiniMapa, getAgentes } = useAuth();
     const navigate = useNavigate();
     const [mundos, setMundos] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -55,6 +55,9 @@ export default function () {
             descricao: " Descendente de uma geração de caçadores, este agente recebeu as melhores características dos ancestrais de sua tribo. Ele nasceu com seus objetivos gravados em seu DNA."
         }
     ]
+
+    const [carregandoAgentes, setCarregandoAgentes] = useState(false);
+    const [agentesDoDB, setAgentesDoDB] = useState([]);
 
     const [salaSelecionada, setSalaSelecionada] = useState([]);
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
@@ -277,7 +280,27 @@ export default function () {
 
     useEffect(() => {
         carregarMundosSalvos(1, true);
+        carregarAgentesDoDB();
     }, [])
+
+    async function carregarAgentesDoDB() {
+        setCarregandoAgentes(true);
+        try {
+            const data = await getAgentes(1, 5);
+            console.log(data.agentes);
+            setAgentesDoDB(data.agentes || []);
+        } catch (error) {
+            console.error('Erro ao carregar agentes:', error);
+            await confirm({
+                title: "Erro",
+                message: "Não foi possível carregar os agentes salvos",
+                type: "alert",
+                botao1: "OK"
+            });
+        } finally {
+            setCarregandoAgentes(false);
+        }
+    }
 
     return (
         <>
@@ -445,6 +468,10 @@ export default function () {
                         <p style={{ margin: '5px' }}>Selecione o agente:</p>
                         <div className="listaAgentes">
 
+                            <div className="itemAgente itemSeparador">
+                                <p className="paragrafoInformativo"><b>Agentes padrão</b></p>
+                            </div>
+
                             {agentes.map((agente) => {
 
                                 const ativo = agenteSelecionado == agente.id;
@@ -454,13 +481,13 @@ export default function () {
                                         key={agente.id}
                                         className={`itemAgente ${ativo ? 'agenteAtivo' : ''}`}
                                         onClick={() => {
-                                            // console.log("Agente selecionado: ", agente.id);
                                             setAgenteSelecionado(agente.id);
                                             console.log(agente);
                                             setAgenteInformacoes(agente);
                                         }}
                                     >
                                         <h3>{agente.nome}</h3>
+                                        <p className="paragrafoInformativo"><b>☛ Agente padrão ☚</b></p>
                                         <p className="paragrafoInformativo">
                                             {agente.descricao}
                                         </p>
@@ -468,28 +495,90 @@ export default function () {
                                 )
                             })}
 
-                            {/* <div className="itemAgente">
-                                <h3>Agente 0</h3>
-                                <p className="paragrafoInformativo">
-                                    Agente totalmente aleatório, apenas dá passos pelo ambiente sem se importar, ou seja, um agente burro.
-                                </p>
-                            </div> */}
+                            {carregandoAgentes && (
+                                <div className="loadingPequeno">
+                                    <img src={LoadingGif}></img>
+                                </div>
+                            )}
+
+                            {agentesDoDB.length > 0 && (
+                                <>
+                                    <div className="itemAgente itemSeparador">
+                                        <p className="paragrafoInformativo"><b>Agentes que você criou</b></p>
+                                    </div>
+                                    {agentesDoDB.map((agente) => {
+                                        const ativo = agenteSelecionado == agente.id;
+
+                                        return (
+                                            <div
+                                                className={`itemAgente ${ativo ? 'agenteAtivo' : ''}`}
+                                                onClick={() => {
+                                                    setAgenteSelecionado(agente.id);
+                                                    setAgenteInformacoes(agente);
+                                                    console.log(agente);
+                                                }}
+                                            >
+                                                <h3>{agente.nome}</h3>
+                                                {agente.tipo == 2 ?
+                                                    <>
+                                                        <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
+
+                                                        {/* {agente.properties.corajoso && (<><p>✅  Corajoso</p></>)}
+                                                        {agente.properties.explorador && (<><p>✅  Explorador</p></>)}
+                                                        {agente.properties.garimpeiro && (<><p>✅  Garimpeiro</p></>)}
+                                                        {agente.properties.cacador && (<><p>✅  Caçador</p></>)} */}
+
+                                                        {/* <p className="paragrafoInformativo">
+                                                            {[
+                                                                agente.properties.corajoso && "Corajoso",
+                                                                agente.properties.explorador && "Explorador",
+                                                                agente.properties.garimpeiro && "Garimpeiro",
+                                                                agente.properties.cacador && "Caçador"
+                                                            ]
+                                                                .filter(Boolean)
+                                                                .join(" • ")}
+                                                        </p> */}
+
+                                                        <p className="paragrafoInformativo">
+                                                            {[
+                                                                agente.properties.corajoso && "🛡 Corajoso",
+                                                                agente.properties.explorador && "◈ Explorador",
+                                                                agente.properties.garimpeiro && "✦ Garimpeiro",
+                                                                agente.properties.cacador && "⚔ Caçador"
+                                                            ]
+                                                                .filter(Boolean)
+                                                                .map((texto, index, arr) => (
+                                                                    <span key={index}>
+                                                                        {texto}
+                                                                        {index < arr.length - 1 && <br />}
+                                                                    </span>
+                                                                ))}
+                                                        </p>
+
+                                                    </> : <>
+                                                        <p className="destaqueGold paragrafoInformativo">✎ Agente evolutivo personalizado</p>
+                                                        <p className="paragrafoInformativo">
+                                                            ⟳ Gerações: {agente.properties.geracoes} <br />
+                                                            ≡ População: {agente.properties.populacao} <br />
+                                                            ❤ Taxa de cruzamento: {agente.properties.taxa_de_cruzamento}% <br />
+                                                            ⚯ Taxa de mutação: {agente.properties.taxa_de_mutacao}% <br />
+                                                        </p>
+                                                    </>
+                                                }
+                                            </div>
+                                        )
+                                    })}
+                                </>
+                            )}
                         </div>
-                        {/* <label htmlFor="" className="checkMovimento">
-                            <input
-                                type="checkbox"
-                                name="" id=""
-                                onChange={(e) => {
-                                    setAtivarDiagonal(e.target.checked);
-                                    // console.log(e.target.checked);
-                                }} />
-                            Permitir movimentos na diagonal
-                        </label> */}
                     </div>
                     <div className="divControle">
-                        <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
+                        {/* <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
                         <p>{agenteSelecionado > -1 ? '✅' : '❌'} Selecionou um agente</p>
-                        <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p>
+                        <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p> */}
+                        <p>{mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo</p>
+                        <p>{agenteSelecionado > -1 ? '✔ ' : '✖ '} Selecionou um agente</p>
+                        <p>{salaSelecionada.length > 0 ? '✔ ' : '✖ '} Selecionou uma posição inicial</p>
                         <button
                             className="botaoIniciarPartida"
                             onClick={iniciar}

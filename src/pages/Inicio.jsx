@@ -101,7 +101,7 @@ export default function Inicio() {
                     <p className='pAvisoTelaInicio'>Atenção: a experiência em dispositivos com tela pequena <span>não é completa!</span> Algumas funções só estão disponíveis em computadores.</p>
                     <div className='divBotoesInicio'>
                         {/* <button onClick={() => navigate('/mundos-salvos')} >Mundos</button> */}
-                        {botoes.slice(0, 4).map(b => (
+                        {botoes.slice(0, 2).map(b => (
                             <button
                                 key={b.id}
                                 onClick={b.acao}

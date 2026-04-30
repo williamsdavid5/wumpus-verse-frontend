@@ -115,6 +115,24 @@
     background-color: rgb(40, 40, 40);
 }
 
+.itemSeparador {
+    background-color: white;
+    padding: 2px;
+    padding-left: 5px;
+}
+
+.itemSeparador:hover {
+    background-color: white;
+    color: black;
+    padding: 2px;
+    padding-left: 5px;
+    cursor: default !important;
+}
+
+.itemSeparador p {
+    color: black;
+}
+
 .checkMovimento {
     font-size: 14px;
     margin: 5px;

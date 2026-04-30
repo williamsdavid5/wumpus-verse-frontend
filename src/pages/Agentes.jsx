@@ -60,117 +60,6 @@ export default function Agentes() {
     const [agenteEdicao, setAgenteEdicao] = useState({ id: 0 });
     const [carregandoAgenteIndividual, setCarregandoAgenteIndividual] = useState(false);
 
-    //para salvar agentes
-    // async function handleSalvarAgente() {
-    //     let agentData = {};
-    //     let nomeParaSalvar = '';
-    //     let tipoAgente = 0;
-
-    //     // Validação baseada no tipo de agente
-    //     if (tipoAgenteSelecionado === 'logico') {
-    //         if (!nomeAgente.trim()) {
-    //             await confirm({
-    //                 title: "Não tá esquecendo de nada?",
-    //                 message: "Cadê o nome do agente?",
-    //                 type: "alert",
-    //                 botao1: "Realmente",
-    //             });
-    //             return;
-    //         }
-    //         nomeParaSalvar = nomeAgente;
-    //         tipoAgente = 2;
-
-    //         agentData = {
-    //             second_agent_schemas: {
-    //                 corajoso: coragem,
-    //                 explorador: explorador,
-    //                 cacador: odio,
-    //                 garimpeiro: garimpeiro,
-    //                 forma_de_busca: formaDeBusca
-    //             }
-    //         };
-
-    //     } else if (tipoAgenteSelecionado === 'evolutivo') {
-    //         if (!nomeAgenteEvolutivo.trim()) {
-    //             await confirm({
-    //                 title: "Não tá esquecendo de nada?",
-    //                 message: "Cadê o nome do agente?",
-    //                 type: "alert",
-    //                 botao1: "Realmente",
-    //             });
-    //             return;
-    //         }
-    //         nomeParaSalvar = nomeAgenteEvolutivo;
-    //         tipoAgente = 3;
-
-    //         if (tipoConfigPontos === 'simples') {
-    //             const fitnessEquation = `((PV * ${passoValido}) + (PI * ${passoInvalido}) + (TI * ${tiroInvalido}) + (TV * ${tiroValido}) + (SW * ${entradaWumpus}) + (SP * ${entradaBuraco}) + (SO * ${pegouOuro}) + (V * ${ouroVoltouOrigem}))`;
-
-    //             agentData = {
-    //                 third_agent_schemas: {
-    //                     populacao: populacao,
-    //                     geracoes: geracoes,
-    //                     taxa_de_cruzamento: taxaCruzamento,
-    //                     taxa_de_mutacao: taxaMutacao,
-    //                     fitness: fitnessEquation
-    //                 }
-    //             };
-    //         } else {
-    //             agentData = {
-    //                 third_agent_schemas: {
-    //                     populacao: populacao,
-    //                     geracoes: geracoes,
-    //                     taxa_de_cruzamento: taxaCruzamento,
-    //                     taxa_de_mutacao: taxaMutacao,
-    //                     fitness: fitness
-    //                 }
-    //             };
-    //         }
-    //     } else {
-    //         return; // Nenhum tipo selecionado
-    //     }
-
-    //     const respostaConfirmacao = await confirm({
-    //         title: "Quer mesmo salvar esse agente?",
-    //         message: "Ele ficará muito feliz por viver!",
-    //         type: "confirm",
-    //         botao1: "Sim",
-    //         botao2: "Me enganei"
-    //     });
-
-    //     if (respostaConfirmacao === 'yes') {
-    //         setCarregando(true);
-
-    //         try {
-    //             const resultado = await criarAgente(tipoAgente, nomeParaSalvar, agentData);
-    //             await carregarAgentes(true);
-
-    //             // Limpar formulário
-    //             setNomeAgente('');
-    //             setNomeAgenteEvolutivo('');
-    //             setTipoAgenteSelerionado('');
-
-    //             await confirm({
-    //                 title: "Sucesso!",
-    //                 message: `Agente ${tipoAgente === 2 ? 'Lógico' : 'Evolutivo'} criado com sucesso!`,
-    //                 type: "alert",
-    //                 botao1: "Legal!",
-    //             });
-
-    //             console.log('Resultado:', resultado);
-    //         } catch (error) {
-    //             await confirm({
-    //                 title: "Ah não",
-    //                 message: "Alguma coisa deu errado ao salvar o seu agente",
-    //                 type: "alert",
-    //                 botao1: "Vou tentar de novo",
-    //             });
-    //         }
-
-    //         setCarregando(false);
-    //     }
-    // }
-
     async function handleSalvarAgente() {
         let agentData = {};
         let nomeParaSalvar = '';
@@ -189,6 +78,14 @@ export default function Agentes() {
             }
             nomeParaSalvar = nomeAgente;
             tipoAgente = 2;
+
+            console.log('Valores atuais:', {
+                coragem,
+                explorador,
+                odio,
+                garimpeiro,
+                formaDeBusca
+            });
 
             agentData = {
                 second_agent_schemas: {
@@ -385,6 +282,13 @@ export default function Agentes() {
         setAgenteEdicao(agente);
         setCarregandoAgenteIndividual(true);
 
+        setPopulacao(1);
+        setGeracoes(1);
+        setTaxaMutacao(1);
+        setTaxaCruzamento(1);
+        setPassoValido(0);
+        setPassoInvalido(0);
+
         try {
             const dados = await getAgenteById(agente.id);
             if (!dados) {
@@ -404,14 +308,14 @@ export default function Agentes() {
                 // Agente Lógico
                 setTipoAgenteSelerionado('logico');
                 setTipoIntAgenteSelecionado(2);
-                setNomeAgente(dados.nome || dados.name || ''); // CORRIGIDO: usar 'nome'
+                setNomeAgente(dados.nome || dados.name || '');
 
                 if (dados.properties) {
-                    setCoragem(dados.properties.corajoso || false);
-                    setExplorador(dados.properties.explorador || false);
-                    setGarimpeiro(dados.properties.garimpeiro || false);
-                    setOdio(dados.properties.cacador || false);
-                    setFormaDeBusca(dados.properties.forma_de_busca || 1);
+                    setCoragem(dados.properties.corajoso ?? false);
+                    setExplorador(dados.properties.explorador ?? false);
+                    setGarimpeiro(dados.properties.garimpeiro ?? false);
+                    setOdio(dados.properties.cacador ?? false);
+                    setFormaDeBusca(dados.properties.forma_de_busca ?? 1);
                 }
             } else if (dados.tipo === 3) {
                 // Agente Evolutivo
@@ -421,7 +325,7 @@ export default function Agentes() {
 
                 if (dados.properties) {
                     setPopulacao(dados.properties.populacao || 1);
-                    setGeracoes(dados.properties.geracao || 1);
+                    setGeracoes(dados.properties.geracoes || 1);
                     setTaxaCruzamento(dados.properties.taxa_de_cruzamento || 1);
                     setTaxaMutacao(dados.properties.taxa_de_mutacao || 1);
 
@@ -478,27 +382,57 @@ export default function Agentes() {
                             </p>
                         ) : (
                             agentes.map((agente) => {
+                                // Mantendo a lógica de ativação da primeira tela
+                                const estaAtivo = agenteEdicao.id == agente.id;
 
                                 return (
                                     <div
                                         key={agente.id}
-                                        className={`itemListaMundos
-                                                    itemListaAgentesCustomizados
-                                                    ${agenteEdicao.id == agente.id ? 'ativo' : ''}
-                                                `}
+                                        className={`itemListaMundos itemListaAgentesCustomizados ${estaAtivo ? 'ativo' : ''}`}
                                     >
                                         <div className='esquerda'>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                 <h2>{agente.nome}</h2>
                                                 <p><span className='destaqueGold'>ID: {agente.id}</span></p>
                                             </div>
-                                            <p className={agente.tipo === 2 ? 'destaqueRed' : 'destaqueGold'}>
-                                                Agente {agente.tipo === 2 ? 'Lógico' : 'Evolutivo'}
-                                            </p>
-                                            <p className='paragrafoInformativo'>
+
+                                            {/* Início da lógica detalhada da segunda tela */}
+                                            {agente.tipo === 2 ? (
+                                                <>
+                                                    <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
+                                                    <p className="paragrafoInformativo">
+                                                        {[
+                                                            agente.properties.corajoso && "◬ Corajoso",
+                                                            agente.properties.explorador && "◈ Explorador",
+                                                            agente.properties.garimpeiro && "✦ Garimpeiro",
+                                                            agente.properties.cacador && "✕ Caçador"
+                                                        ]
+                                                            .filter(Boolean)
+                                                            .map((texto, index, arr) => (
+                                                                <span key={index}>
+                                                                    {texto}
+                                                                    {index < arr.length - 1 && " • "}
+                                                                </span>
+                                                            ))}
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p className="destaqueGold paragrafoInformativo">✎ Agente evolutivo personalizado</p>
+                                                    <p className="paragrafoInformativo">
+                                                        ⟳ Gerações: {agente.properties.geracoes} <br />
+                                                        ≡ População: {agente.properties.populacao} <br />
+                                                        ⌬ Cruzamento: {agente.properties.taxa_de_cruzamento}% <br />
+                                                        ⚯ Mutação: {agente.properties.taxa_de_mutacao}% <br />
+                                                    </p>
+                                                </>
+                                            )}
+
+                                            <p className='paragrafoInformativo' style={{ marginTop: '5px' }}>
                                                 <b>Criado em: </b> {new Date(agente.data).toLocaleDateString()}
                                             </p>
                                         </div>
+
                                         <div className='direita'>
                                             <button
                                                 onClick={async () => {
@@ -515,7 +449,7 @@ export default function Agentes() {
                                             </button>
                                         </div>
                                     </div>
-                                )
+                                );
                             })
                         )}
 
@@ -620,6 +554,8 @@ export default function Agentes() {
 
                                             if (respostaConfirmacao === 'yes') {
                                                 setAgenteEdicao({ id: 0 });
+                                                setTipoAgenteSelerionado('');
+                                                setTipoIntAgenteSelecionado(0);
                                             }
                                         }}
                                     >
@@ -669,14 +605,14 @@ export default function Agentes() {
                                             <label className="switch">
                                                 <input
                                                     type="checkbox"
-                                                    checked={coragem}  // <-- ADICIONE ESTA LINHA
+                                                    checked={coragem}
                                                     onChange={e => setCoragem(e.target.checked)}
                                                 />
                                                 <span className="slider"></span>
                                             </label>
                                         </div>
                                         <p>
-                                            <b>Coragem</b><br />
+                                            <b>Corajoso</b><br />
                                             <span className='paragrafoInformativo'>
                                                 Quando desativado, o agente irá explorar as células marcadas como suspeitas apenas se não vencer a partida. Quando ativado, o agente irá entrar nas células suspeitas mais cedo buscando pegar o ouro antes de explorar o restante do ambiente.
                                             </span>
@@ -688,7 +624,7 @@ export default function Agentes() {
                                             <label className="switch">
                                                 <input
                                                     type="checkbox"
-                                                    checked={garimpeiro}  // <-- ADICIONE ESTA LINHA
+                                                    checked={garimpeiro}
                                                     onChange={e => setGarimpeiro(e.target.checked)}
                                                 />
                                                 <span className="slider"></span>
@@ -714,7 +650,7 @@ export default function Agentes() {
                                             </label>
                                         </div>
                                         <p>
-                                            <b>Ódio ao Canva</b><br />
+                                            <b>Caçador</b><br />
                                             <span className='paragrafoInformativo'>
                                                 Quando ativado, o agente irá tentar matar o Canva sempre que detectar o cheiro, quando desativado, o agente irá atrás do Canva em último caso.
                                             </span>
@@ -837,8 +773,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={passoValido}
                                                         onChange={e => setPassoValido(Number(e.target.value))}
                                                     />
@@ -847,8 +781,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={passoInvalido}
                                                         onChange={e => setPassoInvalido(Number(e.target.value))}
                                                     />
@@ -860,8 +792,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={tiroValido}
                                                         onChange={e => setTiroValido(Number(e.target.value))}
                                                     />
@@ -870,8 +800,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={tiroInvalido}
                                                         onChange={e => setTiroInvalido(Number(e.target.value))}
                                                     />
@@ -883,8 +811,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={entradaBuraco}
                                                         onChange={e => setEntradaBuraco(Number(e.target.value))}
                                                     />
@@ -893,8 +819,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={entradaWumpus}
                                                         onChange={e => setEntradaWumpus(Number(e.target.value))}
                                                     />
@@ -906,8 +830,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={pegouOuro}
                                                         onChange={e => setPegouOuro(Number(e.target.value))}
                                                     />
@@ -916,8 +838,6 @@ export default function Agentes() {
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
                                                         type="number"
-                                                        min={0}
-                                                        max={100}
                                                         value={ouroVoltouOrigem}
                                                         onChange={e => setOuroVoltouOrigem(Number(e.target.value))}
                                                     />

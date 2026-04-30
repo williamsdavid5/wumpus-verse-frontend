@@ -178,8 +178,8 @@
         box-sizing: content-box;
     }
 
-    .itemListaAgentesCustomizados .botaoExcluir {
-        width: 80%;
+    .itemListaAgentesCustomizados button {
+        width: 100%;
         box-sizing: border-box;
     }
 }
