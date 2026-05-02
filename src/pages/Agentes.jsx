@@ -367,6 +367,22 @@ export default function Agentes() {
         }
     }
 
+    //valida os valores de pontuação
+    const handleNumberInput = (setter) => (e) => {
+        let value = e.target.value;
+
+        // Permite: vazio, - , números, - seguido de números
+        if (value === '' || value === '-') {
+            setter(value);
+            return;
+        }
+
+        const numValue = Number(value);
+        if (!isNaN(numValue)) {
+            setter(numValue);
+        }
+    };
+
     return (
         <>
             <main className="mundosMain agentesMain">
@@ -772,17 +788,47 @@ export default function Agentes() {
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={passoValido}
-                                                        onChange={e => setPassoValido(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setPassoValido(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setPassoValido(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (passoValido === '' || passoValido === '-') {
+                                                                setPassoValido(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>A cada passo válido<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={passoInvalido}
-                                                        onChange={e => setPassoInvalido(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setPassoInvalido(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setPassoInvalido(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (passoInvalido === '' || passoInvalido === '-') {
+                                                                setPassoInvalido(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>A cada passo inválido<br /></p>
                                                 </div>
@@ -791,17 +837,47 @@ export default function Agentes() {
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={tiroValido}
-                                                        onChange={e => setTiroValido(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setTiroValido(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setTiroValido(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (tiroValido === '' || tiroValido === '-') {
+                                                                setTiroValido(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>A cada tiro válido<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={tiroInvalido}
-                                                        onChange={e => setTiroInvalido(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setTiroInvalido(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setTiroInvalido(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (tiroInvalido === '' || tiroInvalido === '-') {
+                                                                setTiroInvalido(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>A cada tiro inválido<br /></p>
                                                 </div>
@@ -810,17 +886,47 @@ export default function Agentes() {
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={entradaBuraco}
-                                                        onChange={e => setEntradaBuraco(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setEntradaBuraco(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setEntradaBuraco(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (entradaBuraco === '' || entradaBuraco === '-') {
+                                                                setEntradaBuraco(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>Entrou em sala com buraco<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={entradaWumpus}
-                                                        onChange={e => setEntradaWumpus(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setEntradaWumpus(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setEntradaWumpus(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (entradaWumpus === '' || entradaWumpus === '-') {
+                                                                setEntradaWumpus(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>Entrou em sala com wumpus<br /></p>
                                                 </div>
@@ -829,17 +935,47 @@ export default function Agentes() {
                                             <div className='auxPontuacoesAgenteEvolutivo'>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={pegouOuro}
-                                                        onChange={e => setPegouOuro(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setPegouOuro(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setPegouOuro(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (pegouOuro === '' || pegouOuro === '-') {
+                                                                setPegouOuro(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>Pegou um ouro<br /></p>
                                                 </div>
                                                 <div className='auxiliarCongifAgentesEvolutivos'>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         value={ouroVoltouOrigem}
-                                                        onChange={e => setOuroVoltouOrigem(Number(e.target.value))}
+                                                        onChange={e => {
+                                                            let value = e.target.value;
+                                                            if (value === '' || value === '-') {
+                                                                setOuroVoltouOrigem(value);
+                                                                return;
+                                                            }
+                                                            const numValue = Number(value);
+                                                            if (!isNaN(numValue)) {
+                                                                setOuroVoltouOrigem(numValue);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (ouroVoltouOrigem === '' || ouroVoltouOrigem === '-') {
+                                                                setOuroVoltouOrigem(0);
+                                                            }
+                                                        }}
                                                     />
                                                     <p>Entrou em sala com ouro voltou para a origem<br /></p>
                                                 </div>
