@@ -165,6 +165,20 @@
     color: white;
 }
 
+.botaoNovoAgente {
+    width: 80%;
+    margin: 15px 0px;
+    padding: 8px;
+    background-color: var(--roxoDestaque);
+    border: none;
+}
+
+.botaoSalvarAgente {
+    width: 100%;
+    background-color: var(--roxoDestaque);
+    border: none;
+}
+
 @media (max-width: 1300px) {
     .itemListaAgentesCustomizados {
         flex-direction: column;

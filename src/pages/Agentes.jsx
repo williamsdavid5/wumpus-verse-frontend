@@ -60,6 +60,8 @@ export default function Agentes() {
     const [agenteEdicao, setAgenteEdicao] = useState({ id: 0 });
     const [carregandoAgenteIndividual, setCarregandoAgenteIndividual] = useState(false);
 
+    const [criarNovo, setCriarNovo] = useState(false);
+
     async function handleSalvarAgente() {
         let agentData = {};
         let nomeParaSalvar = '';
@@ -192,6 +194,7 @@ export default function Agentes() {
             }
 
             setCarregando(false);
+            setCriarNovo(false);
         }
     }
 
@@ -426,8 +429,8 @@ export default function Agentes() {
                                                             .filter(Boolean)
                                                             .map((texto, index, arr) => (
                                                                 <span key={index}>
-                                                                    {texto}
-                                                                    {index < arr.length - 1 && " • "}
+                                                                    {texto} <br />
+                                                                    {/* {index < arr.length - 1 && " • "} */}
                                                                 </span>
                                                             ))}
                                                     </p>
@@ -453,6 +456,7 @@ export default function Agentes() {
                                             <button
                                                 onClick={async () => {
                                                     await carregarAgenteParaEdicao(agente);
+                                                    setCriarNovo(true);
                                                 }}
                                             >
                                                 Editar
@@ -512,33 +516,35 @@ export default function Agentes() {
                             </span>
                         </span>
                     </div>
-                    <div className='divControle'>
-                        <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
-                        <div className={`auxiliarSelecaoTipoAgente`}>
-                            <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'logico' ? 'blocoTipoSelecionado' : ''}`}
-                                onClick={() => {
-                                    setTipoAgenteSelerionado('logico');
-                                    setTipoIntAgenteSelecionado(2);
-                                }}>
-                                <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
-                                <h3>Lógico</h3>
-                                <p className='paragrafoInformativo'>
-                                    Esse agente não tem sentimentos, apenas segue um conjunto de regras definidas em sua programação
-                                </p>
-                            </div>
-                            <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`}
-                                onClick={() => {
-                                    setTipoAgenteSelerionado('evolutivo');
-                                    setTipoIntAgenteSelecionado(3);
-                                }}>
-                                <img src={LinoEvolutivo} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
-                                <h3>Evolutivo</h3>
-                                <p className='paragrafoInformativo'>
-                                    Esse agente evolui aprendendo com os seus erros (diferente de certas pessoas)
-                                </p>
+                    {criarNovo && (
+                        <div className='divControle'>
+                            <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
+                            <div className={`auxiliarSelecaoTipoAgente`}>
+                                <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'logico' ? 'blocoTipoSelecionado' : ''}`}
+                                    onClick={() => {
+                                        setTipoAgenteSelerionado('logico');
+                                        setTipoIntAgenteSelecionado(2);
+                                    }}>
+                                    <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
+                                    <h3>Lógico</h3>
+                                    <p className='paragrafoInformativo'>
+                                        Esse agente não tem sentimentos, apenas segue um conjunto de regras definidas em sua programação
+                                    </p>
+                                </div>
+                                <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`}
+                                    onClick={() => {
+                                        setTipoAgenteSelerionado('evolutivo');
+                                        setTipoIntAgenteSelecionado(3);
+                                    }}>
+                                    <img src={LinoEvolutivo} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
+                                    <h3>Evolutivo</h3>
+                                    <p className='paragrafoInformativo'>
+                                        Esse agente evolui aprendendo com os seus erros (diferente de certas pessoas)
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                     {agenteEdicao.id != 0 && (
                         <div className='divControle divModoEdicao'>
 
@@ -572,6 +578,7 @@ export default function Agentes() {
                                                 setAgenteEdicao({ id: 0 });
                                                 setTipoAgenteSelerionado('');
                                                 setTipoIntAgenteSelecionado(0);
+                                                setCriarNovo(false);
                                             }
                                         }}
                                     >
@@ -586,6 +593,14 @@ export default function Agentes() {
                             <>
                                 <h2>Crie um <span className='destaqueRoxo'>novo agente</span>, selecione um tipo!</h2>
                                 <p>Ou escolha um dos seus agentes para editar</p>
+                                {!criarNovo && (
+                                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <button
+                                            className='botaoNovoAgente'
+                                            onClick={() => setCriarNovo(true)}
+                                        >Novo agente</button>
+                                    </span>
+                                )}
                             </> :
                             tipoAgenteSelecionado == 'logico' ?
                                 <>
@@ -673,8 +688,26 @@ export default function Agentes() {
                                         </p>
                                     </div>
                                     <div className='divControle controlesSalvarAgente'>
-                                        <button onClick={handleSalvarAgente}>Salvar esse agente</button>
-                                        <button>Excluir</button>
+                                        <button onClick={handleSalvarAgente} className='botaoSalvarAgente'>Salvar esse agente</button>
+                                        <button
+                                            onClick={async () => {
+                                                const respostaConfirmacao = await confirm({
+                                                    title: "Cancelar?",
+                                                    message: "Esse aviso é para evitar que você perca uma edição complexa tão facilmente",
+                                                    type: "confirm",
+                                                    botao1: "Sim",
+                                                    botao2: "Me enganei"
+                                                });
+
+                                                if (respostaConfirmacao === 'yes') {
+                                                    setAgenteEdicao({ id: 0 });
+                                                    setTipoAgenteSelerionado('');
+                                                    setTipoIntAgenteSelecionado(0);
+                                                    setCriarNovo(false);
+                                                }
+                                            }}
+                                        >Cancelar</button>
+                                        {/* <button>Excluir</button> */}
                                     </div>
                                 </> :
                                 // -----------------------------------------------------------------------
@@ -996,8 +1029,26 @@ export default function Agentes() {
                                         </>
                                     }
                                     <div className='divControle controlesSalvarAgente'>
-                                        <button onClick={handleSalvarAgente}>Salvar esse agente</button>
-                                        <button>Excluir</button>
+                                        <button onClick={handleSalvarAgente} className='botaoSalvarAgente'>Salvar esse agente</button>
+                                        <button
+                                            onClick={async () => {
+                                                const respostaConfirmacao = await confirm({
+                                                    title: "Cancelar?",
+                                                    message: "Esse aviso é para evitar que você perca uma edição complexa tão facilmente",
+                                                    type: "confirm",
+                                                    botao1: "Sim",
+                                                    botao2: "Me enganei"
+                                                });
+
+                                                if (respostaConfirmacao === 'yes') {
+                                                    setAgenteEdicao({ id: 0 });
+                                                    setTipoAgenteSelerionado('');
+                                                    setTipoIntAgenteSelecionado(0);
+                                                    setCriarNovo(false);
+                                                }
+                                            }}
+                                        >Cancelar</button>
+                                        {/* <button>Excluir</button> */}
                                     </div>
                                 </>
                         }
