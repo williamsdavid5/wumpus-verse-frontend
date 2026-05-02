@@ -615,9 +615,23 @@ export default function () {
                         {/* <p>{mundoSelecionado ? '✅' : '❌'} Selecionou um mundo</p>
                         <p>{agenteSelecionado > -1 ? '✅' : '❌'} Selecionou um agente</p>
                         <p>{salaSelecionada.length > 0 ? '✅' : '❌'} Selecionou uma posição inicial</p> */}
-                        <p>{mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo</p>
+
+                        {/* <p>{mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo</p>
                         <p>{agenteSelecionado > -1 ? '✔ ' : '✖ '} Selecionou um agente</p>
-                        <p>{salaSelecionada.length > 0 ? '✔ ' : '✖ '} Selecionou uma posição inicial</p>
+                        <p>{salaSelecionada.length > 0 ? '✔ ' : '✖ '} Selecionou uma posição inicial</p> */}
+
+                        <p style={{ color: mundoSelecionado ? 'inherit' : 'red' }}>
+                            {mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo
+                        </p>
+
+                        <p style={{ color: agenteSelecionado > -1 ? 'inherit' : 'red' }}>
+                            {agenteSelecionado > -1 ? '✔ ' : '✖ '} Selecionou um agente
+                        </p>
+
+                        <p style={{ color: salaSelecionada.length > 0 ? 'inherit' : 'red' }}>
+                            {salaSelecionada.length > 0 ? '✔ ' : '✖ '} Selecionou uma posição inicial
+                        </p>
+
                         <button
                             className="botaoIniciarPartida"
                             onClick={iniciar}
