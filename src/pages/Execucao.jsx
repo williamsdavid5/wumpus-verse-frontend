@@ -279,7 +279,7 @@ export default function Execucao() {
                         {agenteInformacoes ?
                             <>
                                 <p>Agente selecionado:</p>
-                                {!agenteSelecionado.properties && (
+                                {!agenteInformacoes?.properties && (
                                     <>
                                         <h3 style={{ textAlign: 'center' }}>{agenteInformacoes.nome}</h3>
                                         <p className="paragrafoInformativo">

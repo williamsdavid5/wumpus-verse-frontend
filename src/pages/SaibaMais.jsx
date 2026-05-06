@@ -3,6 +3,7 @@ import './styles/saibaMais.css'
 // imagens
 // são importadas aqui para evitar erros de renderização no deploy
 import LinoVsCanva from '../assets/linoVsCanva.png'
+import Mec2 from '../assets/mec2Logo.svg'
 import LinkedinLogo from '../assets/linkedin_logo.png'
 import gitlogo from '../assets/gitLogo.png'
 import otavio from '../assets/otavio.jpeg'
@@ -278,6 +279,7 @@ export default function SaibaMais() {
             <hr className='hrCompleta' />
             <section className='divisaoHorizontal divisaoCards'>
                 <img src={logo} alt="" className='logo' />
+                <img src={Mec2} alt="" className='logo' />
             </section>
 
             {odio && <>

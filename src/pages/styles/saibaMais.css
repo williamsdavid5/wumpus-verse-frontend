@@ -4,11 +4,13 @@
     align-items: normal;
     height: auto;
     width: 100%;
+    /* background-color: red; */
+    align-items: center;
 }
 
 .divisaoHorizontal {
     box-sizing: border-box;
-    width: 100%;
+    width: 85%;
     height: auto;
     display: flex;
 }
@@ -38,8 +40,8 @@
 .LinoIlustracao {
     object-fit: contain;
     width: 80%;
-    border-bottom-left-radius: 50px;
-    border-top-right-radius: 50px;
+    /* border-bottom-left-radius: 50px;
+    border-top-right-radius: 50px; */
 }
 
 .movimentacaoAgenteAntigoImagem {
@@ -77,6 +79,10 @@
     box-sizing: border-box;
     padding: 10px;
     margin-bottom: 20px;
+}
+
+.divisaoCards {
+    image-rendering: ;
 }
 
 .cardPessoa {
@@ -199,7 +205,7 @@ hr {
 }
 
 .logo {
-    width: 200px;
+    width: 120px;
 }
 
 .hateBotao {
