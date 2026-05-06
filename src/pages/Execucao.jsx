@@ -267,7 +267,7 @@ export default function Execucao() {
                     <div className="divControle">
                         <h2>Controle de Execução</h2>
                         <p className="paragrafoInformativo">
-                            Envie seu agente para esta perigosa missão de recuperar suas barras de ouro de dentro de uma caverna escura. Ele enfrentará o perigoso (mas nem tanto) Wumpus, e tentará não cair em nenhum buraco pelo caminho. Não se proecupe, ele tem uma shotgun e não tem medo de usá-la!
+                            Envie seu agente para esta perigosa missão de recuperar suas barras de ouro de dentro de uma caverna escura. Ele enfrentará o perigoso (mas nem tanto) Wumpus, e tentará não cair em nenhum buraco pelo caminho. Não se preocupe, ele tem uma shotgun e não tem medo de usá-la!
                         </p>
 
                         <h3 className="h3PequenoTituloSecao">Regras Atuais</h3>
@@ -336,7 +336,7 @@ export default function Execucao() {
                     {passosExecucao.length == 0 && (
                         <div className="divControle reconfigurar">
                             <h3 className="h3PequenoTituloSecao">
-                                Reconfigure a exeução
+                                Reconfigure a execução
                             </h3>
                             <p className="paragrafoInformativo">
                                 Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial. Para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
@@ -391,7 +391,7 @@ export default function Execucao() {
                                         }
                                     }}
                                 >
-                                    Gerar Nova partida
+                                    Gerar nova partida
                                 </button>
                             </div>
                         </div>)}

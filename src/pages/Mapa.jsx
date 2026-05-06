@@ -944,7 +944,7 @@ export default function Mapa() {
                             className='nomeDoMundo'
                         />
                         <button title='Baixe o arquivo deste mundo no seu computador' onClick={exportarJSON}>Exportar/Baixar JSON</button>
-                        <p className='paragrafoInformativo' style={{ width: '100%', textAlign: 'center', color: 'gold' }}><b>Atenção!</b> Para obter o ID corretamente no JSON, salve o mundo, depois clique em <b>Editar</b> para retorntar a esta tela, só então faça a exportação.</p>
+                        <p className='paragrafoInformativo' style={{ width: '100%', textAlign: 'center', color: 'gold' }}><b>Atenção!</b> Para obter o ID corretamente no JSON, salve o mundo, depois clique em <b>Editar</b> para retornar a esta tela, só então faça a exportação.</p>
                         <button title='Importe o arquivo de um mundo do seu computador' onClick={importarJSON}>Importar JSON</button>
                         <button title='Salve este mundo na sua conta' onClick={salvar} className='botaoSalvar'>Salvar na minha conta</button>
                     </div>
@@ -1027,7 +1027,7 @@ export default function Mapa() {
                         </button>
                         <button title='Apague todas as entidades inseridas no mapa (wumpus, ouro, buraco)' onClick={() => limparEntidades()} style={{ backgroundColor: 'red', border: 'none' }}>Limpar Todas as Entidades</button>
                         <div className='div-entidades-aleatorio'>
-                            <input type="number" min={0} max={95} name="" id="" placeholder='% prenchimento' />
+                            <input type="number" min={0} max={95} name="" id="" placeholder='% preenchimento' />
                             <button onClick={gerarEntidadesAleatorias} title='Gere todos esses elementos aleatoriamente no mapa. Você pode definir uma porcentagem de densidade'>Aleatório</button>
                         </div>
                         <p className='paragrafoInformativo'>

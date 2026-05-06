@@ -754,7 +754,7 @@ export default function Agentes() {
                                         <p>
                                             <b>Garimpeiro</b><br />
                                             <span className='paragrafoInformativo'>
-                                                Se ativado, o agente dá prioridade a captura do ouro. Se desativado, ele ainda fará a coleta de ouro, mas apenas se esbarrar nele por aí.
+                                                Se ativado, o agente dá prioridade à captura do ouro. Se desativado, ele ainda fará a coleta de ouro, mas apenas se esbarrar nele por aí.
                                             </span>
                                         </p>
                                     </div>
@@ -773,7 +773,7 @@ export default function Agentes() {
                                         <p>
                                             <b>Caçador</b><br />
                                             <span className='paragrafoInformativo'>
-                                                Quando ativado, o agente irá tentar matar o Canva sempre que detectar o cheiro, quando desativado, o agente irá atrás do Canva em último caso.
+                                                Quando ativado, o agente irá tentar matar o Wumpus sempre que detectar o cheiro, quando desativado, o agente irá atrás do Wumpus em último caso.
                                             </span>
                                         </p>
                                     </div>

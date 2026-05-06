@@ -52,7 +52,7 @@ export default function () {
         {
             nome: "Agente Evolutivo",
             id: 3,
-            descricao: " Descendente de uma geração de caçadores, este agente recebeu as melhores características dos ancestrais de sua tribo. Ele nasceu com seus objetivos gravados em seu DNA."
+            descricao: "Descendente de uma geração de caçadores, este agente recebeu as melhores características dos ancestrais de sua tribo. Ele nasceu com seus objetivos gravados em seu DNA."
         }
     ]
 
@@ -118,7 +118,7 @@ export default function () {
         if (agenteSelecionado === -1) {
             await confirm({
                 title: "Por favor né amigo",
-                message: "Selecione um agente para a iniciar a partida.",
+                message: "Selecione um agente para iniciar a partida.",
                 type: "alert",
                 botao1: "Taaaaaaa"
             })
