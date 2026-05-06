@@ -279,6 +279,14 @@ export default function Execucao() {
                         {agenteInformacoes ?
                             <>
                                 <p>Agente selecionado:</p>
+                                {!agenteSelecionado.properties && (
+                                    <>
+                                        <h3 style={{ textAlign: 'center' }}>{agenteInformacoes.nome}</h3>
+                                        <p className="paragrafoInformativo">
+                                            {agenteInformacoes.descricao}
+                                        </p>
+                                    </>
+                                )}
                                 {agenteInformacoes.properties && (
                                     agenteInformacoes.tipo === 2 ? (
                                         <div className="inforAgenteSelecionado">
@@ -323,9 +331,6 @@ export default function Execucao() {
                                         </div>
                                     )
                                 )}
-                                <p className="paragrafoInformativo">
-                                    {agenteInformacoes.descricao}
-                                </p>
                             </>
                             :
                             <>
@@ -333,39 +338,6 @@ export default function Execucao() {
                             </>
                         }
                     </div>
-                    {passosExecucao.length == 0 && (
-                        <div className="divControle reconfigurar">
-                            <h3 className="h3PequenoTituloSecao">
-                                Reconfigure a execução
-                            </h3>
-                            <p className="paragrafoInformativo">
-                                Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial. Para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
-                            </p>
-                            <div className="reconfiguracoes">
-                                <label htmlFor="" className="checkMovimento">
-                                    <input
-                                        type="checkbox"
-                                        name=""
-                                        id=""
-                                        onChange={(e) => { setAtivarDiagonal(e.target.checked) }}
-                                        checked={ativarDiagonal}
-                                        disabled={passosExecucao.length > 0}
-                                    />
-                                    Ativar movimento diagonal
-                                </label>
-                                <button
-                                    className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
-                                    onClick={() => setModoEditarSala(!modoEditarSala)}
-                                    disabled={passosExecucao.length > 0}
-                                    title="A sala inicial define onde o agente começa e termina a partida"
-                                >
-                                    {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
-                                </button>
-                                <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
-                            </div>
-                            <hr />
-                        </div>
-                    )}
 
                     {passosExecucao.length > 0 && (
                         <div className="divControle">
@@ -411,62 +383,99 @@ export default function Execucao() {
                                     </p>
                                 </div>
                             </div>
-                            <div className="divControle">
-                                <p>Você também pode <b>baixar ou importar um arquivo de partida </b> baixado anteriormente, isto permite que você guarde suas partida favoritas e importe quando quiser!</p>
-                                <button
-                                    onClick={importarJSON}
-                                    className="botaoImportar"
-                                    disabled={passosExecucao.length > 0}
-                                    title="Caso você tenha um JSON guardado, importe e execute uma partida aqui!"
-                                >
-                                    Importar JSON
-                                </button>
-                                <h2 style={{ marginTop: '15px' }}>Gostaria de usar o seu próprio agente?</h2>
-                                <p>Você pode desenvolver o seu próprio agente, na linguagem que preferir, e utilizar este frontend para visualizar a sua execução, desde que siga os seguintes passos:
-                                    <br /><br /></p>
-                                <p className="paragrafoTutorial">
-                                    <b>1. Criar e exportar um mundo utilizando esta plataforma</b><br />
-                                    Não é para forçar você a usar o nosso site, mas um requisito de lógica! O botão <b>'Importar JSON'</b> acima faz a importação apenas dos passos do agente, o mundo da partida, utilizando o ID, é resgatado diretamente do banco de dados,
-                                    isso significa que você deve ter aquele mundo armazenado na sua conta para que tudo possa funcionar. <br /><br />
-                                    Nesse caso, você pode criar o mundo normalmente pelo nosso site e salvar na sua conta, o arquivo daquele mundo pode ser baixado em formato JSON, permitindo que você possa fazer a importação no seu próprio código.
-                                    <br /><br />
-                                    <b>2. Converter os passos da sua partida para o formato correto</b>
-                                    Se o seu código exportar um arquivo JSON dos passos da execução com o mesmo formato que estamos utilizando, e usar um mundo existente na sua conta, você será capaz de visualizar o seu agente no nosso frontend!
-                                    <br /><br />A estrutura é esta:
-                                </p>
-                                <div className="auxBlocoCodigo">
-                                    <SyntaxHighlighter
-                                        language="json"
-                                        style={nightOwl}
-                                    // showLineNumbers
-                                    >
-                                        {JSON.stringify(jsonExample, null, 2)}
-                                    </SyntaxHighlighter>
-                                </div>
-                                <p className="paragrafoTutorial">Os dados inúteis para você seriam:
-                                    <ul>
-                                        <li><b>Agente selecionado:</b> você não estaria utilizando um dos nossos agentes, então este ID não seria utilizado. Mas é importante que você envie com o valor -1 para que o código possa identificar que este é um agente criado por você!</li>
-                                        <li><b>Ativar diagonal:</b> você estaria criando a sua própria execução, então você tem a liberdade de ativar ou não movimentos na diagonal, logo, esta variável não será utilizada. Mas é importante que você envie seu valor de acordo com a sua execução para facilitar a vida de todo mundo!</li>
-                                    </ul>
-                                    Dados com os quais você deve ter <b>muita atenção:</b> <br />
-                                    <ul>
-                                        <li><b>ID do mundo:</b> é muitíssimo importante que você utilize um mundo que existe, e com exatamente o mesmo layout e elementos! o ID do mundo pode ser resgatado na tela de criação, ao exportar um mundo (que já foi criado e salvo), ou na própria listagem, onde exibimos o ID de cada mundo para facilitar o seu trabalho.</li>
-                                        <li><b>Sala inicial, posição do agente e posição de tiro:</b> esteja atento à orientação das coordenadas! pode ser que no seu código elas estejam invertidas! Então uma dica: escreva a sua lógica de forma que, ao alterar uma única variável (booleana talvez?), as variáveis X e Y sejam invertidas.</li>
-                                        <li><b>Vetor de passos: </b>Siga corretamente a estrutura geral do JSON, e adicione os passos em vetor conforme mostrado na estrutura acima. </li>
-                                        <li><b>Ação: </b>As ações orientam o frontend sobre o que fazer a cada passo, então é muito importante que seu JSON fale a mesma língua. As ações ficam no campo "ação", conforme mostrado no JSON acima, e são escritas como uma string. São essas: <br />
-                                            <br />
-                                            - direção de movimentação [N, S, L, O, NO, NE, SO, SE] (em maiúsculo) <br />
-                                            - direção de disparos [n, s, l, o, no, ne, so, se] (em minúsculo) <br />
-                                            - Pegar ouro [x] <br /> <br />
-                                            Cada passo possui a sua ação, e apenas uma por passo, caso não possua, o campo pode ficar com uma string vazia sem problemas.
-                                        </li>
-                                    </ul>
-                                </p>
-                                <br />
-                                <p>Experimente! Desenvolva seu próprio agente, em python, java ou C# e utilize este frontend para vê-lo ganhar vida!</p>
-                                <br /> <br />
-                            </div>
                         </>
+                    )}
+
+                    {passosExecucao.length == 0 && (
+                        <div className="divControle reconfigurar">
+                            <h3 className="h3PequenoTituloSecao">
+                                Reconfigure a execução
+                            </h3>
+                            <p className="paragrafoInformativo">
+                                Você pode ativar ou desativar o movimento diagonal, assim como alterar a sala inicial. Para alterar o mundo ou o agente utilizado, você precisa voltar para a tela anterior.
+                            </p>
+                            <div className="reconfiguracoes">
+                                <label htmlFor="" className="checkMovimento">
+                                    <input
+                                        type="checkbox"
+                                        name=""
+                                        id=""
+                                        onChange={(e) => { setAtivarDiagonal(e.target.checked) }}
+                                        checked={ativarDiagonal}
+                                        disabled={passosExecucao.length > 0}
+                                    />
+                                    Ativar movimento diagonal
+                                </label>
+                                <button
+                                    className={`botaoEditarSala ${modoEditarSala ? 'ativo' : ''}`}
+                                    onClick={() => setModoEditarSala(!modoEditarSala)}
+                                    disabled={passosExecucao.length > 0}
+                                    title="A sala inicial define onde o agente começa e termina a partida"
+                                >
+                                    {modoEditarSala ? 'Cancelar Edição' : 'Alterar Sala Inicial'}
+                                </button>
+                                <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
+                            </div>
+                            {/* <hr /> */}
+                        </div>
+                    )}
+
+                    {passosExecucao.length == 0 && (
+                        <div className="divControle">
+                            <p>Você também pode <b>baixar ou importar um arquivo de partida </b> baixado anteriormente, isto permite que você guarde suas partida favoritas e importe quando quiser!</p>
+                            <button
+                                onClick={importarJSON}
+                                className="botaoImportar"
+                                disabled={passosExecucao.length > 0}
+                                title="Caso você tenha um JSON guardado, importe e execute uma partida aqui!"
+                            >
+                                Importar JSON
+                            </button>
+                            <h2 style={{ marginTop: '15px' }}>Gostaria de usar o seu próprio agente?</h2>
+                            <p>Você pode desenvolver o seu próprio agente, na linguagem que preferir, e utilizar este frontend para visualizar a sua execução, desde que siga os seguintes passos:
+                                <br /><br /></p>
+                            <p className="paragrafoTutorial">
+                                <b>1. Criar e exportar um mundo utilizando esta plataforma</b><br />
+                                Não é para forçar você a usar o nosso site, mas um requisito de lógica! O botão <b>'Importar JSON'</b> acima faz a importação apenas dos passos do agente, o mundo da partida, utilizando o ID, é resgatado diretamente do banco de dados,
+                                isso significa que você deve ter aquele mundo armazenado na sua conta para que tudo possa funcionar. <br /><br />
+                                Nesse caso, você pode criar o mundo normalmente pelo nosso site e salvar na sua conta, o arquivo daquele mundo pode ser baixado em formato JSON, permitindo que você possa fazer a importação no seu próprio código.
+                                <br /><br />
+                                <b>2. Converter os passos da sua partida para o formato correto</b>
+                                Se o seu código exportar um arquivo JSON dos passos da execução com o mesmo formato que estamos utilizando, e usar um mundo existente na sua conta, você será capaz de visualizar o seu agente no nosso frontend!
+                                <br /><br />A estrutura é esta:
+                            </p>
+                            <div className="auxBlocoCodigo">
+                                <SyntaxHighlighter
+                                    language="json"
+                                    style={nightOwl}
+                                // showLineNumbers
+                                >
+                                    {JSON.stringify(jsonExample, null, 2)}
+                                </SyntaxHighlighter>
+                            </div>
+                            <p className="paragrafoTutorial">Os dados inúteis para você seriam:
+                                <ul>
+                                    <li><b>Agente selecionado:</b> você não estaria utilizando um dos nossos agentes, então este ID não seria utilizado. Mas é importante que você envie com o valor -1 para que o código possa identificar que este é um agente criado por você!</li>
+                                    <li><b>Ativar diagonal:</b> você estaria criando a sua própria execução, então você tem a liberdade de ativar ou não movimentos na diagonal, logo, esta variável não será utilizada. Mas é importante que você envie seu valor de acordo com a sua execução para facilitar a vida de todo mundo!</li>
+                                </ul>
+                                Dados com os quais você deve ter <b>muita atenção:</b> <br />
+                                <ul>
+                                    <li><b>ID do mundo:</b> é muitíssimo importante que você utilize um mundo que existe, e com exatamente o mesmo layout e elementos! o ID do mundo pode ser resgatado na tela de criação, ao exportar um mundo (que já foi criado e salvo), ou na própria listagem, onde exibimos o ID de cada mundo para facilitar o seu trabalho.</li>
+                                    <li><b>Sala inicial, posição do agente e posição de tiro:</b> esteja atento à orientação das coordenadas! pode ser que no seu código elas estejam invertidas! Então uma dica: escreva a sua lógica de forma que, ao alterar uma única variável (booleana talvez?), as variáveis X e Y sejam invertidas.</li>
+                                    <li><b>Vetor de passos: </b>Siga corretamente a estrutura geral do JSON, e adicione os passos em vetor conforme mostrado na estrutura acima. </li>
+                                    <li><b>Ação: </b>As ações orientam o frontend sobre o que fazer a cada passo, então é muito importante que seu JSON fale a mesma língua. As ações ficam no campo "ação", conforme mostrado no JSON acima, e são escritas como uma string. São essas: <br />
+                                        <br />
+                                        - direção de movimentação [N, S, L, O, NO, NE, SO, SE] (em maiúsculo) <br />
+                                        - direção de disparos [n, s, l, o, no, ne, so, se] (em minúsculo) <br />
+                                        - Pegar ouro [x] <br /> <br />
+                                        Cada passo possui a sua ação, e apenas uma por passo, caso não possua, o campo pode ficar com uma string vazia sem problemas.
+                                    </li>
+                                </ul>
+                            </p>
+                            <br />
+                            <p>Experimente! Desenvolva seu próprio agente, em python, java ou C# e utilize este frontend para vê-lo ganhar vida!</p>
+                            <br /> <br />
+                        </div>
                     )}
 
                     {passosExecucao.length > 0 && (

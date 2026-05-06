@@ -31,23 +31,27 @@ function Bloco({
     noBottom,
     flechas,
     wumpusMorto,
-    passosExecucao
+    passosExecucao,
+    foiVisitado
 }) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
     const temOuro = ouro && !ouroColetado;
 
+
     return (
         <div
-            className={`blocoExecucao ${selecionado ? 'selecionado' : ''} ${salaInicial ? 'salaInicialExecucao' : ''} ${clicavel ? 'clicavel' : ''}
-                       ${noTop ? 'noTop' : ''} ${noLeft ? 'noLeft' : ''} ${noRight ? 'noRight' : ''} ${noBottom ? 'noBottom' : ''}`}
+            className={`blocoExecucao 
+                ${selecionado ? 'selecionado' : ''} 
+                ${salaInicial ? 'salaInicialExecucao' : ''} 
+                ${clicavel ? 'clicavel' : ''}
+                ${noTop ? 'noTop' : ''} ${noLeft ? 'noLeft' : ''} 
+                ${noRight ? 'noRight' : ''} ${noBottom ? 'noBottom' : ''}
+                ${temAgenteAqui ? 'blocoComAgente' : ''}
+                ${foiVisitado ? 'blocoExplorado' : ''}
+            `}
             onClick={onClick}
             style={{ cursor: clicavel ? 'pointer' : 'default' }}
         >
-            {/* {wumpus
-                &&
-                // <div className='elemento wumpus'></div>
-                <img src={wumpusVivo} className='skin wumpusVivo' alt="" />
-            } */}
 
             {wumpus && !wumpusMorto && (
                 <img src={wumpusVivo} className='skin wumpusVivo' alt="Wumpus Vivo" />
@@ -56,23 +60,9 @@ function Bloco({
                 <img src={wumpusMortoSkin} className='skin wumpusMorto' alt="Wumpus Morto" />
             )}
 
-            {/* {temAgenteAqui && !buraco && (
-                <>
-                    {flechas > 0 &&
-                        <img src={agenteSkin} className='skin skinAgenteArmado' alt="" />
-                    }
-
-                    {flechas == 0 &&
-                        <img src={agenteSemMunicao} className='skin skinAgenteDesarmado' alt="" />
-                    }
-                </>
-            )
-            } */}
-
             {temAgenteAqui && !buraco && (
                 <>
                     {(() => {
-                        // Pega o tipo do agente do primeiro passo da execução
                         const tipoAgente = passosExecucao[0]?.agente || 1;
 
                         if (flechas > 0) {
@@ -89,12 +79,10 @@ function Bloco({
             )}
 
             {buraco &&
-                // <div className='elemento buraco'></div>
                 <img src={buracoSkin} className='skin skiBuraco' alt="" />
             }
             {temOuro &&
                 <img src={ouroSkin} className='skin skinOuro' alt="" />
-                // <div className='elemento ouro'></div>
             }
         </div>
     );
@@ -875,6 +863,19 @@ export default function Minimapa({
 
                                     const wumpusMortoo = wumpusMortos.some(w => w.x === x && w.y === y);
 
+                                    const jaPassouPorAqui = sala.ativa && passosExecucao
+                                        .slice(0, passoAtual + 1)
+                                        .some(passo => {
+                                            let posX = passo.posicao_x;
+                                            let posY = passo.posicao_y;
+
+                                            if (inverterCoordenadas) {
+                                                [posX, posY] = [passo.posicao_y, passo.posicao_x];
+                                            }
+
+                                            return posX === x && posY === y;
+                                        });
+
                                     return (
                                         <Bloco
                                             key={`${x}-${y}`}
@@ -895,6 +896,7 @@ export default function Minimapa({
                                             flechas={dadosAgente.flechas}
                                             wumpusMorto={wumpusMortoo}
                                             passosExecucao={passosExecucao}
+                                            foiVisitado={jaPassouPorAqui}
                                         />
                                     );
                                 })

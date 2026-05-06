@@ -53,6 +53,11 @@
     /* border: solid 1px var(--bordaCor); */
 }
 
+.itemListaAgentesCustomizados:hover {
+    background-color: black;
+    cursor: default;
+}
+
 .imagemSelecaoAgente {
     width: 100%;
     object-fit: contain;
