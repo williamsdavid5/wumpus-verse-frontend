@@ -281,6 +281,95 @@ export default function Agentes() {
         return () => clearTimeout(timer);
     }, [carregandoLista]);
 
+    // async function carregarAgenteParaEdicao(agente) {
+    //     setAgenteEdicao(agente);
+    //     setCarregandoAgenteIndividual(true);
+
+    //     setPopulacao(1);
+    //     setGeracoes(1);
+    //     setTaxaMutacao(1);
+    //     setTaxaCruzamento(1);
+    //     setPassoValido(0);
+    //     setPassoInvalido(0);
+
+    //     try {
+    //         const dados = await getAgenteById(agente.id);
+    //         if (!dados) {
+    //             await confirm({
+    //                 title: "Erro",
+    //                 message: "Não foi possível carregar os dados do agente",
+    //                 type: "alert",
+    //                 botao1: "OK"
+    //             });
+    //             setAgenteEdicao({ id: 0 });
+    //             return;
+    //         }
+
+    //         setAgenteEdicao(dados);
+
+    //         if (dados.tipo === 2) {
+    //             // Agente Lógico
+    //             setTipoAgenteSelerionado('logico');
+    //             setTipoIntAgenteSelecionado(2);
+    //             setNomeAgente(dados.nome || dados.name || '');
+
+    //             if (dados.properties) {
+    //                 setCoragem(dados.properties.corajoso ?? false);
+    //                 setExplorador(dados.properties.explorador ?? false);
+    //                 setGarimpeiro(dados.properties.garimpeiro ?? false);
+    //                 setOdio(dados.properties.cacador ?? false);
+    //                 setFormaDeBusca(dados.properties.forma_de_busca ?? 1);
+    //             }
+    //         } else if (dados.tipo === 3) {
+    //             // Agente Evolutivo
+    //             setTipoAgenteSelerionado('evolutivo');
+    //             setTipoIntAgenteSelecionado(3);
+    //             setNomeAgenteEvolutivo(dados.nome || dados.name || '');
+
+    //             if (dados.properties) {
+    //                 setPopulacao(dados.properties.populacao || 1);
+    //                 setGeracoes(dados.properties.geracoes || 1);
+    //                 setTaxaCruzamento(dados.properties.taxa_de_cruzamento || 1);
+    //                 setTaxaMutacao(dados.properties.taxa_de_mutacao || 1);
+
+    //                 const fitnessStr = dados.properties.fitness || '';
+    //                 setFitness(fitnessStr);
+
+    //                 // Tentar extrair valores da equação fitness
+    //                 if (fitnessStr && fitnessStr.includes('PV *')) {
+    //                     const pvMatch = fitnessStr.match(/PV\s*\*\s*([-\d]+)/);
+    //                     const piMatch = fitnessStr.match(/PI\s*\*\s*([-\d]+)/);
+    //                     const tvMatch = fitnessStr.match(/TV\s*\*\s*([-\d]+)/);
+    //                     const tiMatch = fitnessStr.match(/TI\s*\*\s*([-\d]+)/);
+    //                     const swMatch = fitnessStr.match(/SW\s*\*\s*([-\d]+)/);
+    //                     const spMatch = fitnessStr.match(/SP\s*\*\s*([-\d]+)/);
+    //                     const soMatch = fitnessStr.match(/SO\s*\*\s*([-\d]+)/);
+    //                     const vMatch = fitnessStr.match(/V\s*\*\s*([-\d]+)/);
+
+    //                     setPassoValido(pvMatch ? parseInt(pvMatch[1]) : 0);
+    //                     setPassoInvalido(piMatch ? parseInt(piMatch[1]) : 0);
+    //                     setTiroValido(tvMatch ? parseInt(tvMatch[1]) : 0);
+    //                     setTiroInvalido(tiMatch ? parseInt(tiMatch[1]) : 0);
+    //                     setEntradaWumpus(swMatch ? parseInt(swMatch[1]) : 0);
+    //                     setEntradaBuraco(spMatch ? parseInt(spMatch[1]) : 0);
+    //                     setPegouOuro(soMatch ? parseInt(soMatch[1]) : 0);
+    //                     setOuroVoltouOrigem(vMatch ? parseInt(vMatch[1]) : 0);
+    //                 }
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Erro ao carregar agente:', error);
+    //         await confirm({
+    //             title: "Erro",
+    //             message: "Erro ao carregar dados do agente",
+    //             type: "alert",
+    //             botao1: "OK"
+    //         });
+    //     } finally {
+    //         setCarregandoAgenteIndividual(false);
+    //     }
+    // }
+
     async function carregarAgenteParaEdicao(agente) {
         setAgenteEdicao(agente);
         setCarregandoAgenteIndividual(true);
@@ -291,10 +380,15 @@ export default function Agentes() {
         setTaxaCruzamento(1);
         setPassoValido(0);
         setPassoInvalido(0);
+        setTiroValido(0);
+        setTiroInvalido(0);
+        setEntradaBuraco(0);
+        setEntradaWumpus(0);
+        setPegouOuro(0);
+        setOuroVoltouOrigem(0);
 
         try {
-            const dados = await getAgenteById(agente.id);
-            if (!dados) {
+            if (!agente) {
                 await confirm({
                     title: "Erro",
                     message: "Não foi possível carregar os dados do agente",
@@ -305,38 +399,35 @@ export default function Agentes() {
                 return;
             }
 
-            setAgenteEdicao(dados);
+            setAgenteEdicao(agente);
 
-            if (dados.tipo === 2) {
-                // Agente Lógico
+            if (agente.tipo === 2) {
                 setTipoAgenteSelerionado('logico');
                 setTipoIntAgenteSelecionado(2);
-                setNomeAgente(dados.nome || dados.name || '');
+                setNomeAgente(agente.nome || agente.name || '');
 
-                if (dados.properties) {
-                    setCoragem(dados.properties.corajoso ?? false);
-                    setExplorador(dados.properties.explorador ?? false);
-                    setGarimpeiro(dados.properties.garimpeiro ?? false);
-                    setOdio(dados.properties.cacador ?? false);
-                    setFormaDeBusca(dados.properties.forma_de_busca ?? 1);
+                if (agente.properties) {
+                    setCoragem(agente.properties.corajoso ?? false);
+                    setExplorador(agente.properties.explorador ?? false);
+                    setGarimpeiro(agente.properties.garimpeiro ?? false);
+                    setOdio(agente.properties.cacador ?? false);
+                    setFormaDeBusca(agente.properties.forma_de_busca ?? 1);
                 }
-            } else if (dados.tipo === 3) {
-                // Agente Evolutivo
+            } else if (agente.tipo === 3) {
                 setTipoAgenteSelerionado('evolutivo');
                 setTipoIntAgenteSelecionado(3);
-                setNomeAgenteEvolutivo(dados.nome || dados.name || '');
+                setNomeAgenteEvolutivo(agente.nome || agente.name || '');
 
-                if (dados.properties) {
-                    setPopulacao(dados.properties.populacao || 1);
-                    setGeracoes(dados.properties.geracoes || 1);
-                    setTaxaCruzamento(dados.properties.taxa_de_cruzamento || 1);
-                    setTaxaMutacao(dados.properties.taxa_de_mutacao || 1);
+                if (agente.properties) {
+                    setPopulacao(agente.properties.populacao || 1);
+                    setGeracoes(agente.properties.geracoes || 1);
+                    setTaxaCruzamento(agente.properties.taxa_de_cruzamento || 1);
+                    setTaxaMutacao(agente.properties.taxa_de_mutacao || 1);
 
-                    const fitnessStr = dados.properties.fitness || '';
+                    const fitnessStr = agente.properties.fitness || '';
                     setFitness(fitnessStr);
 
-                    // Tentar extrair valores da equação fitness
-                    if (fitnessStr && fitnessStr.includes('PV *')) {
+                    if (fitnessStr && typeof fitnessStr === 'string') {
                         const pvMatch = fitnessStr.match(/PV\s*\*\s*([-\d]+)/);
                         const piMatch = fitnessStr.match(/PI\s*\*\s*([-\d]+)/);
                         const tvMatch = fitnessStr.match(/TV\s*\*\s*([-\d]+)/);
@@ -370,7 +461,6 @@ export default function Agentes() {
         }
     }
 
-    //valida os valores de pontuação
     const handleNumberInput = (setter) => (e) => {
         let value = e.target.value;
 
@@ -1021,6 +1111,7 @@ export default function Agentes() {
                                             <p>Se você está aqui, imagino que saiba o que está fazendo, então escreva a sua equação abaixo</p>
                                             <input
                                                 type="text"
+                                                value={fitness}
                                                 placeholder='((PV * -1) +  (PI * -100) + (TI * -100) (TV * 100) + (SW * -100) + (SP * -100) (SO * 100) + (V * 1000)) / '
                                                 onChange={(e) => {
                                                     setFitness(e.target.value);

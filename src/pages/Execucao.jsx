@@ -8,6 +8,9 @@ import './styles/execucao.css'
 import Minimapa from "./Minimapa";
 import LoadingPage from './LoadingPage';
 
+import LinoLogico from '../assets/linoLogico.png'
+import LinoEvolutivo from '../assets/linoEvolutivo.png'
+
 export default function Execucao() {
     const { iniciarPartida } = useAuth();
 
@@ -232,70 +235,6 @@ export default function Execucao() {
         input.click();
     }, [mundoSelecionado, ativarDiagonal]);
 
-
-    // const importarJSON = useCallback(() => {
-    //     const input = document.createElement('input');
-    //     input.type = 'file';
-    //     input.accept = '.json';
-
-    //     input.onchange = async (e) => {
-    //         const file = e.target.files[0];
-    //         if (!file) return;
-
-    //         try {
-    //             setCarregando(true);
-    //             const texto = await file.text();
-    //             const dados = JSON.parse(texto);
-
-    //             if (!dados.passosExecucao && !dados.passos) {
-    //                 throw new Error('Formato de arquivo inválido: faltam passos da execução');
-    //             }
-
-    //             const passos = dados.passosExecucao || dados.passos;
-
-    //             const agente = dados.agenteSelecionado !== undefined ? dados.agenteSelecionado :
-    //                 (dados.agente !== undefined ? dados.agente : 0);
-
-    //             const mundoId = dados.mundoId || dados.mundoSelecionado || mundoSelecionado;
-
-    //             const salaInicial = dados.salaInicial || dados.salaSelecionada || salaSelecionada;
-
-    //             const movimentoDiagonal = dados.ativarDiagonal !== undefined ? dados.ativarDiagonal :
-    //                 (dados.movimentoDiagonal !== undefined ? dados.movimentoDiagonal : ativarDiagonal);
-
-    //             if (!Array.isArray(passos)) {
-    //                 throw new Error('Os passos da execução não estão em formato válido');
-    //             }
-
-    //             if (mundoId === -1 || mundoId === undefined) {
-    //                 throw new Error('ID do mundo não encontrado no arquivo');
-    //             }
-
-    //             if (!salaInicial || !Array.isArray(salaInicial) || salaInicial.length !== 2) {
-    //                 throw new Error('Sala inicial inválida no arquivo');
-    //             }
-
-    //             setMundoSelecionado(mundoId);
-    //             setAgenteSelecionado(agente);
-    //             setSalaSelecionada(salaInicial);
-    //             setAtivarDiagonal(movimentoDiagonal);
-    //             setPassosExecucao(passos);
-    //             setPartida(passos);
-    //             setSalaInvalida(false);
-    //             setModoEditarSala(false);
-    //             setExecutandoAnimacao(false);
-
-    //         } catch (error) {
-    //             console.error('Erro ao importar JSON:', error);
-    //             alert('Erro ao importar arquivo: ' + error.message);
-    //         } finally {
-    //             setCarregando(false);
-    //         }
-    //     };
-
-    //     input.click();
-    // }, [mundoSelecionado, agenteSelecionado, salaSelecionada, ativarDiagonal]);
-
     return (
         <>
             <main className="execucaoMain">
@@ -339,10 +278,51 @@ export default function Execucao() {
                     <div className="divControle">
                         {agenteInformacoes ?
                             <>
-                                {/* <h3>Agente selecionado</h3> */}
-                                {/* <p>Agente selecionado</p> */}
-                                {/* <p style={{ width: '100%', textAlign: 'center', marginTop: '10px' }} className="destaqueRoxo"><b>{agenteInformacoes.nome}</b><br /></p> */}
-                                <h3 className="destaqueGold">Agente selecionado: {agenteInformacoes.nome}</h3>
+                                <p>Agente selecionado:</p>
+                                {agenteInformacoes.properties && (
+                                    agenteInformacoes.tipo === 2 ? (
+                                        <div className="inforAgenteSelecionado">
+                                            <div className="esquerda">
+                                                <img src={LinoLogico} alt="" className="skinTipoAgenteTelaExecucao" style={{ transform: 'scaleX(-1)' }} />
+                                            </div>
+                                            <div className="direita">
+                                                <h3>{agenteInformacoes.nome}</h3>
+                                                <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
+                                                <p className="paragrafoInformativo">
+                                                    {[
+                                                        agenteInformacoes.properties.corajoso && "🛡 Corajoso",
+                                                        agenteInformacoes.properties.explorador && "◈ Explorador",
+                                                        agenteInformacoes.properties.garimpeiro && "✦ Garimpeiro",
+                                                        agenteInformacoes.properties.cacador && "⚔ Caçador"
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .map((texto, index, arr) => (
+                                                            <span key={index}>
+                                                                {texto}
+                                                                {index < arr.length - 1 && <br />}
+                                                            </span>
+                                                        ))}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="inforAgenteSelecionado">
+                                            <div className="esquerda">
+                                                <img src={LinoEvolutivo} alt="" className="skinTipoAgenteTelaExecucao" />
+                                            </div>
+                                            <div className="direita">
+                                                <h3>{agenteInformacoes.nome}</h3>
+                                                <p className="destaqueGold paragrafoInformativo">✎ Agente evolutivo personalizado</p>
+                                                <p className="paragrafoInformativo">
+                                                    ⟳ Gerações: {agenteInformacoes.properties.geracoes} <br />
+                                                    ≡ População: {agenteInformacoes.properties.populacao} <br />
+                                                    ❤ Taxa de cruzamento: {agenteInformacoes.properties.taxa_de_cruzamento}% <br />
+                                                    ⚯ Taxa de mutação: {agenteInformacoes.properties.taxa_de_mutacao}% <br />
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )
+                                )}
                                 <p className="paragrafoInformativo">
                                     {agenteInformacoes.descricao}
                                 </p>
@@ -384,24 +364,6 @@ export default function Execucao() {
                                 <p>Sala atual: ({salaSelecionada[0]},{salaSelecionada[1]})</p>
                             </div>
                             <hr />
-                            {/* <div className='auxInterruptores interruptoresVencerAPartida'>
-                                <p>
-                                    <b>Como vencer a partida?</b><br />
-                                    <span className='paragrafoInformativo'>
-                                        <input type="radio" name='comoVencer' /> O agente vence se pegar um ouro e voltar para a origem. <br />
-                                        <input type="radio" name='comoVencer' /> O agente vence apenas se pegar todo o ouro e voltar para a origem. <br />
-                                    </span>
-                                </p>
-                                <hr />
-                                <p>
-                                    <b>Sobre o Canva</b><br />
-                                    <span className='paragrafoInformativo'>
-                                        <input type="radio" name='comoVencerCanva' /> Não é necessário matar um Canva para vencer o jogo.<br />
-                                        <input type="radio" name='comoVencerCanva' /> O agente precisa matar pelo menos um Canva. <br />
-                                        <input type="radio" name='comoVencerCanva' /> O agente precisa matar todos os Canvas da face da terra! <br />
-                                    </span>
-                                </p>
-                            </div> */}
                         </div>
                     )}
 
@@ -536,11 +498,11 @@ export default function Execucao() {
                                     >
                                         Baixar JSON da partida
                                     </button>
-                                    <button
+                                    {/* <button
                                         title="Salve o resultado desta partida na sua conta, mas apenas dados básicos, você não poder executar novamente esta partida!"
                                     >
                                         Salvar resultados na minha conta
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                         </>
