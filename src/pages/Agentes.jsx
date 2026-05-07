@@ -606,7 +606,7 @@ export default function Agentes() {
                             </span>
                         </span>
                     </div>
-                    {criarNovo && (
+                    {/* {criarNovo && (
                         <div className='divControle'>
                             <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
                             <div className={`auxiliarSelecaoTipoAgente`}>
@@ -634,7 +634,51 @@ export default function Agentes() {
                                 </div>
                             </div>
                         </div>
+                    )} */}
+
+                    {criarNovo && (
+                        <div className='divControle'>
+                            <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
+                            <div className={`auxiliarSelecaoTipoAgente`}>
+                                {(agenteEdicao.id === 0 || agenteEdicao.tipo === 2) && (
+                                    <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'logico' ? 'blocoTipoSelecionado' : ''}`}
+                                        onClick={() => {
+                                            if (agenteEdicao.id === 0) {
+                                                setTipoAgenteSelerionado('logico');
+                                                setTipoIntAgenteSelecionado(2);
+                                            }
+                                        }}
+                                        style={{ opacity: agenteEdicao.id !== 0 && agenteEdicao.tipo !== 2 ? 0.5 : 1, cursor: agenteEdicao.id !== 0 && agenteEdicao.tipo !== 2 ? 'not-allowed' : 'pointer' }}
+                                    >
+                                        <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
+                                        <h3>Lógico</h3>
+                                        <p className='paragrafoInformativo'>
+                                            Esse agente não tem sentimentos, apenas segue um conjunto de regras definidas em sua programação
+                                        </p>
+                                    </div>
+                                )}
+
+                                {(agenteEdicao.id === 0 || agenteEdicao.tipo === 3) && (
+                                    <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`}
+                                        onClick={() => {
+                                            if (agenteEdicao.id === 0) {
+                                                setTipoAgenteSelerionado('evolutivo');
+                                                setTipoIntAgenteSelecionado(3);
+                                            }
+                                        }}
+                                        style={{ opacity: agenteEdicao.id !== 0 && agenteEdicao.tipo !== 3 ? 0.5 : 1, cursor: agenteEdicao.id !== 0 && agenteEdicao.tipo !== 3 ? 'not-allowed' : 'pointer' }}
+                                    >
+                                        <img src={LinoEvolutivo} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
+                                        <h3>Evolutivo</h3>
+                                        <p className='paragrafoInformativo'>
+                                            Esse agente evolui aprendendo com os seus erros (diferente de certas pessoas)
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     )}
+
                     {agenteEdicao.id != 0 && (
                         <div className='divControle divModoEdicao'>
 

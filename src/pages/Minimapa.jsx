@@ -32,7 +32,8 @@ function Bloco({
     flechas,
     wumpusMorto,
     passosExecucao,
-    foiVisitado
+    foiVisitado,
+    tipoAgente
 }) {
     const temAgenteAqui = agentePosicao && agentePosicao.x === agente.x && agentePosicao.y === agente.y;
     const temOuro = ouro && !ouroColetado;
@@ -63,7 +64,7 @@ function Bloco({
             {temAgenteAqui && !buraco && (
                 <>
                     {(() => {
-                        const tipoAgente = passosExecucao[0]?.agente || 1;
+                        // const tipoAgente = passosExecucao[0]?.agente || 1;
 
                         if (flechas > 0) {
                             if (tipoAgente === 2) return <img src={agenteLogico} className='skin skinAgenteLogicoArmado' alt="" />;
@@ -93,7 +94,8 @@ export default function Minimapa({
     salaInicial = [],
     onSalaSelecionada,
     modoEdicao = false,
-    passosExecucao = []
+    passosExecucao = [],
+    tipoAgente
 }) {
     const { getMiniMapa } = useAuth();
     const [carregando, setCarregando] = useState(false);
@@ -360,7 +362,6 @@ export default function Minimapa({
 
     useEffect(() => {
         if (passosExecucao.length > 0) {
-            console.log("tem passos!");
             const primeiroPasso = passosExecucao[0];
 
             if (primeiroPasso) {
@@ -897,6 +898,7 @@ export default function Minimapa({
                                             wumpusMorto={wumpusMortoo}
                                             passosExecucao={passosExecucao}
                                             foiVisitado={jaPassouPorAqui}
+                                            tipoAgente={tipoAgente}
                                         />
                                     );
                                 })

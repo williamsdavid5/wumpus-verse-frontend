@@ -18,6 +18,7 @@ export default function Execucao() {
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
     const [agenteSelecionado, setAgenteSelecionado] = useState(-1);
     const [agenteInformacoes, setAgenteInformacoes] = useState();
+    const [tipoAgente, setTipoAgente] = useState(0);
     const [salaSelecionada, setSalaSelecionada] = useState([]);
     const [partida, setPartida] = useState([]);
     const [passosExecucao, setPassosExecucao] = useState([]);
@@ -79,6 +80,10 @@ export default function Execucao() {
         setMundoSelecionado(executionConfig.mundoSelecionado);
         setSalaSelecionada(executionConfig.salaSelecionada);
         setAgenteInformacoes(executionConfig.agenteInformacoes);
+        const info = executionConfig.agenteInformacoes;
+        if (info) {
+            setTipoAgente(info.tipo ? info.tipo : (info.id !== undefined ? info.id : 0));
+        }
     }, [executionConfig]);
 
     async function iniciar() {
@@ -119,7 +124,6 @@ export default function Execucao() {
 
             partidaIniciada[0].flechas = partidaIniciada[1].flechas;
 
-            // console.log('Partida iniciada:', partidaIniciada);
             setPartida(partidaIniciada);
             setPassosExecucao(partidaIniciada);
             setExecutandoAnimacao(true);
@@ -130,7 +134,6 @@ export default function Execucao() {
             }
         } catch (err) {
             console.log("Erro ao iniciar partida: ", err);
-            // alert('Erro ao iniciar partida: ' + (err.message || 'Verifique os dados'));
         } finally {
             setCarregando(false);
         }
@@ -247,6 +250,7 @@ export default function Execucao() {
                                 onSalaSelecionada={handleSalaSelecionada}
                                 modoEdicao={modoEditarSala}
                                 passosExecucao={passosExecucao}
+                                tipoAgente={tipoAgente}
                             />
                         </>
                     ) : (
