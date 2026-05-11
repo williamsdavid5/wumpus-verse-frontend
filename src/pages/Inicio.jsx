@@ -39,10 +39,10 @@ export default function Inicio() {
 
         const resposta = await confirm({
             title: "Excluir conta",
-            message: "Sério mesmo?",
+            message: "Sério mesmo? Você tem coragem????",
             type: "confirm",
             botao1: "Sim",
-            botao2: "Não"
+            botao2: "Não..."
         })
 
         if (resposta === "yes") {
@@ -117,7 +117,7 @@ export default function Inicio() {
                     </div>
                 </section>
                 <footer>
-                    {logado && (
+                    {/* {logado && (
                         <>
                             <button onClick={sair} className='botaoLogado' title='Clique para deslogar da sua conta'>
                                 <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
@@ -128,6 +128,21 @@ export default function Inicio() {
                                     Excluir conta
                                 </button>
                             }
+                        </>
+
+                    )} */}
+
+                    {logado && (
+                        <>
+                            <div className='controlesConta'>
+                                <button onClick={sair} className='botaoLogado' title='Clique para deslogar da sua conta'>
+                                    <span style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</span> <br />
+                                    clique para sair
+                                </button>
+                                <button className='botaoExcluirConta' onClick={() => deletarConta()}>
+                                    Excluir minha conta
+                                </button>
+                            </div>
                         </>
 
                     )}

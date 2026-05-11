@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
         // localStorage.setItem("access_token", data.access_token);
         salvarTokenComTimestamp(data.access_token, timestampAtual);
         localStorage.setItem("user", JSON.stringify(data.user));
-
+        console.log(data);
         setToken(data.access_token);
         setUsuario(data.user);
 
@@ -392,6 +392,27 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function resetPassword(email) {
+        try {
+            const response = await api.post("/auth/reset-password", {
+                email: email
+            });
+
+            console.log('Email de redefinição enviado com sucesso:', response.data);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao solicitar redefinição de senha:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            throw error;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -410,7 +431,8 @@ export function AuthProvider({ children }) {
             getAgentes,
             excluirAgente,
             getAgenteById,
-            atualizarAgente
+            atualizarAgente,
+            resetPassword
         }}>
             {children}
         </AuthContext.Provider>

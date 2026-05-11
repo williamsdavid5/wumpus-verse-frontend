@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
+import LoadingGif from '../assets/loadingGif.gif'
 
 import LoadingPage from './LoadingPage';
 
 export default function Login() {
-    const { login } = useAuth();
+    const { login, resetPassword } = useAuth();
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [erro, setErro] = useState("");
@@ -16,6 +17,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     const [carregando, setCarregando] = useState(false);
+    const [carregandoSenha, setCarregandoSenha] = useState(false);
 
     async function enviar(e) {
         e.preventDefault();
@@ -48,6 +50,38 @@ export default function Login() {
             }
         }
         setCarregando(false)
+    }
+
+    async function recuperarSenha(email) {
+        if (!email || email.trim == '' || email == null) {
+            await confirm({
+                title: "Calma aí",
+                message: "Eu preciso do email para que isso funcione!",
+                type: "alert",
+                botao1: "Tá bom"
+            })
+        } else {
+            setCarregandoSenha(true);
+            try {
+                await resetPassword(email);
+                await confirm({
+                    title: "Link enviado!",
+                    message: "Um link de redefinição de senha foi enviado para o seu email, é muito importante que você VERIFIQUE A CAIXA DE SPAM!",
+                    type: "alert",
+                    botao1: "Tá bom"
+                })
+                setCarregandoSenha(false);
+            } catch (error) {
+                await resetPassword(email);
+                setCarregandoSenha(false);
+                await confirm({
+                    title: "Ops",
+                    message: "Alguma coisa deu errada, pode ter sido o seu email ou a nossa API, que tal tentar de novo?",
+                    type: "alert",
+                    botao1: "Tá bom"
+                })
+            }
+        }
     }
 
     return (
@@ -83,6 +117,17 @@ export default function Login() {
                         }
                     }}
                 />
+                {carregandoSenha ?
+                    <>
+                        <span className='spanCarregandoSenha'>
+                            <img src={LoadingGif} alt="" />
+                        </span>
+                    </> : <>
+                        <button type='button' onClick={() => recuperarSenha(email)} className='botaoEsqueciSenha'>
+                            <p>Esqueci a minha senha</p>
+                        </button>
+                    </>
+                }
                 <button type="button" onClick={enviar} className='botaoLogin'>Entrar</button>
                 <p className='paragrafoInformativo'>ou</p>
                 <button type="button" className='botaoLogin' onClick={() => navigate('/registrar')}>Registrar</button>

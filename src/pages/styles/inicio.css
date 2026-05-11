@@ -68,6 +68,32 @@
     margin: 0;
     border: none;
     padding: 0px 20px;
+    height: 100%;
+}
+
+.controlesConta {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botaoExcluirConta {
+    height: 100%;
+    margin: 0;
+    background-color: red;
+    padding: 0px 10px;
+    border: none;
+    opacity: 0;
+    /* display: none; */
+    visibility: none;
+    transition: opacity ease-in-out 0.3s;
+}
+
+.controlesConta:hover .botaoExcluirConta {
+    /* display: block; */
+    visibility: visible;
+    opacity: 1;
 }
 
 .botaoNovaPartida {

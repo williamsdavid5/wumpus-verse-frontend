@@ -18,7 +18,7 @@ export default function Registrar() {
     const [senhaValida, setSenhaValida] = useState(true);
 
     const [erro, setErro] = useState("");
-    const [sucesso, setSucesso] = useState("");
+    // const [sucesso, setSucesso] = useState("");
 
     const [carregando, setCarregando] = useState(false);
 
@@ -35,13 +35,12 @@ export default function Registrar() {
     async function enviar(e) {
         e.preventDefault();
         setErro("");
-        setSucesso("");
         setCarregando(true);
 
         if (email.trim() == "" || usuario.trim() == "" || senha.trim() == "") {
             await confirm({
                 title: "Eu pareço um vidende pra você?",
-                message: "Preencha todos os campos! 😠",
+                message: "Preencha todos os \n\n\n campos! 😠",
                 type: "alert",
                 botao1: "Tá bom"
             })
@@ -59,17 +58,25 @@ export default function Registrar() {
 
         try {
             await registrar(usuario, email, senha);
+            setCarregando(false);
 
-            setSucesso("Registrado com sucesso!");
+            await confirm({
+                title: "Verifique a sua conta!!",
+                message: "Sim, você foi registrado com sucesso, mas um link de verificação foi enviado para o seu email, se você não verificar a sua conta, nenhuma função da plataforma estará acessível para você! (e a sua conta será apagada do sistema ) \nobs: olhe a caixa de SPAM.",
+                type: "alert",
+                botao1: "Tá bom"
+            })
             navigate('/');
         } catch (err) {
-            setErro(err.message || "Erro no registro");
-        } finally {
             setCarregando(false);
+            await confirm({
+                title: "ERRO",
+                message: "Algo deu errado no seu registro, você pode tentar de novo agora ou mais tarde.",
+                type: "alert",
+                botao1: "Tá bom"
+            })
+            setErro(err.message || "Erro no registro");
         }
-
-        console.log('enviar');
-
     }
 
     return (

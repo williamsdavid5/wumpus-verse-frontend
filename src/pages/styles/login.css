@@ -79,6 +79,27 @@ input[type="password"]::-webkit-textfield-decoration-container {
     color: red;
 }
 
+.spanCarregandoSenha {
+    height: 40px;
+}
+
+.spanCarregandoSenha img {
+    height: 100%;
+    object-fit: contain;
+}
+
+.botaoEsqueciSenha {
+    border: none;
+}
+
+.botaoEsqueciSenha:hover {
+    background-color: black;
+}
+
+.botaoEsqueciSenha p {
+    text-decoration: underline;
+}
+
 @media (max-width: 600px) {
     .loginJanela {
         width: 100%;
