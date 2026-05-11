@@ -2,6 +2,7 @@ import './styles/inicio.css'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/wumpus_verse_logo_white.svg'
+import LoadingGif from '../assets/loadingGif.gif'
 import { useEffect, useState } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
 
@@ -13,6 +14,8 @@ export default function Inicio() {
     const logado = !!usuario;
     const verificado = true;
     const [botaoHover, setBotaoHover] = useState(null);
+
+    const [carregandoVerificacao, setCarregandoVerificacao] = useState(false);
 
     const botoes = [
         { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mundos-salvos') : navigate('/login') },
@@ -96,7 +99,7 @@ export default function Inicio() {
 
         if (resposta === 'yes') {
             try {
-                console.log(usuario?.email);
+                setCarregandoVerificacao(true);
                 await reenviarLinkVerificacao(usuario?.email);
                 await confirm({
                     title: "E-mail enviado!",
@@ -112,6 +115,7 @@ export default function Inicio() {
                     botao1: "Entendi"
                 });
             }
+            setCarregandoVerificacao(false);
         }
     }
 
@@ -132,7 +136,7 @@ export default function Inicio() {
                     <p className='pAvisoTelaInicio'>Atenção: a experiência em dispositivos com tela pequena <span>não é completa!</span> Algumas funções só estão disponíveis em computadores.</p>
                     <div className='divBotoesInicio'>
                         {/* <button onClick={() => navigate('/mundos-salvos')} >Mundos</button> */}
-                        {botoes.slice(0, 2).map(b => (
+                        {/* {botoes.slice(0, 2).map(b => (
                             <button
                                 key={b.id}
                                 onClick={b.acao}
@@ -144,6 +148,22 @@ export default function Inicio() {
                                     b.texto : botaoHover === b.id ?
                                         'faça login' : b.texto}
                             </button>
+                        ))} */}
+                        {botoes.slice(0, 2).map(b => (
+                            <button
+                                key={b.id}
+                                onClick={b.acao}
+                                onMouseEnter={() => setBotaoHover(b.id)}
+                                onMouseLeave={() => setBotaoHover(null)}
+                                className={(!logado || (logado && !usuario?.is_verified)) ? 'botaoInicioSemLogin' : ''}
+                            >
+                                {logado ? (
+                                    !usuario?.is_verified && botaoHover === b.id ?
+                                        'verifique sua conta' : b.texto
+                                ) : (
+                                    botaoHover === b.id ? 'faça login' : b.texto
+                                )}
+                            </button>
                         ))}
                     </div>
                 </section>
@@ -151,12 +171,21 @@ export default function Inicio() {
                     {logado && (
                         <>
                             <div className='controlesConta'>
-                                <button onClick={sair} className='botaoLogado' title='Clique para deslogar da sua conta'>
+                                <button onClick={sair} className='botaoLogado'>
                                     <span style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</span> <br />
                                     clique para sair
                                     {!usuario?.is_verified && <><p className='animarTexto'><b>Não verificado</b></p></>}
                                 </button>
-                                {!usuario?.is_verified && <><button className='botaoExcluirConta botaoReenviarVerificacao' onClick={() => handleReenviarVerificacao()}>Reenviar verificação</button></>}
+                                {carregandoVerificacao && (
+                                    <span className='spanCarregandoSenha'>
+                                        <img src={LoadingGif} alt="" />
+                                    </span>
+                                )}
+                                {!usuario?.is_verified &&
+                                    <><button
+                                        className='botaoExcluirConta botaoReenviarVerificacao'
+                                        onClick={() => handleReenviarVerificacao()
+                                        }>Sua conta não está funcionando <br /> clique para verificar</button></>}
                                 <button className='botaoExcluirConta' onClick={() => deletarConta()}>
                                     Excluir minha conta
                                 </button>
@@ -170,17 +199,18 @@ export default function Inicio() {
                     )}
 
                     <button
-                        className={`botaoNovaPartida ${logado ? '' : 'botaoInicioSemLogin'}`}
+                        className={`botaoNovaPartida ${(!logado || (logado && !usuario?.is_verified)) ? 'botaoInicioSemLogin' : ''}`}
                         onClick={botoes[4].acao}
                         onMouseEnter={() => setBotaoHover(5)}
                         onMouseLeave={() => setBotaoHover(null)}
                         title={`${logado ? 'Escolha um agente e um mundo e inicie uma partida' : ''}`}
                     >
-                        {logado
-                            ? botoes[4].texto
-                            : botaoHover === 5
-                                ? 'faça login'
-                                : botoes[4].texto}
+                        {logado ? (
+                            !usuario?.is_verified && botaoHover === 5 ?
+                                'verifique sua conta' : botoes[4].texto
+                        ) : (
+                            botaoHover === 5 ? 'faça login' : botoes[4].texto
+                        )}
                     </button>
                 </footer>
                 <img src={logo} alt="" className='logoInicio' />
