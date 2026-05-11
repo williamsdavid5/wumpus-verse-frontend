@@ -72,7 +72,7 @@
 }
 
 .controlesConta {
-    height: 100%;
+    /* height: 100%; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -95,6 +95,20 @@
     visibility: visible;
     opacity: 1;
 }
+
+.botaoReenviarVerificacao {
+    height: 100%;
+    padding: 0px 10px;
+    border: none;
+    background-color: var(--roxoDestaque);
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* .botaoReenviarVerificacao:hover {
+    background-color: black;
+    color: white;
+} */
 
 .botaoNovaPartida {
     margin: 0;
@@ -181,6 +195,10 @@
         background-color: white;
         padding: 7px;
         /* border: solid 1px var(--bordaCor); */
+    }
+
+    .botaoExcluirConta {
+        display: none;
     }
 }
 

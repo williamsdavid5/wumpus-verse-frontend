@@ -50,18 +50,6 @@ export function AuthProvider({ children }) {
         setCarregando(false);
     }, []);
 
-    // useEffect(() => {
-    //     const tokenSalvo = localStorage.getItem("access_token");
-    //     const userSalvo = localStorage.getItem("user");
-
-    //     if (tokenSalvo && userSalvo) {
-    //         setToken(tokenSalvo);
-    //         setUsuario(JSON.parse(userSalvo));
-    //     }
-
-    //     setCarregando(false);
-    // }, []);
-
     async function login(email, password) {
         const response = await api.post("/auth/login", {
             email,
@@ -74,7 +62,7 @@ export function AuthProvider({ children }) {
         // localStorage.setItem("access_token", data.access_token);
         salvarTokenComTimestamp(data.access_token, timestampAtual);
         localStorage.setItem("user", JSON.stringify(data.user));
-        console.log(data);
+        // console.log(data);
         setToken(data.access_token);
         setUsuario(data.user);
 
@@ -413,6 +401,27 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function reenviarLinkVerificacao(email) {
+        try {
+            const response = await api.post("/auth/resend-verification-link", {
+                email: email
+            });
+
+            console.log('Link de verificação reenviado com sucesso:', response.data);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao reenviar link de verificação:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            throw error;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -432,7 +441,8 @@ export function AuthProvider({ children }) {
             excluirAgente,
             getAgenteById,
             atualizarAgente,
-            resetPassword
+            resetPassword,
+            reenviarLinkVerificacao
         }}>
             {children}
         </AuthContext.Provider>

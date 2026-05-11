@@ -6,11 +6,12 @@ import { useEffect, useState } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
 
 export default function Inicio() {
-    const { usuario, token, logout } = useAuth();
+    const { usuario, token, logout, reenviarLinkVerificacao } = useAuth();
     const { confirm } = useConfirm();
     const navigate = useNavigate();
     // const [logado, setLogado] = useState(false);
     const logado = !!usuario;
+    const verificado = true;
     const [botaoHover, setBotaoHover] = useState(null);
 
     const botoes = [
@@ -84,6 +85,36 @@ export default function Inicio() {
         }
     }
 
+    async function handleReenviarVerificacao() {
+        const resposta = await confirm({
+            title: "Reenviar verificação",
+            message: "Reenvie a verificação de conta caso o link tenha expirado. Reenviar?",
+            type: "confirm",
+            botao1: "Sim",
+            botao2: "Não"
+        });
+
+        if (resposta === 'yes') {
+            try {
+                console.log(usuario?.email);
+                await reenviarLinkVerificacao(usuario?.email);
+                await confirm({
+                    title: "E-mail enviado!",
+                    message: "Um novo link de verificação foi enviado para o seu e-mail.",
+                    type: "alert",
+                    botao1: "Ok"
+                });
+            } catch (error) {
+                await confirm({
+                    title: "Erro",
+                    message: "Não foi possível reenviar o link, você pode tentar de novo para garantir que não é um erro de API.",
+                    type: "alert",
+                    botao1: "Entendi"
+                });
+            }
+        }
+    }
+
     return (
         <>
             <main className='mainInicio'>
@@ -116,29 +147,16 @@ export default function Inicio() {
                         ))}
                     </div>
                 </section>
-                <footer>
-                    {/* {logado && (
-                        <>
-                            <button onClick={sair} className='botaoLogado' title='Clique para deslogar da sua conta'>
-                                <p style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</p>
-                                clique para sair
-                            </button>
-                            {import.meta.env.DEV &&
-                                <button onClick={() => deletarConta()}>
-                                    Excluir conta
-                                </button>
-                            }
-                        </>
-
-                    )} */}
-
+                <footer className={!usuario?.is_verified && 'footeNaoVerificado'}>
                     {logado && (
                         <>
                             <div className='controlesConta'>
                                 <button onClick={sair} className='botaoLogado' title='Clique para deslogar da sua conta'>
                                     <span style={{ fontWeight: 'bold', margin: '0' }}>{usuario?.name}</span> <br />
                                     clique para sair
+                                    {!usuario?.is_verified && <><p className='animarTexto'><b>Não verificado</b></p></>}
                                 </button>
+                                {!usuario?.is_verified && <><button className='botaoExcluirConta botaoReenviarVerificacao' onClick={() => handleReenviarVerificacao()}>Reenviar verificação</button></>}
                                 <button className='botaoExcluirConta' onClick={() => deletarConta()}>
                                     Excluir minha conta
                                 </button>
