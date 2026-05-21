@@ -694,8 +694,8 @@ export default function Mapa() {
 
     const gerarEntidadesAleatorias = async () => {
         await limparEntidades(true);
-        const porcentagemInput = document.querySelector('input[placeholder="% prenchimento"]');
-        const porcentagem = porcentagemInput.value ? Math.min(95, Math.max(0, parseInt(porcentagemInput.value))) : null;
+        const porcentagemInput = document.querySelector('input[placeholder="% preenchimento"]');
+        const porcentagem = porcentagemInput && porcentagemInput.value ? Math.min(95, Math.max(0, parseInt(porcentagemInput.value))) : null;
 
         setGrid(prev => {
             const novaGrid = prev.map(row => row.slice());
