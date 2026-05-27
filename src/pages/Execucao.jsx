@@ -7,12 +7,13 @@ import { useConfirm } from '../contexts/ConfirmContext';
 import './styles/execucao.css'
 import Minimapa from "./Minimapa";
 import LoadingPage from './LoadingPage';
+import LoadingGif from '../assets/loadingGif.gif'
 
 import LinoLogico from '../assets/linoLogico.png'
 import LinoEvolutivo from '../assets/linoEvolutivo.png'
 
 export default function Execucao() {
-    const { iniciarPartida } = useAuth();
+    const { iniciarPartida, salvarExecution } = useAuth();
 
     const [mundoSelecionado, setMundoSelecionado] = useState(-1);
     const [ativarDiagonal, setAtivarDiagonal] = useState(false);
@@ -30,6 +31,9 @@ export default function Execucao() {
     const [carregando, setCarregando] = useState(false);
     const { confirm } = useConfirm();
 
+    //para controlar o carregamento do salvamento
+    const [salvando, setSalvando] = useState(false);
+
     const podeIniciar =
         mundoSelecionado &&
         mundoSelecionado !== -1 &&
@@ -39,7 +43,6 @@ export default function Execucao() {
 
     const { executionConfig } = useExecution();
 
-    //json que mostra ao usuário a estrutura que ele precisa para importar o seu proprio agente
     const jsonExample = {
         mundoId: 0,
         agenteSelecionado: -1,
@@ -237,6 +240,71 @@ export default function Execucao() {
 
         input.click();
     }, [mundoSelecionado, ativarDiagonal]);
+
+
+    async function salvarResultados() {
+        if (!partida || partida.length === 0) {
+            await confirm({
+                title: "Ops!",
+                message: "Nenhuma partida para salvar!",
+                type: "alert",
+                botao1: "OK"
+            });
+            return;
+        }
+
+        const resultadoFinal = partida[partida.length - 1];
+
+        const passoInicial = partida[0];
+
+        const executionDataArray = [{
+            agente: agenteSelecionado,
+            posicao_x: resultadoFinal.posicao_x ?? passoInicial.posicao_x,
+            posicao_y: resultadoFinal.posicao_y ?? passoInicial.posicao_y,
+            acao: resultadoFinal.acao ?? "",
+            tiro_position: resultadoFinal.tiro_position ?? [-1, -1],
+            turos: resultadoFinal.ouros ?? 0,
+            flechas: resultadoFinal.flechas ?? 0,
+            pontos: resultadoFinal.pontos ?? 0,
+            kills: resultadoFinal.kills ?? 0
+        }];
+
+        console.log('Enviando dados:', JSON.stringify(executionDataArray, null, 2));
+
+        try {
+            setSalvando(true);
+
+            await salvarExecution(
+                agenteSelecionado,
+                mundoSelecionado,
+                executionDataArray
+            );
+
+            await confirm({
+                title: "Sucesso!",
+                message: "Resultados salvos na sua conta com sucesso!",
+                type: "alert",
+                botao1: "Tá bom"
+            });
+
+        } catch (error) {
+            console.error('Erro ao salvar resultados:', error);
+
+            let mensagemErro = "Erro ao salvar os resultados. Tente novamente.";
+            if (error.response?.data?.message) {
+                mensagemErro = error.response.data.message;
+            }
+
+            await confirm({
+                title: "Erro!",
+                message: mensagemErro,
+                type: "alert",
+                botao1: "OK"
+            });
+        } finally {
+            setSalvando(false);
+        }
+    }
 
     return (
         <>
@@ -511,11 +579,29 @@ export default function Execucao() {
                                     >
                                         Baixar JSON da partida
                                     </button>
-                                    {/* <button
-                                        title="Salve o resultado desta partida na sua conta, mas apenas dados básicos, você não poder executar novamente esta partida!"
-                                    >
-                                        Salvar resultados na minha conta
-                                    </button> */}
+                                    {salvando ?
+                                        <>
+                                            <button
+                                                title="Salve o resultado desta partida na sua conta, mas apenas dados básicos, você não poder executar novamente esta partida!"
+                                                disabled
+                                                className=""
+                                            >
+                                                <img src={LoadingGif} alt="" style={{ height: '100%' }} />
+                                            </button>
+                                        </>
+                                        :
+                                        <>
+                                            <button
+                                                title="Salve o resultado desta partida na sua conta, mas apenas dados básicos, você não poder executar novamente esta partida!"
+                                                onClick={salvarResultados}
+                                                disabled={salvando}
+                                                className="botaoSalvar"
+                                            >
+                                                {salvando ? "Salvando..." : "Salvar resultados na minha conta"}
+                                            </button>
+                                        </>
+                                    }
+
                                 </div>
                             </div>
                         </>

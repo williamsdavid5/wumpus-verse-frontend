@@ -422,6 +422,33 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function salvarExecution(agent_id, environment_id, agentData) {
+        try {
+            // Garante que é um array
+            const bodyArray = Array.isArray(agentData) ? agentData : [agentData];
+
+            const response = await api.post("/execution/user", bodyArray, {
+                params: {
+                    agent_id: agent_id,
+                    environment_id: environment_id
+                }
+            });
+
+            console.log('Execution salva com sucesso:', response.data);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao salvar execution:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            throw error;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -442,7 +469,8 @@ export function AuthProvider({ children }) {
             getAgenteById,
             atualizarAgente,
             resetPassword,
-            reenviarLinkVerificacao
+            reenviarLinkVerificacao,
+            salvarExecution
         }}>
             {children}
         </AuthContext.Provider>
