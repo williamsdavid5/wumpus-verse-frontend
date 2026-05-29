@@ -255,7 +255,7 @@ export default function Historico() {
                                     significa que todos eles vão ter um histórico!</p>
                             </div>
                             <h1 style={{ fontSize: '60px', margin: '0px 10px' }}>+</h1>
-                            <div className='topoAgentes'>
+                            <div className='topoAgentesHistorico'>
                                 <h3>Selecione um agente</h3>
                                 <p className='paragrafoInformativo'>Você pode ou não selecionar um agente. Se não selecionar,
                                     a lista exibirá o histórico de todos os agentes para aquele ambiente!</p>
