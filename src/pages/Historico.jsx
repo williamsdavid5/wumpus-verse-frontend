@@ -8,7 +8,7 @@ import { useEffect, useState, useRef, useTransition } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Historico() {
-    const { getMundosSalvos, getAgentes } = useAuth();
+    const { getMundosSalvos, getAgentes, getExecucoesUsuario } = useAuth();
 
     const [carregandoMundos, setCarregandoMundos] = useState(false);
     const [temMaisMundos, setTemMaisMundos] = useState(false)
@@ -24,6 +24,11 @@ export default function Historico() {
     const [paginaAgentesAtual, setPaginaAgentesAtual] = useState(1);
     const [temMaisAgentes, setTemMaisAgentes] = useState(true);
     const [carregandoMaisAgentes, setCarregandoMaisAgentes] = useState(false);
+
+    const [historico, setHistorico] = useState([]);
+    const [carregandoMaisHistorico, setCarregandoMaisHistorico] = useState(false);
+    const [paginaAtualHistorico, setPaginaAtualHistorico] = useState(1);
+    const [temMaisHistorico, setTemMaisHistorico] = useState(false);
 
     function formatarData(dateString) {
         const date = new Date(dateString);
@@ -140,10 +145,108 @@ export default function Historico() {
         }
     }
 
+    async function carregarHistorico(pagina = 1, limparLista = true) {
+        if (!mundoSelecionado) {
+            setHistorico([]);
+            setTemMaisHistorico(false);
+            return;
+        }
+
+        if (pagina === 1) {
+            setCarregandoHistorico(true);
+        } else {
+            setCarregandoMaisHistorico(true);
+        }
+
+        try {
+            const agentId = agenteSelecionado > -1 ? agenteSelecionado : 0;
+            const resposta = await getExecucoesUsuario(
+                pagina,
+                10,
+                agentId,
+                mundoSelecionado
+            );
+
+            console.log("Resposta completa:", resposta);
+
+            let historicoItens = [];
+            let temMais = false;
+
+            if (resposta && resposta.execucoes && Array.isArray(resposta.execucoes)) {
+                historicoItens = resposta.execucoes;
+                temMais = resposta.hasMore || false;
+            } else if (Array.isArray(resposta)) {
+                const ultimoItem = resposta[resposta.length - 1];
+                if (typeof ultimoItem === 'boolean') {
+                    temMais = ultimoItem;
+                    historicoItens = resposta.slice(0, -1);
+                } else {
+                    historicoItens = resposta;
+                    temMais = resposta.length === 10;
+                }
+            } else if (resposta && resposta.data && Array.isArray(resposta.data)) {
+                historicoItens = resposta.data;
+                temMais = resposta.hasMore || false;
+            } else {
+                historicoItens = [];
+                temMais = false;
+            }
+
+            console.log("Itens do histórico extraídos:", historicoItens);
+            console.log("Tem mais páginas:", temMais);
+
+            if (limparLista || pagina === 1) {
+                setHistorico(historicoItens);
+            } else {
+                setHistorico(prev => [...prev, ...historicoItens]);
+            }
+
+            setTemMaisHistorico(temMais);
+            setPaginaAtualHistorico(pagina);
+
+        } catch (error) {
+            console.error('Erro ao carregar histórico:', error);
+            setHistorico([]);
+            setTemMaisHistorico(false);
+        } finally {
+            if (pagina === 1) {
+                setCarregandoHistorico(false);
+            }
+            setCarregandoMaisHistorico(false);
+        }
+    }
+
+    function carregarMaisHistorico() {
+        if (!carregandoMaisHistorico && temMaisHistorico) {
+            carregarHistorico(paginaAtualHistorico + 1, false);
+        }
+    }
+
     useEffect(() => {
         carregarMundosSalvos(1, true);
         carregarAgentesDoDB(1, true);
     }, [])
+
+    useEffect(() => {
+        if (mundoSelecionado) {
+            setPaginaAtualHistorico(1);
+            carregarHistorico(1, true);
+        } else {
+            setHistorico([]);
+            setTemMaisHistorico(false);
+        }
+    }, [mundoSelecionado]);
+
+    useEffect(() => {
+        if (mundoSelecionado) {
+            setPaginaAtualHistorico(1);
+            carregarHistorico(1, true);
+        }
+    }, [agenteSelecionado]);
+
+    useEffect(() => {
+        console.log(historico);
+    }, [historico]);
 
     return (
         <>
@@ -173,7 +276,7 @@ export default function Historico() {
                                                     className={`itemMundoHistorico ${ativo ? 'ativo' : ''}`}
                                                     onClick={() => {
                                                         setMundoSelecionado(mundo.id);
-                                                        carregarMinimapa(mundo.id);
+                                                        setAgenteSelecionado(-1);
                                                     }}
                                                 >
 
@@ -239,12 +342,16 @@ export default function Historico() {
                                                     key={agente.id}
                                                     className={`itemAgente ${agente.id == agenteSelecionado ? 'agenteAtivo' : ''}`}
                                                     onClick={() => {
-                                                        setAgenteSelecionado(agente.id);
-                                                        setAgenteInformacoes(agente);
-                                                        console.log(agente);
+                                                        if (agenteSelecionado == agente.id) {
+                                                            setAgenteSelecionado(-1);
+                                                        } else {
+                                                            setAgenteSelecionado(agente.id);
+                                                        }
+
                                                     }}
                                                 >
                                                     <h3>{agente.nome}</h3>
+                                                    <p className='paragrafoInformativo destaqueGold'>ID: {agente.id}</p>
                                                     {agente.tipo == 2 ?
                                                         <>
                                                             <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
@@ -305,6 +412,13 @@ export default function Historico() {
                         <p className='paragrafoInformativo'>
                             Histórico de execução para o mundo selecionado
                         </p>
+                        <p style={{ color: mundoSelecionado ? 'inherit' : 'red' }}>
+                            {mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo
+                        </p>
+
+                        <p style={{ color: agenteSelecionado > -1 ? 'inherit' : 'red' }}>
+                            {agenteSelecionado > -1 ? '✔ ' : '✖ '} Selecionou um agente
+                        </p>
                     </div>
                     <div className='itensListaHistorico itensMundosHistorico'>
                         {
@@ -316,9 +430,37 @@ export default function Historico() {
                                 </>
                                 :
                                 <>
-                                    <div className='itemListaMundos'>
-                                        <h3>Mundo A</h3>
-                                    </div>
+                                    {historico.length > 0 ?
+                                        <>
+                                            {historico.map((dadoHistorico) => {
+                                                return (
+                                                    <div className='itemAgente' key={dadoHistorico.id}>
+                                                        <h2>ID: {dadoHistorico.id}</h2>
+                                                        <p><b>Pontuação na partida:</b> {dadoHistorico.pontos}</p>
+                                                        <p className='paragrafoInformativo'>
+                                                            <span className='destaqueGold'>
+                                                                <b>Mundo ID:</b> {dadoHistorico.ambiente_id}, <b>Agente ID:</b> {dadoHistorico.agente_id}<br />
+                                                            </span>
+                                                            <b>Data de criação:</b> {formatarData(dadoHistorico.data)} <br />
+                                                        </p>
+                                                        <p className='paragrafoInformativo pDadosHistorico'>
+                                                            <b>Dados da partida:</b> <br />
+                                                            - <b>Posição inicial:</b> [{dadoHistorico.posicao_x},{dadoHistorico.posicao_y}] <br />
+                                                            - <b>Munição inicial:</b> {dadoHistorico.qtd_flechas} <br />
+                                                            - <b>Ouro no ambiente:</b> {dadoHistorico.qtd_ouro} <br />
+                                                            - <b>Wumpus:</b> {dadoHistorico.qtd_wumpus}
+                                                        </p>
+                                                    </div>
+                                                )
+                                            })}
+                                        </>
+                                        :
+                                        <>
+                                            <div className='loadingPequeno'>
+                                                <p>Sem histórico</p>
+                                            </div>
+                                        </>
+                                    }
                                 </>
                         }
                     </div>

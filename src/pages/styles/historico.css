@@ -89,6 +89,13 @@
     box-sizing: border-box;
 }
 
+.pDadosHistorico {
+    border: solid 1px var(--bordaCor);
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
 @media (max-width: 1060px) {
     .topoListaMundosHistorico {
         height: auto;

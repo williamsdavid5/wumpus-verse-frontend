@@ -449,6 +449,66 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function getExecucoesUsuario(pagina = 1, limite = 5, agent_id = 0, environment_id = 0) {
+        console.log(environment_id);
+        try {
+            const response = await api.get("/execution/list-user", {
+                params: {
+                    page: pagina,
+                    limit: limite,
+                    agent_id: agent_id,
+                    enviroment_id: environment_id
+                }
+            });
+            let dados = response.data;
+
+            if (typeof dados === 'string') {
+                dados = JSON.parse(dados);
+            }
+
+            let execucoes = [];
+            let hasMore = false;
+
+            if (Array.isArray(dados)) {
+                const ultimoItem = dados[dados.length - 1];
+                if (ultimoItem === false || ultimoItem === true) {
+                    hasMore = ultimoItem;
+                    execucoes = dados.slice(0, -1);
+                } else {
+                    execucoes = dados;
+                    hasMore = dados.length === limite;
+                }
+            } else if (dados.data && Array.isArray(dados.data)) {
+                execucoes = dados.data;
+                hasMore = dados.hasMore || (dados.page && dados.page < dados.totalPages);
+            } else if (dados.execucoes && Array.isArray(dados.execucoes)) {
+                execucoes = dados.execucoes;
+                hasMore = dados.hasMore || false;
+            }
+
+            return {
+                execucoes: execucoes,
+                hasMore: hasMore,
+                total: dados.total || execucoes.length
+            };
+
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao buscar execuções:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return {
+                execucoes: [],
+                hasMore: false,
+                total: 0
+            };
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -470,7 +530,8 @@ export function AuthProvider({ children }) {
             atualizarAgente,
             resetPassword,
             reenviarLinkVerificacao,
-            salvarExecution
+            salvarExecution,
+            getExecucoesUsuario
         }}>
             {children}
         </AuthContext.Provider>
