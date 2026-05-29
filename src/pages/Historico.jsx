@@ -162,12 +162,10 @@ export default function Historico() {
             const agentId = agenteSelecionado > -1 ? agenteSelecionado : 0;
             const resposta = await getExecucoesUsuario(
                 pagina,
-                10,
+                5,
                 agentId,
                 mundoSelecionado
             );
-
-            console.log("Resposta completa:", resposta);
 
             let historicoItens = [];
             let temMais = false;
@@ -191,9 +189,6 @@ export default function Historico() {
                 historicoItens = [];
                 temMais = false;
             }
-
-            console.log("Itens do histórico extraídos:", historicoItens);
-            console.log("Tem mais páginas:", temMais);
 
             if (limparLista || pagina === 1) {
                 setHistorico(historicoItens);
@@ -459,6 +454,22 @@ export default function Historico() {
                                                     </div>
                                                 )
                                             })}
+
+                                            {temMaisHistorico && !carregadoHistorico && (
+                                                <div className='loadingPequeno'>
+                                                    {carregandoMaisHistorico ? (
+                                                        <img src={LoadingGig} alt="Carregando..." />
+                                                    ) : (
+                                                        <button
+                                                            style={{ padding: '10px', marginTop: '10px' }}
+                                                            onClick={carregarMaisHistorico}
+                                                            disabled={carregandoMaisHistorico}
+                                                        >
+                                                            Carregar mais agentes
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )}
                                         </>
                                         :
                                         <>

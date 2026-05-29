@@ -457,7 +457,7 @@ export function AuthProvider({ children }) {
                     page: pagina,
                     limit: limite,
                     agent_id: agent_id,
-                    enviroment_id: environment_id
+                    environment_id: environment_id
                 }
             });
             let dados = response.data;
