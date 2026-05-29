@@ -9,31 +9,45 @@
     height: 100dvh;
     box-sizing: border-box;
     display: flex;
+    flex-direction: column;
+    width: 55dvw;
 }
 
 .listaMundosHistorico {
     border-right: 1px solid var(--bordaCor);
     box-sizing: border-box;
-    width: 25dvw;
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
 
-.listaAgentesHistorico {
-    width: 25dvw;
-    border-right: 1px solid var(--bordaCor);
+.topoMundos {
+    text-align: right;
+    flex: 1;
+}
+
+.topoAgentes {
+    flex: 1;
+}
+
+.topoMundos p {
+    text-align: right !important;
+}
+
+.secaoListas {
+    flex: 1;
     box-sizing: border-box;
+    min-height: 0;
+    display: flex;
 }
 
 .topoListaMundosHistorico {
     padding: 10px;
     box-sizing: border-box;
     border-bottom: 1px solid var(--bordaCor);
-    height: 16%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 .topoListaMundosHistorico p {
@@ -43,6 +57,8 @@
 .itensMundosHistorico {
     flex: 1;
     overflow-y: auto;
+    border-right: solid 1px var(--bordaCor);
+    box-sizing: border-box;
 }
 
 .itemMundoHistorico {
@@ -78,6 +94,14 @@
     box-sizing: border-box;
     border-bottom: 1px solid var(--bordaCor);
     padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topoSecaoHistoricoMundo img {
+    height: 80px;
+    margin-right: 15px;
 }
 
 .topoSecaoHistoricoMundo p {
@@ -99,5 +123,51 @@
 @media (max-width: 1060px) {
     .topoListaMundosHistorico {
         height: auto;
+    }
+}
+
+@media (max-width: 1000px) {
+    .listasHistorico {
+        width: 65dvw;
+    }
+
+    .topoSecaoHistoricoMundo img {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .historicoMain {
+        flex-direction: column;
+        box-sizing: border-box;
+        justify-content: flex-start;
+        overflow-x: hidden;
+        /* ← Adicione */
+        width: 100%;
+        /* ← Adicione */
+        max-width: 100%;
+        /* ← Adicione */
+    }
+
+    .listasHistorico {
+        width: 100dvw;
+        height: 80dvh;
+        box-sizing: border-box;
+    }
+
+    .secaoHistoricoMundo {
+        width: 100dvw;
+        box-sizing: border-box;
+        border-top: solid 1px var(--bordaCor);
+        height: 80dvh;
+    }
+
+    .secaoListas {
+        width: 100dvw;
+    }
+
+    .topoSecaoHistoricoMundo img {
+        display: block;
+        height: 50px;
     }
 }

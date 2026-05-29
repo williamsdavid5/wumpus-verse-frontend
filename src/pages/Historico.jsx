@@ -254,10 +254,20 @@ export default function Historico() {
                 <aside className='listasHistorico'>
                     <section className='listaMundosHistorico'>
                         <div className='topoListaMundosHistorico'>
-                            <h3>Selecione um mundo</h3>
-                            <p className='paragrafoInformativo'>Abaixo tem todos os mundos que você criou, isso não
-                                significa que todos eles vão ter um histórico!</p>
+                            <div className='topoMundos'>
+                                <h3>Selecione um mundo</h3>
+                                <p className='paragrafoInformativo'>Abaixo tem todos os mundos que você criou, isso não
+                                    significa que todos eles vão ter um histórico!</p>
+                            </div>
+                            <h1 style={{ fontSize: '60px', margin: '0px 10px' }}>+</h1>
+                            <div className='topoAgentes'>
+                                <h3>Selecione um agente</h3>
+                                <p className='paragrafoInformativo'>Você pode ou não selecionar um agente. Se não selecionar,
+                                    a lista exibirá o histórico de todos os agentes para aquele ambiente!</p>
+                            </div>
                         </div>
+                    </section>
+                    <section className='secaoListas'>
                         <div className='itensMundosHistorico'>
                             {
                                 carregandoMundos ?
@@ -316,13 +326,6 @@ export default function Historico() {
                             }
 
 
-                        </div>
-                    </section>
-                    <section className='listaAgentesHistorico listaMundosHistorico'>
-                        <div className='topoListaMundosHistorico'>
-                            <h3>Selecione um agente</h3>
-                            <p className='paragrafoInformativo'>Você pode ou não selecionar um agente. Se não selecionar,
-                                a lista exibirá o histórico de todos os agentes para aquele ambiente!</p>
                         </div>
                         <div className='itensMundosHistorico'>
                             {
@@ -408,17 +411,20 @@ export default function Historico() {
                 </aside>
                 <section className='secaoHistoricoMundo'>
                     <div className='topoSecaoHistoricoMundo'>
-                        <h1>Histórico</h1>
-                        <p className='paragrafoInformativo'>
-                            Histórico de execução para o mundo selecionado
-                        </p>
-                        <p style={{ color: mundoSelecionado ? 'inherit' : 'red' }}>
-                            {mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo
-                        </p>
+                        <span>
+                            <h1>Histórico</h1>
+                            <p className='paragrafoInformativo'>
+                                Histórico de execução para o mundo selecionado
+                            </p>
+                            <p style={{ color: mundoSelecionado ? 'inherit' : 'red' }}>
+                                {mundoSelecionado ? '✔ ' : '✖ '} Selecionou um mundo
+                            </p>
 
-                        <p style={{ color: agenteSelecionado > -1 ? 'inherit' : 'red' }}>
-                            {agenteSelecionado > -1 ? '✔ ' : '✖ '} Selecionou um agente
-                        </p>
+                            <p style={{ color: agenteSelecionado > -1 ? 'inherit' : 'red' }}>
+                                {agenteSelecionado > -1 ? '✔ ' : '✖ '} Selecionou um agente
+                            </p>
+                        </span>
+                        <img src={Buraco} alt="" />
                     </div>
                     <div className='itensListaHistorico itensMundosHistorico'>
                         {
