@@ -509,6 +509,169 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function getEnvironmentsWithExecutions(pagina = 1, limite = 5) {
+        try {
+            const response = await api.get("/execution/list_environments", {
+                params: {
+                    page: pagina,
+                    limit: limite
+                }
+            });
+
+            let dados = response.data;
+
+            if (typeof dados === 'string') {
+                dados = JSON.parse(dados);
+            }
+
+            let environments = [];
+            let hasMore = false;
+            let total = 0;
+
+            if (Array.isArray(dados)) {
+                const ultimoItem = dados[dados.length - 1];
+                if (ultimoItem === false || ultimoItem === true) {
+                    hasMore = ultimoItem;
+                    environments = dados.slice(0, -1);
+                } else {
+                    environments = dados;
+                    hasMore = dados.length === limite;
+                }
+                total = environments.length;
+            } else if (dados.environments && Array.isArray(dados.environments)) {
+                environments = dados.environments;
+                hasMore = dados.hasMore || false;
+                total = dados.total || environments.length;
+            } else if (dados.data && Array.isArray(dados.data)) {
+                environments = dados.data;
+                hasMore = dados.hasMore || false;
+                total = dados.total || environments.length;
+            }
+
+            return {
+                environments: environments,
+                hasMore: hasMore,
+                total: total
+            };
+
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao buscar ambientes com execuções:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return {
+                environments: [],
+                hasMore: false,
+                total: 0
+            };
+        }
+    }
+
+    async function getAgentsWithExecutionsInEnvironment(environment_id, pagina = 1, limite = 5) {
+        if (!environment_id) {
+            console.warn('environment_id é obrigatório');
+            return {
+                agents: [],
+                hasMore: false,
+                total: 0
+            };
+        }
+
+        try {
+            const response = await api.get("/execution/list-_agents", {
+                params: {
+                    environment_id: environment_id,
+                    page: pagina,
+                    limit: limite
+                }
+            });
+
+            let dados = response.data;
+
+            if (typeof dados === 'string') {
+                dados = JSON.parse(dados);
+            }
+
+            let agents = [];
+            let hasMore = false;
+            let total = 0;
+
+            if (Array.isArray(dados)) {
+                const ultimoItem = dados[dados.length - 1];
+                if (ultimoItem === false || ultimoItem === true) {
+                    hasMore = ultimoItem;
+                    agents = dados.slice(0, -1);
+                } else {
+                    agents = dados;
+                    hasMore = dados.length === limite;
+                }
+                total = agents.length;
+            } else if (dados.agents && Array.isArray(dados.agents)) {
+                agents = dados.agents;
+                hasMore = dados.hasMore || false;
+                total = dados.total || agents.length;
+            } else if (dados.data && Array.isArray(dados.data)) {
+                agents = dados.data;
+                hasMore = dados.hasMore || false;
+                total = dados.total || agents.length;
+            }
+
+            return {
+                agents: agents,
+                hasMore: hasMore,
+                total: total
+            };
+
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao buscar agentes com execuções no ambiente:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return {
+                agents: [],
+                hasMore: false,
+                total: 0
+            };
+        }
+    }
+
+    async function excluirExecution(execution_id) {
+        if (!execution_id) {
+            console.warn('execution_id é obrigatório');
+            return false;
+        }
+
+        try {
+            const response = await api.delete("/execution/user", {
+                params: {
+                    execution_id: execution_id
+                }
+            });
+
+            console.log('Execução excluída com sucesso:', response.data);
+            return true;
+
+        } catch (error) {
+            if (error.response) {
+                console.error(
+                    'Erro ao excluir execução:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+            } else {
+                console.error(error);
+            }
+            return false;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -531,7 +694,10 @@ export function AuthProvider({ children }) {
             resetPassword,
             reenviarLinkVerificacao,
             salvarExecution,
-            getExecucoesUsuario
+            getExecucoesUsuario,
+            getEnvironmentsWithExecutions,
+            getAgentsWithExecutionsInEnvironment,
+            excluirExecution
         }}>
             {children}
         </AuthContext.Provider>

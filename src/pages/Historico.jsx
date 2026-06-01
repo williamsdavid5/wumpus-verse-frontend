@@ -3,12 +3,24 @@ import LinoLogico from '../assets/linoLogico.png'
 import LinoEvolutivo from '../assets/linoEvolutivo.png'
 import Buraco from '../assets/skins/buraco.png'
 import LoadingGig from '../assets/loadingGif.gif'
+import LoadingPage from './LoadingPage'
 
 import { useEffect, useState, useRef, useTransition } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useConfirm } from '../contexts/ConfirmContext';
 
 export default function Historico() {
-    const { getMundosSalvos, getAgentes, getExecucoesUsuario } = useAuth();
+    const { getMundosSalvos,
+        getAgentes,
+        getExecucoesUsuario,
+        getEnvironmentsWithExecutions,
+        getAgentsWithExecutionsInEnvironment,
+        excluirExecution
+    } = useAuth();
+
+    const { confirm } = useConfirm();
+
+    const [carregandoPagina, setCarregandoPagina] = useState(false);
 
     const [carregandoMundos, setCarregandoMundos] = useState(false);
     const [temMaisMundos, setTemMaisMundos] = useState(false)
@@ -43,107 +55,88 @@ export default function Historico() {
         return `${day}/${month}/${year} - ${hours}:${minutes}`;
     }
 
-    async function carregarMundosSalvos(pagina = 1, limparLista = true) {
-        if (pagina === 1) {
+    const carregarAmbientes = async (paginaAtual = 1, limparLista = true) => {
+        if (paginaAtual === 1) {
             setCarregandoMundos(true);
         } else {
             setCarregandoMaisMundos(true);
         }
+
         try {
-            const resposta = await getMundosSalvos(pagina, 6);
+            const resposta = await getEnvironmentsWithExecutions(paginaAtual, 5);
 
-            if (!resposta || !Array.isArray(resposta) || resposta.length === 0) {
-                if (pagina === 1) {
-                    setMundos([]);
-                }
-                setCarregandoMundos(false);
-                return;
+            if (limparLista || paginaAtual === 1) {
+                setMundos(resposta.environments);
+            } else {
+                setMundos(prev => [...prev, ...resposta.environments]);
             }
 
-            const temMais = !resposta[resposta.length - 1];
-            const itensMundos = resposta.slice(0, resposta.length - 1);
-
-            if (itensMundos.length > 0) {
-                if (limparLista || pagina === 1) {
-                    setMundos(itensMundos);
-                } else {
-                    setMundos(prev => [...prev, ...itensMundos]);
-                }
-            } else if (pagina === 1) {
-                setMundos([]);
-            }
-
-            setTemMaisMundos(temMais);
-
-            setPaginaAtualMundos(pagina);
+            setTemMaisMundos(resposta.hasMore);
+            setPaginaAtualMundos(paginaAtual);
 
         } catch (error) {
-            console.error('Erro ao carregar mundos:', error);
-            await confirm({})
-            setTemMaisMundos(false);
+            console.error('Erro ao carregar ambientes:', error);
         } finally {
-            if (pagina === 1) {
+            if (paginaAtual === 1) {
                 setCarregandoMundos(false);
             }
-
-            if (mundos.length > 0) {
-                setCarregandoMaisMundos(false);
-            }
+            setCarregandoMaisMundos(false);
         }
-    }
+    };
 
-    function carregarMaisMundos() {
-        if (!carregandoMaisMundos && temMaisMundos) {
-            carregarMundosSalvos(paginaAtualMundos + 1, false);
+    const carregarMaisMundos = () => {
+        if (!carregandoMaisMundos && !temMaisMundos) {
+            carregarAmbientes(paginaAtualMundos + 1, false);
         }
-    }
+    };
 
-    async function carregarAgentesDoDB(pagina = 1, limparLista = true) {
-        if (pagina === 1) {
+    const carregarAgentes = async (paginaAtual = 1, limparLista = true) => {
+        if (!mundoSelecionado) return;
+
+        if (paginaAtual === 1) {
             setCarregandoAgentes(true);
         } else {
             setCarregandoMaisAgentes(true);
         }
 
         try {
-            const data = await getAgentes(pagina, 5);
-            const agentesRecebidos = data.agentes || [];
-            const temMais = data.hasMore || (agentesRecebidos.length === 5); // Ajuste conforme sua API retorna
+            const resposta = await getAgentsWithExecutionsInEnvironment(
+                mundoSelecionado,
+                paginaAtual,
+                10
+            );
 
-            if (agentesRecebidos.length > 0) {
-                if (limparLista || pagina === 1) {
-                    setAgentesDoDB(agentesRecebidos);
-                } else {
-                    setAgentesDoDB(prev => [...prev, ...agentesRecebidos]);
-                }
-            } else if (pagina === 1) {
-                setAgentesDoDB([]);
+            if (limparLista || paginaAtual === 1) {
+                setAgentesDoDB(resposta.agents);
+            } else {
+                setAgentesDoDB(prev => [...prev, ...resposta.agents]);
             }
 
-            setTemMaisAgentes(temMais);
-            setPaginaAgentesAtual(pagina);
+            setTemMaisAgentes(resposta.hasMore);
+            setPaginaAgentesAtual(paginaAtual);
 
         } catch (error) {
             console.error('Erro ao carregar agentes:', error);
-            await confirm({
-                title: "Erro",
-                message: "Não foi possível carregar os agentes salvos",
-                type: "alert",
-                botao1: "OK"
-            });
         } finally {
-            if (pagina === 1) {
+            if (paginaAtual === 1) {
                 setCarregandoAgentes(false);
             }
             setCarregandoMaisAgentes(false);
         }
-    }
+    };
 
-    function carregarMaisAgentes() {
-        if (!carregandoMaisAgentes && temMaisAgentes) {
-            carregarAgentesDoDB(paginaAgentesAtual + 1, false);
+    const carregarMaisAgentes = () => {
+        if (!carregandoMaisAgentes && !temMaisAgentes) {
+            carregarAgentes(pagina + 1, false);
         }
-    }
+    };
+
+    useEffect(() => {
+        if (mundoSelecionado) {
+            setPaginaAgentesAtual(1);
+            carregarAgentes(1, true);
+        }
+    }, [mundoSelecionado]);
 
     async function carregarHistorico(pagina = 1, limparLista = true) {
         if (!mundoSelecionado) {
@@ -218,8 +211,8 @@ export default function Historico() {
     }
 
     useEffect(() => {
-        carregarMundosSalvos(1, true);
-        carregarAgentesDoDB(1, true);
+        carregarAmbientes(1, true);
+        carregarAgentes(1, true);
     }, [])
 
     useEffect(() => {
@@ -239,9 +232,47 @@ export default function Historico() {
         }
     }, [agenteSelecionado]);
 
-    // useEffect(() => {
-    //     console.log(historico);
-    // }, [historico]);
+
+    const handleExcluirExecution = async (executionId, event) => {
+
+        const confirmacao = await confirm({
+            title: "Tem certeza?",
+            message: `Tem certeza que deseja excluir a execução #${executionId}? Ela irá sumir para sempre...`,
+            type: "confirm",
+            botao1: "Sim, excluir",
+            botao2: "Melhor não"
+        });
+
+        if (confirmacao === 'yes') {
+            setCarregandoPagina(true);
+            const sucesso = await excluirExecution(executionId);
+
+            if (sucesso) {
+                setPaginaAtualHistorico(1);
+                // await carregarHistorico(1, true);
+                await confirm({
+                    title: "Sucesso!",
+                    message: "Execução excluída com sucesso!",
+                    type: "alert",
+                    botao1: "OK"
+                });
+            } else {
+                await confirm({
+                    title: "Erro!",
+                    message: "Não foi possível excluir a execução. Você pode tentar novamente ou culpar o dev backend.",
+                    type: "alert",
+                    botao1: "OK"
+                });
+            }
+
+            setMundoSelecionado(null);
+            setMundos([]);
+            setAgentesDoDB([]);
+            setHistorico([]);
+            await carregarAmbientes(1, true);
+            setCarregandoPagina(false);
+        }
+    };
 
     return (
         <>
@@ -305,7 +336,7 @@ export default function Historico() {
                                                 <div className='loadingPequeno'>
                                                     <img src={LoadingGig} alt="" />
                                                 </div>
-                                            ) : temMaisMundos ? (
+                                            ) : !temMaisMundos ? (
                                                 <div className='loadingPequeno'>
                                                     <button
                                                         onClick={carregarMaisMundos}
@@ -350,40 +381,65 @@ export default function Historico() {
                                                 >
                                                     <h3>{agente.nome}</h3>
                                                     <p className='paragrafoInformativo destaqueGold'>ID: {agente.id}</p>
-                                                    {agente.tipo == 2 ?
+                                                    {agente.id == 1 && (
                                                         <>
-                                                            <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
-                                                            <p className="paragrafoInformativo">
-                                                                {[
-                                                                    agente.properties.corajoso && "🛡 Corajoso",
-                                                                    agente.properties.explorador && "◈ Explorador",
-                                                                    agente.properties.garimpeiro && "✦ Garimpeiro",
-                                                                    agente.properties.cacador && "⚔ Caçador"
-                                                                ]
-                                                                    .filter(Boolean)
-                                                                    .map((texto, index, arr) => (
-                                                                        <span key={index}>
-                                                                            {texto}
-                                                                            {index < arr.length - 1 && <br />}
-                                                                        </span>
-                                                                    ))}
-                                                            </p>
-                                                        </> :
+                                                            <p className="paragrafoInformativo destaqueRoxo"><b>☛ Agente padrão ☚</b></p>
+                                                            <p className='paragrafoInformativo'>Simplesmente faz tudo o que quer, quando quer, sem se preocupar com as consequências, praticamente um adolescente, mas fortemente armado.</p>
+                                                        </>
+                                                    )}
+                                                    {agente.id == 2 && (
                                                         <>
-                                                            <p className="destaqueGold paragrafoInformativo">✎ Agente evolutivo personalizado</p>
-                                                            <p className="paragrafoInformativo">
-                                                                ⟳ Gerações: {agente.properties.geracoes} <br />
-                                                                ≡ População: {agente.properties.populacao} <br />
-                                                                ❤ Taxa de cruzamento: {agente.properties.taxa_de_cruzamento}% <br />
-                                                                ⚯ Taxa de mutação: {agente.properties.taxa_de_mutacao}% <br />
-                                                            </p>
+                                                            <p className="paragrafoInformativo destaqueRoxo"><b>☛ Agente padrão ☚</b></p>
+                                                            <p className='paragrafoInformativo'>Segue um conjunto de regras gravadas em sua programação. Seu objetivo é pegar o ouro gastando o mínimo possível de sua energia e munição (e eliminar todos os Wumpus do caminho).</p>
+                                                        </>
+                                                    )}
+                                                    {agente.id == 3 && (
+                                                        <>
+                                                            <p className="paragrafoInformativo destaqueRoxo"><b>☛ Agente padrão ☚</b></p>
+                                                            <p className='paragrafoInformativo'>Descendente de uma geração de caçadores, este agente recebeu as melhores características dos ancestrais de sua tribo. Ele nasceu com seus objetivos gravados em seu DNA.</p>
+                                                        </>
+                                                    )}
+                                                    {(agente.properties && agente.id != 2 && agente.id != 1 && agente.id != 3) ?
+                                                        <>
+                                                            {(agente.tipo == 2) ?
+                                                                <>
+                                                                    <p className="destaqueRed paragrafoInformativo">✎ Agente lógico personalizado</p>
+                                                                    <p className="paragrafoInformativo">
+                                                                        {[
+                                                                            agente.properties.corajoso && "🛡 Corajoso",
+                                                                            agente.properties.explorador && "◈ Explorador",
+                                                                            agente.properties.garimpeiro && "✦ Garimpeiro",
+                                                                            agente.properties.cacador && "⚔ Caçador"
+                                                                        ]
+                                                                            .filter(Boolean)
+                                                                            .map((texto, index, arr) => (
+                                                                                <span key={index}>
+                                                                                    {texto}
+                                                                                    {index < arr.length - 1 && <br />}
+                                                                                </span>
+                                                                            ))}
+                                                                    </p>
+                                                                </> :
+                                                                <>
+                                                                    <p className="destaqueGold paragrafoInformativo">✎ Agente evolutivo personalizado</p>
+                                                                    <p className="paragrafoInformativo">
+                                                                        ⟳ Gerações: {agente.properties.geracoes} <br />
+                                                                        ≡ População: {agente.properties.populacao} <br />
+                                                                        ❤ Taxa de cruzamento: {agente.properties.taxa_de_cruzamento}% <br />
+                                                                        ⚯ Taxa de mutação: {agente.properties.taxa_de_mutacao}% <br />
+                                                                    </p>
+                                                                </>
+                                                            }
+                                                        </>
+                                                        :
+                                                        <>
                                                         </>
                                                     }
                                                 </div>
                                             )
                                         })}
 
-                                        {temMaisAgentes && !carregandoAgentes && (
+                                        {!temMaisAgentes && !carregandoAgentes && (
                                             <div className='loadingPequeno'>
                                                 {carregandoMaisAgentes ? (
                                                     <img src={LoadingGig} alt="Carregando..." />
@@ -436,14 +492,23 @@ export default function Historico() {
                                             {historico.map((dadoHistorico) => {
                                                 return (
                                                     <div className='itemAgente' key={dadoHistorico.id}>
-                                                        <h2>ID: {dadoHistorico.id}</h2>
-                                                        <p><b>Pontuação na partida:</b> {dadoHistorico.pontos}</p>
-                                                        <p className='paragrafoInformativo'>
-                                                            <span className='destaqueGold'>
-                                                                <b>Mundo ID:</b> {dadoHistorico.ambiente_id}, <b>Agente ID:</b> {dadoHistorico.agente_id}<br />
+                                                        <span className='topoItemHistorico'>
+                                                            <span>
+                                                                <h2>ID: {dadoHistorico.id}</h2>
+                                                                <p><b>Pontuação na partida:</b> {dadoHistorico.pontos}</p>
+                                                                <p className='paragrafoInformativo'>
+                                                                    <span className='destaqueGold'>
+                                                                        <b>Mundo ID:</b> {dadoHistorico.ambiente_id}, <b>Agente ID:</b> {dadoHistorico.agente_id}<br />
+                                                                    </span>
+                                                                    <b>Data de criação:</b> {formatarData(dadoHistorico.data)} <br />
+                                                                </p>
                                                             </span>
-                                                            <b>Data de criação:</b> {formatarData(dadoHistorico.data)} <br />
-                                                        </p>
+                                                            <span>
+                                                                <button
+                                                                    onClick={() => handleExcluirExecution(dadoHistorico.id)}
+                                                                >Apagar histórico</button>
+                                                            </span>
+                                                        </span>
                                                         <p className='paragrafoInformativo pDadosHistorico'>
                                                             <b>Dados da partida:</b> <br />
                                                             - <b>Posição inicial:</b> [{dadoHistorico.posicao_x},{dadoHistorico.posicao_y}] <br />
@@ -483,6 +548,9 @@ export default function Historico() {
                     </div>
                 </section>
             </main>
+            {carregandoPagina && (
+                <LoadingPage></LoadingPage>
+            )}
         </>
     )
 }

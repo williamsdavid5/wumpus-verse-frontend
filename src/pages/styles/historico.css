@@ -120,6 +120,22 @@
     box-sizing: border-box;
 }
 
+.topoItemHistorico {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topoItemHistorico button {
+    background-color: red;
+    height: 40px;
+}
+
+.topoItemHistorico button:hover {
+    background-color: white;
+    color: black;
+}
+
 @media (max-width: 1060px) {
     .topoListaMundosHistorico {
         height: auto;
@@ -133,6 +149,12 @@
 
     .topoSecaoHistoricoMundo img {
         display: none;
+    }
+
+    .topoItemHistorico {
+        flex-direction: column;
+        /* justify-content: flex-start; */
+        align-items: flex-start;
     }
 }
 
