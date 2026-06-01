@@ -289,7 +289,7 @@ export function AuthProvider({ children }) {
             }
 
             const hasMore = !parsedData[parsedData.length - 1];
-            console.log("Booleana: ", hasMore);
+            // console.log("Booleana: ", hasMore);
             const agentes = parsedData.slice(0, -1);
 
             return {

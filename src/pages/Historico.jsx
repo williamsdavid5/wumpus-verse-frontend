@@ -212,7 +212,7 @@ export default function Historico() {
     }
 
     function carregarMaisHistorico() {
-        if (!carregandoMaisHistorico && temMaisHistorico) {
+        if (!carregandoMaisHistorico && !temMaisHistorico) {
             carregarHistorico(paginaAtualHistorico + 1, false);
         }
     }
@@ -239,9 +239,9 @@ export default function Historico() {
         }
     }, [agenteSelecionado]);
 
-    useEffect(() => {
-        console.log(historico);
-    }, [historico]);
+    // useEffect(() => {
+    //     console.log(historico);
+    // }, [historico]);
 
     return (
         <>
@@ -455,7 +455,7 @@ export default function Historico() {
                                                 )
                                             })}
 
-                                            {temMaisHistorico && !carregadoHistorico && (
+                                            {!temMaisHistorico && !carregadoHistorico && (
                                                 <div className='loadingPequeno'>
                                                     {carregandoMaisHistorico ? (
                                                         <img src={LoadingGig} alt="Carregando..." />
@@ -465,7 +465,7 @@ export default function Historico() {
                                                             onClick={carregarMaisHistorico}
                                                             disabled={carregandoMaisHistorico}
                                                         >
-                                                            Carregar mais agentes
+                                                            Carregar mais
                                                         </button>
                                                     )}
                                                 </div>
