@@ -672,6 +672,64 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function updateUserName(new_user_name) {
+        if (!new_user_name || new_user_name.trim() === '') {
+            console.warn('new_user_name é obrigatório');
+            return {
+                success: false,
+                message: 'O nome de usuário não pode estar vazio'
+            };
+        }
+
+        try {
+            const response = await api.put("/auth/user", null, {
+                params: {
+                    new_user_name: new_user_name.trim()
+                }
+            });
+
+            // console.log('Nome de usuário atualizado com sucesso:', response.data);
+
+            const userSalvo = localStorage.getItem("user");
+            if (userSalvo) {
+                const user = JSON.parse(userSalvo);
+                user.name = new_user_name.trim();
+                localStorage.setItem("user", JSON.stringify(user));
+                setUsuario(user);
+            }
+
+            return {
+                success: true,
+                data: response.data,
+                message: 'Nome atualizado com sucesso!'
+            };
+
+        } catch (error) {
+            let errorMessage = 'Erro ao atualizar nome de usuário';
+
+            if (error.response) {
+                console.error(
+                    'Erro ao atualizar nome:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+
+                if (error.response.data?.detail) {
+                    errorMessage = error.response.data.detail;
+                } else if (error.response.data?.message) {
+                    errorMessage = error.response.data.message;
+                }
+            } else {
+                console.error(error);
+                errorMessage = error.message || errorMessage;
+            }
+
+            return {
+                success: false,
+                message: errorMessage
+            };
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -697,7 +755,8 @@ export function AuthProvider({ children }) {
             getExecucoesUsuario,
             getEnvironmentsWithExecutions,
             getAgentsWithExecutionsInEnvironment,
-            excluirExecution
+            excluirExecution,
+            updateUserName
         }}>
             {children}
         </AuthContext.Provider>

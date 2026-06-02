@@ -6,6 +6,106 @@ import LoadingGif from '../assets/loadingGif.gif'
 import { useEffect, useState } from 'react';
 import { useConfirm } from '../contexts/ConfirmContext';
 
+function JanelaUsername({ setJanelaAlterarNome }) {
+    const { usuario, updateUserName } = useAuth();
+    const { confirm } = useConfirm();
+    const [novoNome, setNovoNome] = useState('');
+    const [carregandoUpaneNome, setCarregandoUpadateNome] = useState(false);
+
+    const handleUpdateName = async () => {
+        if (!novoNome || novoNome.trim() === '') {
+            await confirm({
+                title: "Calma lá amigo",
+                message: "Quer colocar um nome vazio? Isso não é possível",
+                type: "alert",
+                botao1: "Tá bom"
+            });
+            return;
+        }
+
+        if (novoNome.trim() === usuario?.name) {
+            await confirm({
+                title: "Espera aí",
+                message: "Quer colocar o mesmo nome? Sério?",
+                type: "alert",
+                botao1: "Ops"
+            });
+            setCarregandoUpadateNome(false);
+            return;
+        }
+
+        const resposta = await confirm({
+            title: "Confirmar alteração",
+            message: `Deseja alterar seu nome de "${usuario?.name}" para "${novoNome}"?`,
+            type: "confirm",
+            botao1: "Sim, alterar",
+            botao2: "Cancelar"
+        });
+
+        if (resposta === 'yes') {
+            setCarregandoUpadateNome(true);
+            try {
+                const result = await updateUserName(novoNome);
+
+                if (result.success) {
+                    await confirm({
+                        title: "Sucesso!",
+                        message: 'Seu nome foi alterado!',
+                        type: "alert",
+                        botao1: "Ainda bem"
+                    });
+
+                    setCarregandoUpadateNome(false);
+                    setJanelaAlterarNome(false);
+
+                } else {
+                    await confirm({
+                        title: "Erro",
+                        message: 'Certeza que a culpa é do programador backend',
+                        type: "alert",
+                        botao1: "Maldito!"
+                    });
+                    setNovoNome(usuario?.name || '');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                await confirm({
+                    title: "Erro",
+                    message: "Ocorreu um erro inesperado. Você pode tentar novamente, ou culpar o programador backend.",
+                    type: "alert",
+                    botao1: "Certo"
+                });
+            }
+        } else {
+            setNovoNome(usuario?.name || '');
+            setCarregandoUpadateNome(false);
+        }
+    };
+
+    return (
+        <>
+            <div className='janelaUserName'>
+                {carregandoUpaneNome ?
+                    <>
+                        <span className='loadingPequeno'>
+                            <img src={LoadingGif} alt="" />
+                        </span>
+                    </>
+                    :
+                    <>
+                        <p>Alterar nome de usuário</p>
+                        <input type="text" placeholder={usuario?.name} onChange={(e) => setNovoNome(e.target.value)} />
+                        <span className='spanMesmaLinha'>
+                            <button onClick={() => handleUpdateName()}>Confirmar</button>
+                            <button onClick={() => setJanelaAlterarNome(false)}>Cancelar</button>
+                        </span>
+                    </>
+                }
+            </div>
+        </>
+    )
+}
+
 export default function Inicio() {
     const { usuario, token, logout, reenviarLinkVerificacao } = useAuth();
     const { confirm } = useConfirm();
@@ -14,6 +114,7 @@ export default function Inicio() {
     const logado = !!usuario;
     const verificado = true;
     const [botaoHover, setBotaoHover] = useState(null);
+    const [janelaAlterarNome, setJanelaAlterarNome] = useState(false);
 
     const [carregandoVerificacao, setCarregandoVerificacao] = useState(false);
 
@@ -172,6 +273,10 @@ export default function Inicio() {
                                         className='botaoExcluirConta botaoReenviarVerificacao'
                                         onClick={() => handleReenviarVerificacao()
                                         }>Sua conta não está funcionando <br /> clique para verificar</button></>}
+                                <button className='botaoExcluirConta botaoEditarUserName' onClick={() => setJanelaAlterarNome(!janelaAlterarNome)}>
+                                    Alterar nome de usuário
+                                </button>
+
                                 <button className='botaoExcluirConta' onClick={() => deletarConta()}>
                                     Excluir minha conta
                                 </button>
@@ -201,6 +306,11 @@ export default function Inicio() {
                 </footer>
                 <img src={logo} alt="" className='logoInicio' />
             </main>
+            {janelaAlterarNome && (
+                <JanelaUsername
+                    setJanelaAlterarNome={setJanelaAlterarNome}
+                ></JanelaUsername>
+            )}
         </>
     )
 }

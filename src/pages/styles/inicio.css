@@ -90,6 +90,19 @@
     transition: opacity ease-in-out 0.3s;
 }
 
+.botaoEditarUserName {
+    background-color: black;
+    border-left: solid 1px var(--bordaCor);
+    /* color: black; */
+}
+
+/* 
+.botaoEditarUserName:hover {
+    background-color: black;
+    border-right: solid 1px var(--bordaCor);
+    color: white;
+} */
+
 .controlesConta:hover .botaoExcluirConta {
     /* display: block; */
     visibility: visible;
@@ -140,6 +153,36 @@
 
 .pAvisoTelaInicio span {
     font-weight: bold;
+}
+
+.janelaUserName {
+    position: absolute;
+    bottom: 70px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+    z-index: 10000;
+    background-color: black;
+    border: solid 1px var(--bordaCor);
+    color: white;
+    width: 250px;
+    height: 130px;
+    box-sizing: border-box;
+}
+
+.janelaUserName input {
+    border: solid 1px var(--bordaCor);
+    padding: 5px;
+}
+
+.janelaUserName .spanMesmaLinha {
+    gap: 0px;
+}
+
+.janelaUserName .spanMesmaLinha button {
+    width: 50%;
 }
 
 @media (max-width: 900px) {
