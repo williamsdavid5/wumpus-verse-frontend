@@ -253,27 +253,26 @@ export default function Execucao() {
             return;
         }
 
-        const resultadoFinal = partida[partida.length - 1];
+        const executionDataArray = partida.map((passo, index) => {
 
-        const passoInicial = partida[0];
+            return {
+                agente: agenteSelecionado,
+                posicao_x: passo.posicao_x ?? 0,
+                posicao_y: passo.posicao_y ?? 0,
+                acao: passo.acao ?? "",
+                tiro_position: passo.tiro_position ?? [-1, -1],
+                turos: passo.ouros ?? 0,
+                flechas: passo.flechas ?? 0,
+                pontos: passo.pontos ?? 0,
+                kills: passo.kills ?? 0
+            };
+        });
 
-        const executionDataArray = [{
-            agente: agenteSelecionado,
-            posicao_x: resultadoFinal.posicao_x ?? passoInicial.posicao_x,
-            posicao_y: resultadoFinal.posicao_y ?? passoInicial.posicao_y,
-            acao: resultadoFinal.acao ?? "",
-            tiro_position: resultadoFinal.tiro_position ?? [-1, -1],
-            turos: resultadoFinal.ouros ?? 0,
-            flechas: resultadoFinal.flechas ?? 0,
-            pontos: resultadoFinal.pontos ?? 0,
-            kills: resultadoFinal.kills ?? 0
-        }];
-
-        console.log('Enviando dados:', JSON.stringify(executionDataArray, null, 2));
+        // console.log('Salvando TODOS os passos da execução:', executionDataArray.length);
+        // console.log('Dados enviados:', JSON.stringify(executionDataArray, null, 2));
 
         try {
             setSalvando(true);
-
             await salvarExecution(
                 agenteSelecionado,
                 mundoSelecionado,
@@ -282,7 +281,7 @@ export default function Execucao() {
 
             await confirm({
                 title: "Sucesso!",
-                message: "Resultados salvos na sua conta com sucesso!",
+                message: `${executionDataArray.length} passos da execução foram salvos na sua conta com sucesso!`,
                 type: "alert",
                 botao1: "Tá bom"
             });

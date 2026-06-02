@@ -97,7 +97,7 @@ export default function () {
                 botao1: "ops kkk",
                 botao2: 'Eu tenho um arquivo JSON'
             })
-            console.log(resposta);
+            // console.log(resposta);
             if (resposta == 'no') {
                 setExecutionConfig(null);
                 navigate('/execucao');
@@ -513,7 +513,7 @@ export default function () {
                                         className={`itemAgente ${ativo ? 'agenteAtivo' : ''}`}
                                         onClick={() => {
                                             setAgenteSelecionado(agente.id);
-                                            console.log(agente);
+                                            // console.log(agente);
                                             setAgenteInformacoes(agente);
                                         }}
                                     >
@@ -548,7 +548,7 @@ export default function () {
                                                 onClick={() => {
                                                     setAgenteSelecionado(agente.id);
                                                     setAgenteInformacoes(agente);
-                                                    console.log(agente);
+                                                    // console.log(agente);
                                                 }}
                                             >
                                                 <h3>{agente.nome}</h3>

@@ -491,7 +491,7 @@ export default function Historico() {
                                         <>
                                             {historico.map((dadoHistorico) => {
                                                 return (
-                                                    <div className='itemAgente' key={dadoHistorico.id}>
+                                                    <div className='itemAgente' key={dadoHistorico.id} onClick={() => console.log(dadoHistorico)}>
                                                         <span className='topoItemHistorico'>
                                                             <span>
                                                                 <h2>ID: {dadoHistorico.id}</h2>
