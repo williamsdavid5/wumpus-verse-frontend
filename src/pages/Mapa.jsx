@@ -757,6 +757,16 @@ export default function Mapa() {
             return;
         }
 
+        if (estatisticas.quantidadeEntidades.ouros <= 0) {
+            await confirm({
+                title: "Desculpe",
+                message: "É obrigatório que o seu mundo tenha pelo menos 1 ouro para ser salvo",
+                type: "alert",
+                botao1: "Começou a ditadura",
+            });
+            return;
+        }
+
         setCarregado(true);
 
         const salasAtivas = grid.flat().filter(celula => celula.ativa).length;

@@ -730,6 +730,68 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function getStaticsAgentsExecutionsInEnvironment(environment_id, agents_ids, length = 30) {
+        if (!environment_id) {
+            console.warn('environment_id é obrigatório');
+            return {
+                success: false,
+                data: null,
+                message: 'environment_id é obrigatório'
+            };
+        }
+
+        if (!agents_ids || !Array.isArray(agents_ids) || agents_ids.length === 0) {
+            console.warn('agents_ids é obrigatório e deve ser um array não vazio');
+            return {
+                success: false,
+                data: null,
+                message: 'agents_ids é obrigatório e deve ser um array não vazio'
+            };
+        }
+
+        try {
+            const response = await api.post("/execution/statics", {
+                environment_id: environment_id,
+                agents_ids: agents_ids
+            }, {
+                params: {
+                    length: length
+                }
+            });
+
+            console.log('Estatísticas obtidas com sucesso:', response.data);
+            return {
+                success: true,
+                data: response.data,
+                message: 'Estatísticas obtidas com sucesso'
+            };
+        } catch (error) {
+            let errorMessage = 'Erro ao obter estatísticas das execuções';
+
+            if (error.response) {
+                console.error(
+                    'Erro ao obter estatísticas:',
+                    JSON.stringify(error.response.data, null, 2)
+                );
+
+                if (error.response.data?.detail) {
+                    errorMessage = error.response.data.detail;
+                } else if (error.response.data?.message) {
+                    errorMessage = error.response.data.message;
+                }
+            } else {
+                console.error(error);
+                errorMessage = error.message || errorMessage;
+            }
+
+            return {
+                success: false,
+                data: null,
+                message: errorMessage
+            };
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -756,7 +818,8 @@ export function AuthProvider({ children }) {
             getEnvironmentsWithExecutions,
             getAgentsWithExecutionsInEnvironment,
             excluirExecution,
-            updateUserName
+            updateUserName,
+            getStaticsAgentsExecutionsInEnvironment
         }}>
             {children}
         </AuthContext.Provider>

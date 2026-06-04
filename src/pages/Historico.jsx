@@ -15,7 +15,8 @@ export default function Historico() {
         getExecucoesUsuario,
         getEnvironmentsWithExecutions,
         getAgentsWithExecutionsInEnvironment,
-        excluirExecution
+        excluirExecution,
+        getStaticsAgentsExecutionsInEnvironment
     } = useAuth();
 
     const { confirm } = useConfirm();
@@ -274,6 +275,20 @@ export default function Historico() {
         }
     };
 
+    async function buscarEstatisticas(mundoId, agenteId) {
+        const result = await getStaticsAgentsExecutionsInEnvironment(
+            mundoId,
+            [agenteId],
+            30
+        );
+
+        if (result.success) {
+            console.log('Estatísticas:', result.data);
+        } else {
+            console.error('Erro:', result.message);
+        }
+    }
+
     return (
         <>
             <main className="historicoMain mundosMain">
@@ -491,7 +506,13 @@ export default function Historico() {
                                         <>
                                             {historico.map((dadoHistorico) => {
                                                 return (
-                                                    <div className='itemAgente' key={dadoHistorico.id} onClick={() => console.log(dadoHistorico)}>
+                                                    <div
+                                                        className='itemAgente'
+                                                        key={dadoHistorico.id}
+                                                        onClick={() => {
+                                                            buscarEstatisticas(mundoSelecionado, agenteSelecionado);
+                                                        }}
+                                                    >
                                                         <span className='topoItemHistorico'>
                                                             <span>
                                                                 <h2>ID: {dadoHistorico.id}</h2>
