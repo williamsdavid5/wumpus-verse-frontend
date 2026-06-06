@@ -95,7 +95,8 @@ export default function Minimapa({
     onSalaSelecionada,
     modoEdicao = false,
     passosExecucao = [],
-    tipoAgente
+    tipoAgente,
+    inverterPassos = true
 }) {
     const { getMiniMapa } = useAuth();
     const [carregando, setCarregando] = useState(false);
@@ -148,7 +149,7 @@ export default function Minimapa({
         wumpusMortosQTD: 0
     });
 
-    const [inverterCoordenadas, setInverterCoordenadas] = useState(true);
+    const [inverterCoordenadas, setInverterCoordenadas] = useState(inverterPassos);
 
     const coordenada = (x, y) => {
         if (!inverterCoordenadas) return { x, y };
@@ -664,7 +665,6 @@ export default function Minimapa({
         if (passosExecucao.length > 0) {
             resetarExecucao();
         } else {
-            // Resetar para estado vazio
             setAgentePosicao(null);
             setDadosAgente({
                 ouros: 0,
@@ -723,47 +723,10 @@ export default function Minimapa({
             }
         });
 
-        // salasAtivas.forEach(sala => {
-        //     let x = sala.x;
-        //     let y = sala.y;
-
-        //     if (inverterCoordenadas) {
-        //         [x, y] = [sala.y, sala.x];
-        //     }
-
-        //     if (y < altura && x < largura) {
-        //         grid[y][x] = {
-        //             ativa: true,
-        //             wumpus: sala.wumpus,
-        //             buraco: sala.buraco,
-        //             ouro: sala.ouro
-        //         };
-        //     }
-        // });
-
         setMiniGrid(grid);
         setDimensoes({ largura, altura });
         setCarregando(false);
     }
-
-    // function handleSalaClick(x, y, sala) {
-    //     if (!modoEdicao || !onSalaSelecionada) return;
-
-    //     let coordX = x;
-    //     let coordY = y;
-
-    //     if (inverterCoordenadas) {
-    //         [coordX, coordY] = [y, x];
-    //     }
-
-    //     if (sala.wumpus || sala.buraco || sala.ouro || !sala.ativa) {
-    //         setSalaInvalida(true);
-    //         onSalaSelecionada([], true);
-    //     } else {
-    //         setSalaInvalida(false);
-    //         onSalaSelecionada([coordX, coordY], false, true);
-    //     }
-    // }
 
     function handleSalaClick(x, y, sala) {
         if (!modoEdicao || !onSalaSelecionada) return;

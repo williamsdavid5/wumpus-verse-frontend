@@ -1,10 +1,12 @@
 .blocoExecucao {
     width: 100%;
     height: 100%;
-    border-bottom: 1px solid var(--bordaCorExecucao);
-    border-right: 1px solid var(--bordaCorExecucao);
+
+    /* border-bottom: 1px solid var(--bordaCorExecucao);
+    border-right: 1px solid var(--bordaCorExecucao); */
+
     box-sizing: border-box;
-    background-color: black;
+    /* background-color: black; */
     transition: background-color 0.08s linear;
     cursor: crosshair;
 
@@ -232,6 +234,8 @@
 .mapaContainerExecucao {
     flex: 1;
     position: relative;
+    background-color: none;
+    /* backdrop-filter: blur(10px); */
     /* overflow: hidden; */
     /* background-color: #f0f0f0; */
     /* border-radius: 8px; */
@@ -244,12 +248,13 @@
     left: 0;
     transform: translate(var(--pan-x, 0px), var(--pan-y, 0px));
     display: grid;
-    background-color: black;
+    /* background-color: black; */
     box-sizing: border-box;
     max-width: 100%;
     max-height: 100%;
     /* overflow: hidden; */
-    border: 1px solid var(--bordaCor);
+
+    /* border: 1px solid var(--bordaCor); */
 }
 
 .carregandoMinimapaExecucao {

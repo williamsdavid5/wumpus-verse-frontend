@@ -126,14 +126,93 @@
     align-items: center;
 }
 
-.topoItemHistorico button {
+.botaoExcluirExecucao {
     background-color: red;
+    color: white;
     height: 40px;
 }
 
-.topoItemHistorico button:hover {
+.botaoExcluirExecucao:hover {
     background-color: white;
     color: black;
+}
+
+.botoesControleHistorico {
+    display: flex;
+    flex-direction: column;
+}
+
+.botaoReconstruir {
+    background-color: white;
+    color: black;
+    height: 40px;
+}
+
+.botaoReconstruir:hover {
+    background-color: var(--roxoDestaque);
+    color: white;
+}
+
+.mapaReconstrucaoExecucaoContainer {
+    position: fixed;
+    z-index: 10000;
+    /* background-color: black; */
+    backdrop-filter: blur(10px);
+    width: 100dvw;
+    height: 100dvh;
+    box-sizing: border-box;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.janelaMapaReconstrucao {
+    width: 100dvw;
+    height: 100dvh;
+    /* background-color: black; */
+    border: solid 1px var(--bordaCor);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.topoJanelaReconstrucao {
+    /* height: 15%; */
+    box-sizing: border-box;
+    border: solid 1px var(--bordaCor);
+    padding: 10px;
+    display: flex;
+    min-height: 0;
+    min-width: 0;
+    /* align-items: flex-end; */
+    justify-content: right;
+    position: absolute;
+    width: 400px;
+    top: 0;
+    right: 0;
+    z-index: 100000;
+    background-color: black;
+}
+
+.informacoesBasicasReconstrucao {
+    flex: 1;
+}
+
+.mainJanelaReconstrucao {
+    height: 85%;
+    width: 100%;
+    min-height: 0;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.botaoFecharjanelaMiniMapaReconstrucao {
+    background-color: red;
+    width: 100px;
 }
 
 @media (max-width: 1060px) {

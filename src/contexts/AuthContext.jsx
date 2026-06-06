@@ -571,7 +571,7 @@ export function AuthProvider({ children }) {
         }
     }
 
-    async function getAgentsWithExecutionsInEnvironment(environment_id, pagina = 1, limite = 5) {
+    async function getAgentsWithExecutionsInEnvironment(environment_id, pagina = 1, limite = 10) {
         if (!environment_id) {
             console.warn('environment_id é obrigatório');
             return {
@@ -792,6 +792,33 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function reexecutarPartida(execution_id) {
+        if (!execution_id) {
+            console.warn('execution_id é obrigatório');
+            throw new Error('execution_id é obrigatório');
+        }
+
+        try {
+            const response = await api.post("/environment/re-execution", null, {
+                params: {
+                    execution_id: execution_id
+                }
+            });
+
+            return response.data;
+
+        } catch (error) {
+            console.error(
+                'Erro ao reexecutar partida:',
+                error.response ? {
+                    status: error.response.status,
+                    data: error.response.data
+                } : error.message
+            );
+            throw error;
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             usuario, token, carregando,
@@ -819,7 +846,8 @@ export function AuthProvider({ children }) {
             getAgentsWithExecutionsInEnvironment,
             excluirExecution,
             updateUserName,
-            getStaticsAgentsExecutionsInEnvironment
+            getStaticsAgentsExecutionsInEnvironment,
+            reexecutarPartida
         }}>
             {children}
         </AuthContext.Provider>

@@ -4,10 +4,91 @@ import LinoEvolutivo from '../assets/linoEvolutivo.png'
 import Buraco from '../assets/skins/buraco.png'
 import LoadingGig from '../assets/loadingGif.gif'
 import LoadingPage from './LoadingPage'
+import Minimapa from './Minimapa'
 
 import { useEffect, useState, useRef, useTransition } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useConfirm } from '../contexts/ConfirmContext';
+
+function MapaExecucao({ setMostrarMiniMapa, dadoHistorico }) {
+    const {
+        reexecutarPartida
+    } = useAuth();
+
+    const [carregandoPassos, setCarregandoPassos] = useState(false);
+    const [passosExecucao, setPassosExecucao] = useState([]);
+
+    async function handleReexecutar(executionId) {
+        setCarregandoPassos(true);
+        try {
+            const resultado = await reexecutarPartida(executionId);
+            setPassosExecucao(resultado);
+        } catch (error) {
+            console.error('Falha na reexecução:', error);
+        }
+        setCarregandoPassos(false);
+    };
+
+    useEffect(() => {
+        handleReexecutar(dadoHistorico.id);
+    }, [])
+
+    function formatarData(dateString) {
+        const date = new Date(dateString);
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+
+        return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    }
+
+    return (
+        <>
+            <div className='mapaReconstrucaoExecucaoContainer'>
+                <div className='janelaMapaReconstrucao'>
+                    {carregandoPassos ?
+                        <>
+                            <img src={LoadingGig} alt="" style={{ objectFit: 'contain', width: '60px' }} />
+                        </>
+                        :
+                        <>
+                            <div className='topoJanelaReconstrucao'>
+                                <span className='informacoesBasicasReconstrucao'>
+                                    <h2>ID: {dadoHistorico.id}</h2>
+                                    <p><b>Pontuação na partida:</b> {dadoHistorico.pontos}</p>
+                                    <p style={{ fontSize: '12px' }}>
+                                        <span className='destaqueGold'>
+                                            <b>Mundo ID:</b> {dadoHistorico.ambiente_id}, <b>Agente ID:</b> {dadoHistorico.agente_id}<br />
+                                        </span>
+                                        <b>Data de criação:</b> {formatarData(dadoHistorico.data)} <br />
+                                    </p>
+                                </span>
+                                <button
+                                    onClick={() => setMostrarMiniMapa(false)}
+                                    className='botaoFecharjanelaMiniMapaReconstrucao'
+                                >Fechar</button>
+                            </div>
+                            <div className='mainJanelaReconstrucao'>
+                                <Minimapa
+                                    mundoId={dadoHistorico.ambiente_id}
+                                    salaInicial={[dadoHistorico.posicao_x, dadoHistorico.posicao_y]}
+                                    onSalaSelecionada={false}
+                                    modoEdicao={false}
+                                    tipoAgente={2}
+                                    passosExecucao={passosExecucao}
+                                ></Minimapa>
+                            </div>
+                        </>
+                    }
+                </div>
+            </div>
+        </>
+    )
+}
 
 export default function Historico() {
     const { getMundosSalvos,
@@ -16,12 +97,14 @@ export default function Historico() {
         getEnvironmentsWithExecutions,
         getAgentsWithExecutionsInEnvironment,
         excluirExecution,
-        getStaticsAgentsExecutionsInEnvironment
+        getStaticsAgentsExecutionsInEnvironment,
+        reexecutarPartida
     } = useAuth();
 
     const { confirm } = useConfirm();
 
     const [carregandoPagina, setCarregandoPagina] = useState(false);
+    const [mostrarMinimapa, setMostrarMiniMapa] = useState(false);
 
     const [carregandoMundos, setCarregandoMundos] = useState(false);
     const [temMaisMundos, setTemMaisMundos] = useState(false)
@@ -42,6 +125,8 @@ export default function Historico() {
     const [carregandoMaisHistorico, setCarregandoMaisHistorico] = useState(false);
     const [paginaAtualHistorico, setPaginaAtualHistorico] = useState(1);
     const [temMaisHistorico, setTemMaisHistorico] = useState(false);
+
+    const [historicoSelecionado, setHistoricoSelecionado] = useState(null);
 
     function formatarData(dateString) {
         const date = new Date(dateString);
@@ -128,7 +213,7 @@ export default function Historico() {
 
     const carregarMaisAgentes = () => {
         if (!carregandoMaisAgentes && !temMaisAgentes) {
-            carregarAgentes(pagina + 1, false);
+            carregarAgentes(paginaAgentesAtual + 1, false);
         }
     };
 
@@ -288,6 +373,15 @@ export default function Historico() {
             console.error('Erro:', result.message);
         }
     }
+
+    const handleReexecutar = async (executionId) => {
+        try {
+            const resultado = await reexecutarPartida(executionId);
+            console.log('Partida reexecutada:', resultado);
+        } catch (error) {
+            console.error('Falha na reexecução:', error);
+        }
+    };
 
     return (
         <>
@@ -509,9 +603,6 @@ export default function Historico() {
                                                     <div
                                                         className='itemAgente'
                                                         key={dadoHistorico.id}
-                                                        onClick={() => {
-                                                            buscarEstatisticas(mundoSelecionado, agenteSelecionado);
-                                                        }}
                                                     >
                                                         <span className='topoItemHistorico'>
                                                             <span>
@@ -524,9 +615,16 @@ export default function Historico() {
                                                                     <b>Data de criação:</b> {formatarData(dadoHistorico.data)} <br />
                                                                 </p>
                                                             </span>
-                                                            <span>
+                                                            <span className='botoesControleHistorico'>
+                                                                <button className='botaoReconstruir'
+                                                                    onClick={() => {
+                                                                        setHistoricoSelecionado(dadoHistorico);
+                                                                        setMostrarMiniMapa(!mostrarMinimapa)
+                                                                    }}
+                                                                >Reconstruir execução</button>
                                                                 <button
                                                                     onClick={() => handleExcluirExecution(dadoHistorico.id)}
+                                                                    className='botaoExcluirExecucao'
                                                                 >Apagar histórico</button>
                                                             </span>
                                                         </span>
@@ -571,6 +669,12 @@ export default function Historico() {
             </main>
             {carregandoPagina && (
                 <LoadingPage></LoadingPage>
+            )}
+            {mostrarMinimapa && (
+                <MapaExecucao
+                    setMostrarMiniMapa={setMostrarMiniMapa}
+                    dadoHistorico={historicoSelecionado}
+                ></MapaExecucao>
             )}
         </>
     )
