@@ -491,7 +491,6 @@ export default function Agentes() {
                             </p>
                         ) : (
                             agentes.map((agente) => {
-                                // Mantendo a lógica de ativação da primeira tela
                                 const estaAtivo = agenteEdicao.id == agente.id;
 
                                 return (
@@ -606,36 +605,6 @@ export default function Agentes() {
                             </span>
                         </span>
                     </div>
-                    {/* {criarNovo && (
-                        <div className='divControle'>
-                            <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>
-                            <div className={`auxiliarSelecaoTipoAgente`}>
-                                <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'logico' ? 'blocoTipoSelecionado' : ''}`}
-                                    onClick={() => {
-                                        setTipoAgenteSelerionado('logico');
-                                        setTipoIntAgenteSelecionado(2);
-                                    }}>
-                                    <img src={LinoLogico} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'logico' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
-                                    <h3>Lógico</h3>
-                                    <p className='paragrafoInformativo'>
-                                        Esse agente não tem sentimentos, apenas segue um conjunto de regras definidas em sua programação
-                                    </p>
-                                </div>
-                                <div className={`blocoTipoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'blocoTipoSelecionado' : ''}`}
-                                    onClick={() => {
-                                        setTipoAgenteSelerionado('evolutivo');
-                                        setTipoIntAgenteSelecionado(3);
-                                    }}>
-                                    <img src={LinoEvolutivo} alt="" className={`imagemSelecaoAgente ${tipoAgenteSelecionado === 'evolutivo' ? 'agenteTipoSelecionado' : 'agenteTipoNaoSelecionado'}`} />
-                                    <h3>Evolutivo</h3>
-                                    <p className='paragrafoInformativo'>
-                                        Esse agente evolui aprendendo com os seus erros (diferente de certas pessoas)
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )} */}
-
                     {criarNovo && (
                         <div className='divControle'>
                             <h2 style={{ width: '100%', textAlign: 'center' }}>Tipo de agente</h2>

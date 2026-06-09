@@ -7,18 +7,96 @@ import { useState, useEffect } from 'react';
 import LoadingGig from '../assets/loadingGif.gif'
 
 function ItemEstatistica({ dadoEstatistica }) {
+
+    function formatarData(dateString) {
+        const date = new Date(dateString);
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+
+        return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    }
+
     return (
         <>
-            <div className='estItem'>
+            <div className='estItem' key={dadoEstatistica.id}>
                 <div className='topoEstItem'>
-                    <h2>Nome do agente</h2>
+                    <p style={{ fontSize: '12px' }}>Estatísticas do agente</p>
+                    <h2>{dadoEstatistica.dadosAgente.nome} - <span className='destaqueGold'>ID - {dadoEstatistica.dadosAgente.id}</span></h2>
                     <p style={{ fontSize: '12px' }}>
-                        <b className='destaqueRed'>Agente lógico personalizado</b> <br />
-                        <b>Data de criação:</b> 10/05/2026
+                        <b>Data de criação:</b> {formatarData(dadoEstatistica.dadosAgente.data)} <br />
                     </p>
+                    {dadoEstatistica.dadosAgente.id == 1 && (
+                        <p className='destaqueRoxo'>Agente aleatório padrão</p>
+                    )}
+                    {dadoEstatistica.dadosAgente.id == 2 && (
+                        <p className='destaqueRoxo'>Agente lógico padrão</p>
+                    )}
+                    {dadoEstatistica.dadosAgente.id == 3 && (
+                        <p className='destaqueRoxo'>Agente evolutivo padrão</p>
+                    )}
+                    {(dadoEstatistica.dadosAgente.id != 1 && dadoEstatistica.dadosAgente.id != 2 && dadoEstatistica.dadosAgente.id != 3) && (
+                        <>
+                            {dadoEstatistica.dadosAgente?.tipo == 2 ? (
+                                <>
+                                    <p className="destaqueRed" style={{ fontSize: '12px' }}>✎ Agente lógico personalizado</p>
+                                    <p style={{ fontSize: '12px' }}>
+                                        {[
+                                            dadoEstatistica.dadosAgente.properties?.corajoso && "🛡 Corajoso - ",
+                                            dadoEstatistica.dadosAgente.properties?.explorador && "◈ Explorador - ",
+                                            dadoEstatistica.dadosAgente.properties?.garimpeiro && "✦ Garimpeiro - ",
+                                            dadoEstatistica.dadosAgente.properties?.cacador && "⚔ Caçador  "
+                                        ]
+                                            .filter(Boolean)
+                                            .map((texto, index, arr) => (
+                                                <span key={index}>
+                                                    {texto}
+                                                    {index < arr.length - 1}
+                                                </span>
+                                            ))}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="destaqueGold" style={{ fontSize: '12px' }}>✎ Agente evolutivo personalizado</p>
+                                    <p style={{ fontSize: '12px' }}>
+                                        ⟳ Gerações: {dadoEstatistica.dadosAgente?.properties?.geracoes} -
+                                        ≡ População: {dadoEstatistica.dadosAgente?.properties?.populacao} -
+                                        ❤ Taxa de cruzamento: {dadoEstatistica.dadosAgente?.properties?.taxa_de_cruzamento}% -
+                                        ⚯ Taxa de mutação: {dadoEstatistica.dadosAgente?.properties?.taxa_de_mutacao}%
+                                    </p>
+                                </>
+                            )}
+                        </>
+                    )
+
+                    }
                 </div>
                 <div className='blocosEstItem'>
-                    <p>corpo</p>
+                    <div className='blocoEstItem'>
+                        <p>Pontuação média</p>
+                        <h1>{dadoEstatistica.pontos_med}</h1>
+                    </div>
+                    <div className='blocoEstItem'>
+                        <p>Média de passos</p>
+                        <h1>{dadoEstatistica.passos_med}</h1>
+                    </div>
+                    <div className='blocoEstItem'>
+                        <p>Média ouro coletado</p>
+                        <h1>{dadoEstatistica.qtd_ouros_med}</h1>
+                    </div>
+                    <div className='blocoEstItem'>
+                        <p>Média de flechas disparadas</p>
+                        <h1>{dadoEstatistica.qtd_flechas_med}</h1>
+                    </div>
+                    <div className='blocoEstItem'>
+                        <p>Média Wumpus mortos</p>
+                        <h1>{dadoEstatistica.wumpus_med}</h1>
+                    </div>
                 </div>
             </div>
         </>
@@ -195,7 +273,7 @@ export default function Benchmark() {
 
         if (result.success) {
             const listaAgentesEst = result.data.agentes;
-            console.log("Estatísticas brutas recebidas:", listaAgentesEst);
+            // console.log("Estatísticas brutas recebidas:", listaAgentesEst);
 
             try {
                 const promisesMesclagem = listaAgentesEst.map(async (estatisticaAgante) => {
@@ -210,14 +288,14 @@ export default function Benchmark() {
                 const dadosMesclados = await Promise.all(promisesMesclagem);
 
                 setEstatisticas(dadosMesclados);
-                console.log("Dados unificados e salvos em estatisticas:", dadosMesclados);
+                // console.log("Dados unificados e salvos em estatisticas:", dadosMesclados);
 
             } catch (error) {
                 console.error("Erro ao mesclar dados dos agentes com as estatísticas:", error);
                 setEstatisticas(listaAgentesEst);
             }
 
-            await handleCarregarMundo(result.data.environment_id);
+            // await handleCarregarMundo(result.data.environment_id);
         } else {
             console.error('Erro:', result.message);
         }
@@ -225,17 +303,17 @@ export default function Benchmark() {
         setCarregandoEstatisticas(false);
     }
 
-    const handleCarregarMundo = async (environment_id) => {
-        try {
-            const dadosMundo = await getMundoById(environment_id);
-            console.log("mundo: ", dadosMundo);
-            setMundoCompleto(dadosMundo);
+    // const handleCarregarMundo = async (environment_id) => {
+    //     try {
+    //         const dadosMundo = await getMundoById(environment_id);
+    //         console.log("mundo: ", dadosMundo);
+    //         setMundoCompleto(dadosMundo);
 
-        } catch (error) {
-            console.error("Erro no fluxo de carregamento do mundo:", error);
-            setMundoCompleto(null);
-        }
-    };
+    //     } catch (error) {
+    //         console.error("Erro no fluxo de carregamento do mundo:", error);
+    //         setMundoCompleto(null);
+    //     }
+    // };
 
     return (
         <>
@@ -272,6 +350,7 @@ export default function Benchmark() {
                                                     key={mundo.id}
                                                     onClick={() => {
                                                         setMundoSelecionado(mundo.id);
+                                                        setMundoCompleto(mundo);
                                                     }}
                                                 >
                                                     <p className='destaqueGold idMundoListaEst'><b>ID {mundo.id}</b></p>
@@ -422,10 +501,27 @@ export default function Benchmark() {
                         :
                         estatisticas != null && (
                             <>
+                                <div className='estItem'>
+                                    <div className='topoEstItem'>
+                                        <p style={{ fontSize: '12px' }}>Mundo selecionado</p>
+                                        <h2>{mundoCompleto.nome} - <span className='destaqueGold'>ID {mundoCompleto.id}</span></h2>
+                                        <hr />
+                                        <p style={{ fontSize: '12px' }}>
+                                            <b>Data de criação: </b> {formatarData(mundoCompleto.data_criacao)} <br />
+                                            <b>Largura x Altura : </b> {mundoCompleto.largura}x{mundoCompleto.altura} <br />
+                                            <b>Salas ativas: </b> {mundoCompleto.estatisticas.salasAtivas} de {mundoCompleto.estatisticas.totalSalas} <br />
+                                            <b>Quantidades: </b> {mundoCompleto.estatisticas.quantidadeEntidades.wumpus} Wumpus; {mundoCompleto.estatisticas.quantidadeEntidades.buracos} Buracos; {mundoCompleto.estatisticas.quantidadeEntidades.ouros} Ouros<br />
+                                            <b>Densidade: </b> {mundoCompleto.estatisticas.densidadeEntidades.wumpus} Wumpus; {mundoCompleto.estatisticas.densidadeEntidades.buracos} Buracos; {mundoCompleto.estatisticas.densidadeEntidades.ouros} Ouros
+
+                                        </p>
+                                    </div>
+                                </div>
                                 {estatisticas.map((dadoEstatistica) => {
                                     return (
                                         <>
-                                            <ItemEstatistica></ItemEstatistica>
+                                            <ItemEstatistica
+                                                dadoEstatistica={dadoEstatistica}
+                                            ></ItemEstatistica>
                                         </>
                                     )
                                 })}
