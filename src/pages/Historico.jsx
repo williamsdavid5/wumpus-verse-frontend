@@ -603,6 +603,9 @@ export default function Historico() {
                                                     <div
                                                         className='itemAgente'
                                                         key={dadoHistorico.id}
+                                                        onClick={() => {
+                                                            buscarEstatisticas(dadoHistorico.ambiente_id, dadoHistorico.agente_id);
+                                                        }}
                                                     >
                                                         <span className='topoItemHistorico'>
                                                             <span>

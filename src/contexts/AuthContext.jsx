@@ -509,7 +509,7 @@ export function AuthProvider({ children }) {
         }
     }
 
-    async function getEnvironmentsWithExecutions(pagina = 1, limite = 5) {
+    async function getEnvironmentsWithExecutions(pagina = 1, limite = 10) {
         try {
             const response = await api.get("/execution/list_environments", {
                 params: {
@@ -571,7 +571,7 @@ export function AuthProvider({ children }) {
         }
     }
 
-    async function getAgentsWithExecutionsInEnvironment(environment_id, pagina = 1, limite = 10) {
+    async function getAgentsWithExecutionsInEnvironment(environment_id, pagina = 1, limite = 5) {
         if (!environment_id) {
             console.warn('environment_id é obrigatório');
             return {

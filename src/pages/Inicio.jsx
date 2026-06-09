@@ -122,7 +122,7 @@ export default function Inicio() {
         { id: 1, texto: 'Mundos', acao: () => logado ? navigate('/mundos-salvos') : navigate('/login') },
         { id: 2, texto: 'Agentes', acao: () => logado ? navigate('/agentes') : navigate('/login') },
         { id: 3, texto: 'Histórico', acao: () => logado ? navigate('/historico') : navigate('/login') },
-        { id: 4, texto: 'Benchmark', acao: () => logado ? navigate('/benchmark') : navigate('/login') },
+        { id: 4, texto: 'Estatísticas', acao: () => logado ? navigate('/benchmark') : navigate('/login') },
         { id: 5, texto: 'Nova partida', acao: () => logado ? navigate('/nova-partida') : navigate('/login') },
     ];
 
@@ -236,7 +236,7 @@ export default function Inicio() {
                     </p>
                     <p className='pAvisoTelaInicio'>Atenção: a experiência em dispositivos com tela pequena <span>não é completa!</span> Algumas funções só estão disponíveis em computadores.</p>
                     <div className='divBotoesInicio'>
-                        {botoes.slice(0, 3).map(b => (
+                        {botoes.slice(0, 4).map(b => (
                             <button
                                 key={b.id}
                                 onClick={b.acao}
