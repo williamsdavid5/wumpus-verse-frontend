@@ -342,7 +342,6 @@ export function AuthProvider({ children }) {
                     agent_id: agent_id
                 }
             });
-            console.log('Agente obtido:', response.data);
             return response.data;
         } catch (error) {
             if (error.response) {
@@ -759,7 +758,6 @@ export function AuthProvider({ children }) {
                 }
             });
 
-            console.log('Estatísticas obtidas com sucesso:', response.data);
             return {
                 success: true,
                 data: response.data,

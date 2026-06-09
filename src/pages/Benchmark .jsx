@@ -6,12 +6,33 @@ import { useState, useEffect } from 'react';
 
 import LoadingGig from '../assets/loadingGif.gif'
 
+function ItemEstatistica({ dadoEstatistica }) {
+    return (
+        <>
+            <div className='estItem'>
+                <div className='topoEstItem'>
+                    <h2>Nome do agente</h2>
+                    <p style={{ fontSize: '12px' }}>
+                        <b className='destaqueRed'>Agente lógico personalizado</b> <br />
+                        <b>Data de criação:</b> 10/05/2026
+                    </p>
+                </div>
+                <div className='blocosEstItem'>
+                    <p>corpo</p>
+                </div>
+            </div>
+        </>
+    )
+}
+
 export default function Benchmark() {
     const {
         getExecucoesUsuario,
         getEnvironmentsWithExecutions,
         getAgentsWithExecutionsInEnvironment,
         getStaticsAgentsExecutionsInEnvironment,
+        getAgenteById,
+        getMundoById
     } = useAuth();
 
     const { confirm } = useConfirm();
@@ -25,10 +46,14 @@ export default function Benchmark() {
 
     const [carregandoAgentes, setCarregandoAgentes] = useState(false);
     const [agentesDoDB, setAgentesDoDB] = useState([]);
-    const [agenteSelecionado, setAgenteSelecionado] = useState(-1);
+    const [agentesSelecionados, setAgentesSelecionados] = useState([]);
     const [paginaAgentesAtual, setPaginaAgentesAtual] = useState(1);
     const [temMaisAgentes, setTemMaisAgentes] = useState(true);
     const [carregandoMaisAgentes, setCarregandoMaisAgentes] = useState(false);
+
+    const [estatisticas, setEstatisticas] = useState(null);
+    const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(false);
+    const [mundoCompleto, setMundoCompleto] = useState(null);
 
     function formatarData(dateString) {
         const date = new Date(dateString);
@@ -93,7 +118,6 @@ export default function Benchmark() {
                 paginaAtual,
                 10
             );
-            console.log("agentes: ", resposta);
 
             if (limparLista || paginaAtual === 1) {
                 setAgentesDoDB(resposta.agents);
@@ -128,6 +152,91 @@ export default function Benchmark() {
         carregarAgentes(1, true);
     }, [mundoSelecionado])
 
+    const toggleAgenteSelecionado = (idAgente) => {
+        setAgentesSelecionados((prevSelecionados) => {
+            const jaEstaSelecionado = prevSelecionados.includes(idAgente);
+
+            if (jaEstaSelecionado) {
+                return prevSelecionados.filter(id => id !== idAgente);
+            } else {
+                return [...prevSelecionados, idAgente];
+            }
+        });
+    };
+
+    async function buscarEstatisticas() {
+        if (mundoSelecionado == null || mundoSelecionado == 0) {
+            await confirm({
+                title: "Não tá esquecendo de nada?",
+                message: `Precisa selecionar um mundo e um ou mais agentes para buscar as estatísticas!`,
+                type: "alert",
+                botao1: "Ops, entendi!",
+            });
+            return;
+        }
+
+        if (agentesSelecionados.length <= 0) {
+            await confirm({
+                title: "Como assim?",
+                message: `Selecionou um agente? Deveria...`,
+                type: "alert",
+                botao1: "Verdade!",
+            });
+            return;
+        }
+
+        setCarregandoEstatisticas(true);
+
+        const result = await getStaticsAgentsExecutionsInEnvironment(
+            mundoSelecionado,
+            agentesSelecionados,
+            30
+        );
+
+        if (result.success) {
+            const listaAgentesEst = result.data.agentes;
+            console.log("Estatísticas brutas recebidas:", listaAgentesEst);
+
+            try {
+                const promisesMesclagem = listaAgentesEst.map(async (estatisticaAgante) => {
+                    const dadosCadastrais = await getAgenteById(estatisticaAgante.agent_id);
+
+                    return {
+                        ...estatisticaAgante,
+                        dadosAgente: dadosCadastrais || { id: estatisticaAgante.agent_id, name: "Agente Desconhecido" }
+                    };
+                });
+
+                const dadosMesclados = await Promise.all(promisesMesclagem);
+
+                setEstatisticas(dadosMesclados);
+                console.log("Dados unificados e salvos em estatisticas:", dadosMesclados);
+
+            } catch (error) {
+                console.error("Erro ao mesclar dados dos agentes com as estatísticas:", error);
+                setEstatisticas(listaAgentesEst);
+            }
+
+            await handleCarregarMundo(result.data.environment_id);
+        } else {
+            console.error('Erro:', result.message);
+        }
+
+        setCarregandoEstatisticas(false);
+    }
+
+    const handleCarregarMundo = async (environment_id) => {
+        try {
+            const dadosMundo = await getMundoById(environment_id);
+            console.log("mundo: ", dadosMundo);
+            setMundoCompleto(dadosMundo);
+
+        } catch (error) {
+            console.error("Erro no fluxo de carregamento do mundo:", error);
+            setMundoCompleto(null);
+        }
+    };
+
     return (
         <>
             <main className="estatisticasMain">
@@ -137,13 +246,13 @@ export default function Benchmark() {
                         <p className='paragrafoInformativo'>Acompanhe as estatísticas dos seus agentes
                             baseado nas execuções que você salvou.</p>
                         <p className='paragrafoInformativo'>
-                            <span className='destaqueGold'>Selecione um mundo e um agente abaixo.</span> São listados apenas mundos e agentes que
+                            <span className='destaqueGold'>Selecione um mundo e um ou mais agentes abaixo.</span> São listados apenas mundos e agentes que
                             possuem execuções salvas!
                         </p>
                     </div>
                     <div className='intermediarioEst'>
                         <p>Mundos</p>
-                        <p>Agentes</p>
+                        <p>Agentes{agentesSelecionados.length > 0 && (`: [${agentesSelecionados}]`)}</p>
                     </div>
                     <section className='estListasContainer'>
                         <div className='estListaMundos'>
@@ -219,7 +328,13 @@ export default function Benchmark() {
                                         {agentesDoDB.map((agente) => {
                                             return (
                                                 <>
-                                                    <div className='itemMundoEstatistica'>
+                                                    <div
+                                                        className={`itemMundoEstatistica ${agentesSelecionados.includes(agente.id) ? 'agenteAtivo' : ''}`}
+                                                        key={agente.id}
+                                                        onClick={() => {
+                                                            toggleAgenteSelecionado(agente.id);
+                                                        }}
+                                                    >
                                                         <p className=' idMundoListaEst'>
                                                             <b>ID {agente.id}</b>
                                                         </p>
@@ -281,11 +396,42 @@ export default function Benchmark() {
                         </div>
                     </section>
                     <section className='botaoBuscarEstatisticasContainer'>
-                        <button className='botaoBuscarEstatisticas'>Buscar estatísticas</button>
+                        <button
+                            className='botaoBuscarEstatisticas'
+                            onClick={() => {
+                                buscarEstatisticas();
+                            }}
+                            disabled={carregandoEstatisticas}
+                        >
+                            {carregandoEstatisticas ?
+                                <>
+                                    ⧖ Buscando estatísticas...
+                                </>
+                                :
+                                <>Buscar estatísticas</>
+                            }
+                        </button>
                     </section>
                 </aside>
                 <section className='estMain'>
-
+                    {estatisticas == null && !carregandoEstatisticas && (
+                        <><p><b>Sem dados carregados</b></p></>
+                    )}
+                    {carregandoEstatisticas ?
+                        <><p><b>Aguarde enquanto as estatísticas são carregadas...</b></p></>
+                        :
+                        estatisticas != null && (
+                            <>
+                                {estatisticas.map((dadoEstatistica) => {
+                                    return (
+                                        <>
+                                            <ItemEstatistica></ItemEstatistica>
+                                        </>
+                                    )
+                                })}
+                            </>
+                        )
+                    }
                 </section>
 
             </main>
