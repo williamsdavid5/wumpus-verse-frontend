@@ -72,9 +72,11 @@ function ItemEstatistica({ dadoEstatistica }) {
                                 </>
                             )}
                         </>
-                    )
-
-                    }
+                    )}
+                    <p><br /><b>Execuções salvas e consideradas:</b> {dadoEstatistica.qtdExecucoes}</p>
+                    <p style={{ fontSize: '12px' }}>Esses dados se baseiam nas execuções que você deicidiu salvar, então <span className='destaqueGold'>
+                        é recomendado que você salve o máximo de execuções possíveis</span> para que a análise seja precisa.
+                    </p>
                 </div>
                 <div className='blocosEstItem'>
                     <div className='blocoEstItem'>
@@ -273,7 +275,7 @@ export default function Benchmark() {
 
         if (result.success) {
             const listaAgentesEst = result.data.agentes;
-            // console.log("Estatísticas brutas recebidas:", listaAgentesEst);
+            const qtdExecucoes = result.data.qtd;
 
             try {
                 const promisesMesclagem = listaAgentesEst.map(async (estatisticaAgante) => {
@@ -281,39 +283,29 @@ export default function Benchmark() {
 
                     return {
                         ...estatisticaAgante,
+                        qtdExecucoes: qtdExecucoes,
                         dadosAgente: dadosCadastrais || { id: estatisticaAgante.agent_id, name: "Agente Desconhecido" }
                     };
                 });
 
                 const dadosMesclados = await Promise.all(promisesMesclagem);
-
                 setEstatisticas(dadosMesclados);
-                // console.log("Dados unificados e salvos em estatisticas:", dadosMesclados);
 
             } catch (error) {
                 console.error("Erro ao mesclar dados dos agentes com as estatísticas:", error);
-                setEstatisticas(listaAgentesEst);
-            }
 
-            // await handleCarregarMundo(result.data.environment_id);
+                const dadosBrutosComQtd = listaAgentesEst.map(est => ({
+                    ...est,
+                    qtdExecucoes: qtdExecucoes
+                }));
+                setEstatisticas(dadosBrutosComQtd);
+            }
         } else {
             console.error('Erro:', result.message);
         }
 
         setCarregandoEstatisticas(false);
     }
-
-    // const handleCarregarMundo = async (environment_id) => {
-    //     try {
-    //         const dadosMundo = await getMundoById(environment_id);
-    //         console.log("mundo: ", dadosMundo);
-    //         setMundoCompleto(dadosMundo);
-
-    //     } catch (error) {
-    //         console.error("Erro no fluxo de carregamento do mundo:", error);
-    //         setMundoCompleto(null);
-    //     }
-    // };
 
     return (
         <>

@@ -243,11 +243,8 @@
         box-sizing: border-box;
         justify-content: flex-start;
         overflow-x: hidden;
-        /* ← Adicione */
         width: 100%;
-        /* ← Adicione */
         max-width: 100%;
-        /* ← Adicione */
     }
 
     .listasHistorico {
