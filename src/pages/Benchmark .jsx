@@ -6,7 +6,129 @@ import { useState, useEffect } from 'react';
 
 import LoadingGig from '../assets/loadingGif.gif'
 
+import React from 'react';
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+    LabelList
+} from 'recharts';
+
+const GraficoEstatisticas = ({
+    data,
+    corLinha = "red",
+    corGrade = "var(--bordaCor)",
+    alturaFixa = 300,
+    margemY = 0.15, // Margem de 15% acima e abaixo dos dados
+    nomeGrafico
+}) => {
+    const dadosFormatados = React.useMemo(() => {
+        if (!data || !Array.isArray(data)) return [];
+
+        if (typeof data[0] !== 'object') {
+            return data.map((ponto, index) => ({
+                name: `${nomeGrafico[1]} ${index + 1}`,
+                valor: ponto
+            }));
+        }
+
+        return data;
+    }, [data]);
+
+    const dominioY = React.useMemo(() => {
+        if (!dadosFormatados.length) return [0, 100];
+
+        const valores = dadosFormatados.map(item => item.valor);
+        const min = Math.min(...valores);
+        const max = Math.max(...valores);
+
+        if (min === max) {
+            const offset = min === 0 ? 1 : Math.abs(min) * 0.1;
+            return [min - offset, max + offset];
+        }
+
+        const range = max - min;
+        const margin = range * margemY;
+
+        let yMin = min - margin;
+        let yMax = max + margin;
+
+        if (min >= 0 && yMin < 0) {
+            yMin = 0;
+        }
+
+        if (max <= 0 && yMax > 0) {
+            yMax = 0;
+        }
+
+        return [Math.floor(yMin), Math.ceil(yMax)];
+    }, [dadosFormatados, margemY]);
+
+    return (
+        <ResponsiveContainer width="100%" height={alturaFixa}>
+            <LineChart
+                data={dadosFormatados}
+                margin={{
+                    top: 10,
+                    right: 30,
+                    left: 10,
+                    bottom: 10,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3" stroke={corGrade} />
+
+                <XAxis
+                    dataKey="name"
+                    stroke="var(--textoCor, #888888)"
+                    fontSize={12}
+                />
+
+                <YAxis
+                    stroke="var(--textoCor, #888888)"
+                    fontSize={12}
+                    domain={dominioY}
+                    tickFormatter={(value) => {
+                        return typeof value === 'number' ? value.toFixed(1) : value;
+                    }}
+                />
+
+                <Tooltip
+                    contentStyle={{ backgroundColor: '#1a252f', borderRadius: '8px', border: 'none' }}
+                    labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+                    formatter={(value) => [typeof value === 'number' ? value.toFixed(2) : value, `${nomeGrafico[0]}`]}
+                />
+
+                <Legend />
+
+                <Line
+                    name={nomeGrafico[0]}
+                    type="linear"
+                    dataKey="valor"
+                    stroke={corLinha}
+                    strokeWidth={2}
+                    activeDot={{ r: 6 }}
+                >
+                    <LabelList
+                        dataKey="valor"
+                        position="top"
+                        offset={10}
+                        fill="var(--textoCor, #ffffff)"
+                        fontSize={11}
+                        formatter={(value) => typeof value === 'number' ? value.toFixed(1) : value}
+                    />
+                </Line>
+            </LineChart>
+        </ResponsiveContainer>
+    );
+};
+
 function ItemEstatistica({ dadoEstatistica }) {
+    const [mostrarGraficos, setMostrarGraficos] = useState(false);
 
     function formatarData(dateString) {
         const date = new Date(dateString);
@@ -23,7 +145,9 @@ function ItemEstatistica({ dadoEstatistica }) {
 
     return (
         <>
-            <div className='estItem' key={dadoEstatistica.id}>
+            <div className='estItem' key={dadoEstatistica.id}
+                onClick={() => console.log(dadoEstatistica)}
+            >
                 <div className='topoEstItem'>
                     <p style={{ fontSize: '12px' }}>Estatísticas do agente</p>
                     <h2>{dadoEstatistica.dadosAgente.nome} - <span className='destaqueGold'>ID - {dadoEstatistica.dadosAgente.id}</span></h2>
@@ -73,10 +197,7 @@ function ItemEstatistica({ dadoEstatistica }) {
                             )}
                         </>
                     )}
-                    <p><br /><b>Execuções salvas e consideradas:</b> {dadoEstatistica.qtdExecucoes}</p>
-                    <p style={{ fontSize: '12px' }}>Esses dados se baseiam nas execuções que você deicidiu salvar, então <span className='destaqueGold'>
-                        é recomendado que você salve o máximo de execuções possíveis</span> para que a análise seja precisa.
-                    </p>
+                    <p><br /><b>Execuções consideradas:</b> {dadoEstatistica.qtdExecucoes}</p>
                 </div>
                 <div className='blocosEstItem'>
                     <div className='blocoEstItem'>
@@ -100,6 +221,61 @@ function ItemEstatistica({ dadoEstatistica }) {
                         <h1>{dadoEstatistica.wumpus_med}</h1>
                     </div>
                 </div>
+                <span className='spanBotaoMostrarGraficos'>
+                    <button
+                        className='botaoMostrarGraficos'
+                        onClick={() => setMostrarGraficos(!mostrarGraficos)}
+                    >
+                        {mostrarGraficos ?
+                            <>
+                                🠕 Ocultar gráficos
+                            </>
+                            :
+                            <>
+                                🠗 Mostrar gráficos
+                            </>
+                        }
+                    </button>
+                </span>
+                {mostrarGraficos && (
+                    <>
+                        <div className='graficosEstatisticas'>
+                            <p style={{ marginTop: '15px' }}>Pontuações registradas</p>
+                            <GraficoEstatisticas
+                                data={dadoEstatistica.pontos}
+                                nomeGrafico={["Pontuação", "Exec."]}
+                            ></GraficoEstatisticas>
+
+                            <p style={{ marginTop: '15px' }}>Passos por execução</p>
+                            <GraficoEstatisticas
+                                data={dadoEstatistica.passos}
+                                nomeGrafico={["Passos", "Exec."]}
+                                corLinha='var(--roxoDestaque)'
+                            ></GraficoEstatisticas>
+
+                            <p style={{ marginTop: '15px' }}>Ouro coletado</p>
+                            <GraficoEstatisticas
+                                data={dadoEstatistica.qtd_ouros}
+                                nomeGrafico={["Ouro", "Exec."]}
+                                corLinha='gold'
+                            ></GraficoEstatisticas>
+
+                            <p style={{ marginTop: '15px' }}>Tiros disparados</p>
+                            <GraficoEstatisticas
+                                data={dadoEstatistica.qtd_flechas}
+                                nomeGrafico={["Tiro", "Exec."]}
+                                corLinha='white'
+                            ></GraficoEstatisticas>
+
+                            <p style={{ marginTop: '15px' }}>Wumpus mortos</p>
+                            <GraficoEstatisticas
+                                data={dadoEstatistica.wumpus}
+                                nomeGrafico={["Wumpus", "Exec."]}
+                                corLinha='red'
+                            ></GraficoEstatisticas>
+                        </div>
+                    </>
+                )}
             </div>
         </>
     )
@@ -134,6 +310,8 @@ export default function Benchmark() {
     const [estatisticas, setEstatisticas] = useState(null);
     const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(false);
     const [mundoCompleto, setMundoCompleto] = useState(null);
+
+    const [mostrarTutorial, setMostrarTutorial] = useState(false);
 
     function formatarData(dateString) {
         const date = new Date(dateString);
@@ -276,6 +454,7 @@ export default function Benchmark() {
         if (result.success) {
             const listaAgentesEst = result.data.agentes;
             const qtdExecucoes = result.data.qtd;
+            console.log(result.data);
 
             try {
                 const promisesMesclagem = listaAgentesEst.map(async (estatisticaAgante) => {
@@ -315,10 +494,29 @@ export default function Benchmark() {
                         <h1>Estatísticas</h1>
                         <p className='paragrafoInformativo'>Acompanhe as estatísticas dos seus agentes
                             baseado nas execuções que você salvou.</p>
-                        <p className='paragrafoInformativo'>
-                            <span className='destaqueGold'>Selecione um mundo e um ou mais agentes abaixo.</span> São listados apenas mundos e agentes que
-                            possuem execuções salvas!
-                        </p>
+                        {mostrarTutorial ?
+                            <>
+                                <p className='paragrafoInformativo'>
+                                    <b>Funcionamento:</b> <br />
+                                    Abaixo são exibidos os mundos com execuções salvas, e os agentes que possuem execuções naquele mundo,
+                                    você deve selecionar um agente para ver as suas estatísticas gerais, ou selecionar mais de um agente para fazer uma comparação. <br />
+                                    <span className='destaqueGold'>Atenção: </span> para a comparação, o menor número de execuções é considerado! Exemplo: você selecionou um agente com
+                                    3 execuções e um agente com 7, desse último, apenas 3 execuções são consideradas para que a comparação seja justa. Por isso é importante que você
+                                    tenha um bom número de execuções salvas para cada agente que você quer analizar, umas 30 execuções é um bom número...
+                                </p>
+                                <button
+                                    onClick={() => setMostrarTutorial(false)}
+                                    className='botaoTutorial'
+                                >Já sei!</button>
+                            </>
+                            :
+                            <>
+                                <button
+                                    onClick={() => setMostrarTutorial(true)}
+                                    className='botaoTutorial'
+                                >Como funciona?</button>
+                            </>
+                        }
                     </div>
                     <div className='intermediarioEst'>
                         <p>Mundos</p>
@@ -489,7 +687,12 @@ export default function Benchmark() {
                         <><p><b>Sem dados carregados</b></p></>
                     )}
                     {carregandoEstatisticas ?
-                        <><p><b>Aguarde enquanto as estatísticas são carregadas...</b></p></>
+                        <>
+                            <div className='carregandoEst'>
+                                <img src={LoadingGig} alt="" />
+                                <p><b>Carregando estatísticas...</b></p>
+                            </div>
+                        </>
                         :
                         estatisticas != null && (
                             <>
