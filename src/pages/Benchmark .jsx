@@ -23,8 +23,8 @@ const GraficoEstatisticas = ({
     data,
     corLinha = "red",
     corGrade = "var(--bordaCor)",
-    alturaFixa = 300,
-    margemY = 0.15, // Margem de 15% acima e abaixo dos dados
+    alturaFixa = 200,
+    margemY = 0.15,
     nomeGrafico
 }) => {
     const dadosFormatados = React.useMemo(() => {
